@@ -2,6 +2,7 @@ const bootScreen = document.querySelector('#bootScreen');
 const enterButton = document.querySelector('#enterButton');
 const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.site-nav');
+const mainContent = document.querySelector('#mainContent');
 
 const enterPortfolio = () => {
   if (document.body.classList.contains('entered')) return;
@@ -40,11 +41,11 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12 });
+}, { root: mainContent, threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 
 document.querySelector('#year').textContent = new Date().getFullYear();
-document.querySelector('.back-top')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+document.querySelector('.back-top')?.addEventListener('click', () => mainContent?.scrollTo({ top: 0, behavior: 'smooth' }));
 
 document.querySelectorAll('.channel').forEach((channel) => {
   channel.addEventListener('toggle', () => {
