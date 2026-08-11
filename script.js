@@ -22,7 +22,16 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.14 });
+}, { threshold: 0.12 });
 
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+document.querySelector('.back-top')?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+window.addEventListener('scroll', () => {
+  const progress = Math.min(99, Math.round((window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 99));
+  document.querySelector('#scroll-count').textContent = String(progress).padStart(2, '0');
+}, { passive: true });
