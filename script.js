@@ -14,7 +14,7 @@ const enterPortfolio = () => {
 
 enterButton?.addEventListener('click', enterPortfolio);
 window.addEventListener('keydown', (event) => {
-  if ((event.code === 'Space' || event.code === 'Enter' || event.code === 'Escape') && !document.body.classList.contains('entered')) {
+  if (enterButton && (event.code === 'Space' || event.code === 'Enter' || event.code === 'Escape') && !document.body.classList.contains('entered')) {
     event.preventDefault();
     enterPortfolio();
   }
