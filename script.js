@@ -1,6 +1,8 @@
 const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.site-nav');
 
+window.addEventListener('DOMContentLoaded', () => document.body.classList.add('ready'));
+
 menuToggle?.addEventListener('click', () => {
   const isOpen = navigation.classList.toggle('open');
   menuToggle.setAttribute('aria-expanded', String(isOpen));
@@ -22,16 +24,30 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12 });
+}, { threshold: 0.13 });
 
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-document.querySelector('.back-top')?.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+document.querySelector('.back-top')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+document.querySelectorAll('.story-card').forEach((card) => {
+  card.addEventListener('toggle', () => {
+    if (!card.open) return;
+    document.querySelectorAll('.story-card[open]').forEach((openCard) => {
+      if (openCard !== card) openCard.open = false;
+    });
+  });
 });
 
-window.addEventListener('scroll', () => {
-  const progress = Math.min(99, Math.round((window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 99));
-  document.querySelector('#scroll-count').textContent = String(progress).padStart(2, '0');
-}, { passive: true });
+if (window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
+  document.querySelectorAll('.tilt-card').forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const bounds = card.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width - .5;
+      const y = (event.clientY - bounds.top) / bounds.height - .5;
+      card.style.transform = `perspective(800px) rotateX(${-y * 2.2}deg) rotateY(${x * 2.2}deg) translateY(-4px)`;
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  });
+}
