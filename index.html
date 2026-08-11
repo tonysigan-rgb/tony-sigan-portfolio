@@ -4,127 +4,82 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Tony Sigan Anak Lapok — video editor, scriptwriter and UGC content creator." />
-    <meta name="theme-color" content="#c10a0a" />
+    <meta name="theme-color" content="#1b1c1f" />
     <title>Tony Sigan — Video, Story & UGC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+  <body class="booting">
+    <a class="skip-link" href="#mainContent">Skip intro</a>
 
-    <header class="site-header" id="top">
-      <a class="brand" href="#top" aria-label="Tony Sigan home">TONY<br />SIGAN<span>®</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span>MENU</span><i></i></button>
-      <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
-        <a href="#about">ABOUT</a>
-        <a href="#work">WORK</a>
-        <a href="#offers">WHAT I DO</a>
-        <a href="#contact">CONTACT</a>
-      </nav>
-      <a class="header-email" href="mailto:tonysigan@tonysiganlapok.com">SAY HELLO ↗</a>
-    </header>
+    <section class="boot-screen" id="bootScreen" aria-label="Portfolio introduction">
+      <div class="boot-monitor">
+        <div class="boot-nav"><span>TONY SIGAN</span><span>PORTFOLIO / 2026</span></div>
+        <div class="boot-copy"><p>STREAMING FROM<br />SARAWAK, MALAYSIA</p><h1><span>T</span><span>O</span><span>N</span><span>Y</span><br /><span>S</span><span>I</span><span>G</span><span>A</span><span>N</span></h1><p>VIDEO · STORY · SOCIAL</p></div>
+        <button class="enter-button" type="button" id="enterButton">TAP TO ENTER <b>↵</b></button>
+        <p class="boot-status"><i></i> SIGNAL READY / PRESS ENTER OR SPACE</p>
+      </div>
+    </section>
 
-    <main id="main">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-rail"><span>VIDEO EDITOR</span><i></i><span>SCRIPTWRITER</span><i></i><span>UGC CREATOR</span></div>
-        <div class="hero-copy">
-          <p class="eyebrow hero-reveal"><span></span> SARAWAK, MALAYSIA · FOR ANYWHERE WITH A STORY</p>
-          <h1 id="hero-title" aria-label="Stories, cut differently."><span class="line hero-reveal">STORIES,</span><span class="line red-line hero-reveal">CUT</span><span class="line hero-reveal">DIFFERENTLY<span class="dot">.</span></span></h1>
-          <p class="hero-intro hero-reveal">From the first line of a script to the final frame: I make films, edits and creator-led content people stop for.</p>
-          <a class="hero-action hero-reveal" href="#work">SEE THE WORK <b>↓</b></a>
-        </div>
-        <figure class="hero-portrait hero-reveal">
-          <div class="portrait-label">TONY SIGAN<br />ANAK LAPOK</div>
-          <img src="assets/tony-sigan-hero.png" alt="Tony Sigan smiling in a black shirt and woven scarf" />
-          <figcaption>01 / ON THE STORY</figcaption>
-        </figure>
-        <a class="hero-scroll" href="#about">START SMALL. GROW BIG. <span>↓</span></a>
-      </section>
+    <div class="outer-shell" id="siteShell">
+      <div class="monitor-shell">
+        <header class="site-header" id="top">
+          <a class="brand" href="#top" aria-label="Tony Sigan home">TONY SIGAN<span>/ STUDIO</span></a>
+          <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span>MENU</span><i></i></button>
+          <nav class="site-nav" id="site-nav" aria-label="Site navigation"><a href="#work">WORK</a><a href="#channels">CHANNELS</a><a href="#profile">PROFILE</a><a href="#contact">CONTACT</a></nav>
+          <a class="record-link" href="#contact"><i></i> AVAILABLE</a>
+        </header>
 
-      <section class="marquee" aria-label="Creative disciplines"><div>VIDEO EDITING <i>✦</i> SCRIPTWRITING <i>✦</i> UGC CONTENT <i>✦</i> VIDEO EDITING <i>✦</i> SCRIPTWRITING <i>✦</i> UGC CONTENT <i>✦</i></div></section>
+        <main id="mainContent">
+          <section class="screen-section hero" aria-labelledby="hero-title">
+            <p class="hud hud-left">PLAY / 01<br />00:00:00</p><p class="hud hud-right">SARAWAK →<br />WORLDWIDE</p>
+            <div class="hero-content"><p class="eyebrow"><i></i> VIDEO EDITOR · SCRIPTWRITER · UGC CREATOR</p><h2 id="hero-title"><span>TONY</span><span>SIGAN<span class="red-dot">.</span></span></h2><p class="hero-copy">I turn a good brief into a story with rhythm, feeling and a reason to keep watching.</p><a class="watch-button" href="#work">WATCH<br />THE REEL <b>↓</b></a></div>
+            <figure class="hero-portrait"><img src="assets/tony-sigan-hero.png" alt="Tony Sigan smiling in a black shirt and woven scarf" /><figcaption>IN FRAME<br />T. SIGAN</figcaption></figure>
+            <a class="scroll-cue" href="#work">SCROLL FOR THE NEXT FRAME <span>↓</span></a>
+          </section>
 
-      <section class="about section" id="about" aria-labelledby="about-title">
-        <div class="section-label"><span>01</span><p>THE JOURNEY</p><p>2022 → NOW</p></div>
-        <div class="about-top">
-          <h2 id="about-title">MY WORK (&)<br /><em>MY WAY IN.</em></h2>
-          <p>Every project has a beginning. Mine started behind the scenes, learning that a good story needs both heart and a proper plan.</p>
-        </div>
-        <div class="timeline">
-          <details class="story-card reveal" open>
-            <summary><span class="story-year">NOW</span><span class="story-title">Making the whole thing move</span><span class="story-tag">@lightcube</span><i>+</i></summary>
-            <div class="story-content"><p>As a Production Executive and Scriptwriter at Lightcube Studio, I develop scripts, shape concepts and guide productions through planning, set days, post-production and client delivery.</p><b>2024 — PRESENT · SARAWAK</b></div>
-          </details>
-          <details class="story-card reveal">
-            <summary><span class="story-year">2024</span><span class="story-title">Broadcast, frame by frame</span><span class="story-tag">@tvs</span><i>+</i></summary>
-            <div class="story-content"><p>Production Manager, Editor and Assistant Director on <em>Raon Ngan Kamek — Season 2</em>, helping deliver all 13 episodes to Television Sarawak broadcast standard.</p><b>13 EPISODES · TV DRAMA</b></div>
-          </details>
-          <details class="story-card reveal">
-            <summary><span class="story-year">2024</span><span class="story-title">A gateway to home</span><span class="story-tag">@sarawak tourism</span><i>+</i></summary>
-            <div class="story-content"><p>Production Manager for <em>Gateway To Borneo 2024</em>, collaborating with Lightcube Studio and ISC International for Sarawak Tourism Board.</p><b>TOURISM CAMPAIGN · STB</b></div>
-          </details>
-          <details class="story-card reveal">
-            <summary><span class="story-year">2023</span><span class="story-title">Learning to lead the picture</span><span class="story-tag">@unimas</span><i>+</i></summary>
-            <div class="story-content"><p>Produced <em>Sinergy Meriyu</em>—1st Runner Up for Best Film at the ASEAN International Film Festival & Awards—and built a foundation in cinematography at UNIMAS.</p><b>FILM · CINEMATOGRAPHY · CRAFT</b></div>
-          </details>
-        </div>
-      </section>
+          <section class="ticker" aria-label="Creative disciplines"><div>VIDEO EDITING <i>✦</i> SCRIPTWRITING <i>✦</i> UGC CONTENT <i>✦</i> VIDEO EDITING <i>✦</i> SCRIPTWRITING <i>✦</i> UGC CONTENT <i>✦</i></div></section>
 
-      <section class="work section" id="work" aria-labelledby="work-title">
-        <div class="section-label"><span>02</span><p>SELECTED WORK</p><p>REAL STORIES / REAL DELIVERIES</p></div>
-        <div class="work-heading"><h2 id="work-title">MADE TO<br /><em>BE FELT.</em></h2><p>Drama, documentary and destination stories shaped for the screen—and remembered after it.</p></div>
-        <div class="project-list">
-          <article class="project project-red tilt-card reveal">
-            <div class="project-count">01</div><p class="project-type">TV DRAMA / 2024</p>
-            <div class="project-title"><h3>RAON NGAN<br />KAMEK</h3><span>13<br />EPISODES</span></div>
-            <p class="project-description">Production Manager · Editor · Assistant Director. One series, thirteen finished episodes, one broadcast-ready result.</p>
-            <a href="#contact">TELL ME ABOUT YOUR PROJECT <b>↗</b></a>
-          </article>
-          <article class="project project-ink tilt-card reveal">
-            <div class="project-count">02</div><p class="project-type">TOURISM / 2024</p>
-            <div class="project-title"><h3>GATEWAY<br />TO BORNEO</h3><span>STB<br />× ISC</span></div>
-            <p class="project-description">Production management for a Sarawak Tourism Board collaboration built to take a local sense of place further.</p>
-            <a href="#contact">TELL ME ABOUT YOUR PROJECT <b>↗</b></a>
-          </article>
-          <article class="project project-paper tilt-card reveal">
-            <div class="project-count">03</div><p class="project-type">EXHIBITION FILM / 2025</p>
-            <div class="project-title"><h3>THE CRADLE<br />OF ORIGIN</h3><span>GEO<br />PARK</span></div>
-            <p class="project-description">Creative direction and production management for the Sarawak Geopark video exhibition.</p>
-            <a href="#contact">TELL ME ABOUT YOUR PROJECT <b>↗</b></a>
-          </article>
-        </div>
-      </section>
+          <section class="screen-section work" id="work" aria-labelledby="work-title">
+            <div class="section-bar"><span>01 / SELECTED TRANSMISSIONS</span><span>3 PROJECTS</span></div>
+            <div class="section-intro"><h2 id="work-title">ON AIR,<br /><em>ON POINT.</em></h2><p>Television, tourism and exhibition films—made with the same care for story, structure and the last frame.</p></div>
+            <div class="work-grid">
+              <article class="reel-card card-red reveal magnetic"><p>01 / TV DRAMA / 2024</p><div><h3>RAON NGAN<br />KAMEK</h3><span>13<br />EPISODES</span></div><small>Production Manager · Editor · Assistant Director</small><a href="#contact">VIEW THE CREDIT ↗</a></article>
+              <article class="reel-card card-dark reveal magnetic"><p>02 / TOURISM / 2024</p><div><h3>GATEWAY<br />TO BORNEO</h3><span>STB<br />× ISC</span></div><small>Production management for a Sarawak Tourism Board collaboration.</small><a href="#contact">VIEW THE CREDIT ↗</a></article>
+              <article class="reel-card card-light reveal magnetic"><p>03 / EXHIBITION FILM / 2025</p><div><h3>THE CRADLE<br />OF ORIGIN</h3><span>GEO<br />PARK</span></div><small>Creative direction and production management for Sarawak Geopark.</small><a href="#contact">VIEW THE CREDIT ↗</a></article>
+            </div>
+          </section>
 
-      <section class="offers section" id="offers" aria-labelledby="offers-title">
-        <div class="section-label"><span>03</span><p>WHAT YOU GET</p><p>ONE BRAIN / THREE MODES</p></div>
-        <h2 id="offers-title">THE RIGHT<br />TOOL FOR <em>THE FEELING.</em></h2>
-        <div class="offer-grid">
-          <article class="offer reveal"><span>01</span><h3>VIDEO<br />EDITING</h3><p>Offline editing for broadcast, documentary, branded work and social. Pace, emotion, detail—each frame earns its place.</p><div>DaVinci Resolve · Premiere Pro · After Effects</div></article>
-          <article class="offer reveal"><span>02</span><h3>SCRIPT<br />WRITING</h3><p>Concepts, treatments and scripts that take an idea from “maybe” to a story with a spine.</p><div>Treatment development · Scripts · EN/BM subtitles</div></article>
-          <article class="offer reveal"><span>03</span><h3>UGC<br />CONTENT</h3><p>Creator-led content with the human texture, clarity and platform awareness that makes a brand feel close.</p><div>Creator concepts · Short-form · Social storytelling</div></article>
-        </div>
-      </section>
+          <section class="screen-section channels" id="channels" aria-labelledby="channels-title">
+            <div class="section-bar"><span>02 / THE CHANNELS</span><span>CHOOSE YOUR FORMAT</span></div>
+            <h2 id="channels-title">TUNE IN<br />TO THE <em>RIGHT MODE.</em></h2>
+            <div class="channel-list">
+              <details class="channel reveal" open><summary><span>CH 01</span><h3>VIDEO<br />EDITING</h3><i>+</i></summary><div class="channel-body"><p>Offline editing for documentary, broadcast, branded content and social. Every cut has a job: carry the story forward.</p><b>DaVinci Resolve · Premiere Pro · After Effects</b></div></details>
+              <details class="channel reveal"><summary><span>CH 02</span><h3>SCRIPT<br />WRITING</h3><i>+</i></summary><div class="channel-body"><p>Concepts, treatments and scripts that find the heart of a brief, then give it a clear voice.</p><b>Story Development · Treatments · EN/BM Subtitles</b></div></details>
+              <details class="channel reveal"><summary><span>CH 03</span><h3>UGC<br />CONTENT</h3><i>+</i></summary><div class="channel-body"><p>Creator-led, social-first content designed to feel human in the feed and useful to the brand behind it.</p><b>Creator Concepts · Short-form Video · Social Storytelling</b></div></details>
+            </div>
+          </section>
 
-      <section class="proof section" aria-labelledby="proof-title">
-        <div class="proof-stamp">FROM BRIEF<br />TO BROADCAST<br />AND BACK<br />AGAIN</div>
-        <div class="proof-copy"><p class="eyebrow"><span></span> HOW I WORK</p><h2 id="proof-title">NO DEAD<br /><em>AIR.</em></h2><p>Clear communication, solid planning and a creative process that stays collaborative from the first meeting to the final export.</p></div>
-        <ol>
-          <li><b>01</b><span>LISTEN</span><p>Find the audience, the purpose and the heartbeat in the brief.</p></li>
-          <li><b>02</b><span>BUILD</span><p>Write, plan, shoot or cut with the story leading every decision.</p></li>
-          <li><b>03</b><span>DELIVER</span><p>Hand over a film or content package ready to do its job.</p></li>
-        </ol>
-      </section>
+          <section class="screen-section profile" id="profile" aria-labelledby="profile-title">
+            <div class="section-bar"><span>03 / THE PERSON BEHIND THE CUT</span><span>TONY SIGAN ANAK LAPOK</span></div>
+            <div class="profile-grid"><div><h2 id="profile-title">THE STORY<br />NEEDS A <em>SPINE.</em></h2><div class="orbital-note">FROM IDEA<br />TO EXPORT<br />TO SCREEN</div></div><div class="profile-copy"><p class="lead">Writer-producer, production executive and editor. The person who loves both a great line and a properly named folder.</p><p>At Lightcube Studio, I guide projects from scripts and concepts through pre-production, set days, post-production and client delivery. I bring a practical production brain to creative work that needs to land.</p><dl><div><dt>NOW</dt><dd>Production Executive / Scriptwriter<br />Lightcube Studio Sdn. Bhd.</dd></div><div><dt>STUDY</dt><dd>MA Cinematography, UNIMAS<br />Commencing July 2026</dd></div><div><dt>LANGUAGES</dt><dd>Bahasa Melayu / Native<br />English / Proficient</dd></div></dl></div></div>
+          </section>
 
-      <section class="contact section" id="contact" aria-labelledby="contact-title">
-        <div class="section-label"><span>04</span><p>CONTACT</p><p>THE NEXT STORY STARTS HERE</p></div>
-        <h2 id="contact-title">LET'S MAKE<br />SOMETHING<br /><em>MOVE.</em></h2>
-        <div class="contact-bottom"><div><a class="email-link" href="mailto:tonysigan@tonysiganlapok.com">tonysigan@<br />tonysiganlapok.com <b>↗</b></a><a class="phone-link" href="tel:+60133800177">+60 13-380 0177 <b>↗</b></a></div><div class="social-links"><p>FOR THE BIG LAUNCH,<br />THE SMALL DETAIL,<br />OR BOTH.</p><a href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">TIKTOK / @TINUTTEE ↗</a><a href="https://www.instagram.com/tinuttsl_/" target="_blank" rel="noreferrer">INSTAGRAM / @TINUTTSL_ ↗</a></div></div>
-        <button class="back-top" type="button">BACK TO TOP ↑</button>
-      </section>
-    </main>
+          <section class="screen-section process" aria-labelledby="process-title">
+            <p class="eyebrow"><i></i> HOW THE SIGNAL GETS THROUGH</p><h2 id="process-title">LESS STATIC.<br /><em>MORE STORY.</em></h2><ol><li><b>01</b><span>LISTEN</span><p>Find the audience, purpose and heartbeat in the brief.</p></li><li><b>02</b><span>SHAPE</span><p>Write, plan, film or edit with the story in charge.</p></li><li><b>03</b><span>DELIVER</span><p>Hand over a polished film or content package ready to work.</p></li></ol>
+          </section>
 
-    <footer><a class="brand" href="#top">TONY<br />SIGAN<span>®</span></a><p>© <span id="year"></span> TONY SIGAN ANAK LAPOK</p><p>VIDEO · STORY · SOCIAL</p></footer>
+          <section class="screen-section contact" id="contact" aria-labelledby="contact-title">
+            <div class="section-bar"><span>04 / END OF TRANSMISSION</span><span>OR IS IT?</span></div>
+            <h2 id="contact-title">LET'S MAKE<br />THE NEXT <em>ONE.</em></h2><div class="contact-bottom"><div><a class="email-link" href="mailto:tonysigan@tonysiganlapok.com">tonysigan@<br />tonysiganlapok.com <b>↗</b></a><a class="phone-link" href="tel:+60133800177">+60 13-380 0177 <b>↗</b></a></div><div class="social-links"><p>FOR THE BIG LAUNCH,<br />THE SMALL DETAIL,<br />OR BOTH.</p><a href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">TIKTOK / @TINUTTEE ↗</a><a href="https://www.instagram.com/tinuttsl_/" target="_blank" rel="noreferrer">INSTAGRAM / @TINUTTSL_ ↗</a></div></div><button class="back-top" type="button">BACK TO TOP ↑</button>
+          </section>
+        </main>
+
+        <footer><a class="brand" href="#top">TONY SIGAN<span>/ STUDIO</span></a><p>© <span id="year"></span> TONY SIGAN ANAK LAPOK</p><p>VIDEO · STORY · SOCIAL</p></footer>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
