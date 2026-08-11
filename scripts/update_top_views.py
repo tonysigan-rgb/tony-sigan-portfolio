@@ -2,7 +2,10 @@
 """Refresh the three most-viewed public videos for the Video Library."""
 
 import json
+import re
 import subprocess
+import time
+from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,6 +22,22 @@ def ytdlp_json(url, flat=False):
     return json.loads(result.stdout)
 
 
+def fetch_public_view_count(video_id):
+    request = Request(
+        f"https://www.youtube.com/watch?v={video_id}&hl=en",
+        headers={
+            "Accept-Language": "en-US,en;q=0.9",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36",
+        },
+    )
+    with urlopen(request, timeout=20) as response:
+        page = response.read().decode("utf-8", errors="ignore")
+    match = re.search(r'"viewCount":"(\d+)"', page)
+    if not match:
+        raise RuntimeError(f"View count was unavailable for {video_id}")
+    return int(match.group(1))
+
+
 def main():
     channel = ytdlp_json(CHANNEL_URL, flat=True)
     videos = []
@@ -26,16 +45,23 @@ def main():
         video_id = entry.get("id")
         if not video_id:
             continue
-        details = ytdlp_json(f"https://www.youtube.com/watch?v={video_id}")
-        views = details.get("view_count")
-        if views is None:
+        try:
+            views = fetch_public_view_count(video_id)
+        except Exception:
             continue
         videos.append({
-            "title": details.get("title") or entry.get("title") or "Untitled video",
+            "title": entry.get("title") or "Untitled video",
             "views": int(views),
-            "url": details.get("webpage_url") or f"https://www.youtube.com/watch?v={video_id}",
-            "thumbnail": details.get("thumbnail") or f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
+            "url": f"https://www.youtube.com/watch?v={video_id}",
+            "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
         })
+        time.sleep(0.3)
+
+    existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8")) if OUTPUT_PATH.exists() else {}
+    if len(videos) < 3:
+        if existing.get("videos"):
+            return
+        raise RuntimeError("Fewer than three public YouTube view counts were available")
 
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
