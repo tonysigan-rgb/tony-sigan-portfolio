@@ -19,8 +19,8 @@ button { font:inherit; }
 .boot-copy p { margin:0; font:.74rem/1.35 var(--mono); }
 .boot-copy p:last-child { text-align:right; }
 .boot-copy h1 { grid-column:1 / -1; margin:0; font-size:clamp(6.5rem,17vw,16rem); font-weight:700; line-height:.69; letter-spacing:-.065em; }
-.boot-copy h1 span { display:inline-block; animation:signal .9s cubic-bezier(.2,.8,.2,1) both; }
-.boot-copy h1 span:nth-child(2n) { color:var(--red); animation-delay:.08s; }
+.boot-copy h1 span { display:inline-block; color:var(--red); animation:signal .9s cubic-bezier(.2,.8,.2,1) both; }
+.boot-copy h1 span:nth-child(2n) { animation-delay:.08s; }
 @keyframes signal { from { opacity:0; transform:translateY(1rem) scaleY(.7); } }
 .boot-actions { position:relative; z-index:1; align-self:center; display:flex; align-items:center; justify-content:center; gap:.65rem; }
 .enter-button { position:relative; z-index:1; align-self:center; padding:.75rem 1rem; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font:.72rem var(--mono); cursor:pointer; transition:background .25s,color .25s,transform .25s; }
