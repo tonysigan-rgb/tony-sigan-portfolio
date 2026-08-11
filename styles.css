@@ -98,6 +98,21 @@ h1 span { display: inline-block; transform: translateX(9vw); }
 .service-item p { margin: 0; max-width: 22rem; }
 .service-item i { font-style: normal; font-size: 2.5rem; font-weight: 300; }
 
+.experience { background: var(--paper); }
+.experience h2 { margin-bottom: 4rem; }
+.experience-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 6vw; align-items: start; }
+.role-list { border-top: 1px solid var(--ink); }
+.role { display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; padding: 1.3rem 0 2rem; border-bottom: 1px solid var(--ink); }
+.role > p, .education-card > p { margin: 0; font: .59rem/1.4 var(--mono); }
+.role h3 { margin: 0; font-size: clamp(1.85rem, 3.2vw, 3.5rem); line-height: .8; letter-spacing: -.105em; }
+.role h4 { margin: .8rem 0 1.1rem; color: var(--red); font: 500 .64rem/1.25 var(--mono); }
+.role span, .education-card span { display: block; max-width: 32rem; font-size: .93rem; line-height: 1.18; letter-spacing: -.035em; }
+.education-card { background: var(--red); color: var(--paper); padding: 1.6rem; position: sticky; top: 1.2rem; }
+.education-card h3 { margin: 3rem 0 .3rem; font-size: clamp(2.4rem, 4vw, 4.3rem); line-height: .77; letter-spacing: -.12em; }
+.education-card strong { display: block; color: var(--ink); margin-bottom: .5rem; font: 500 .62rem var(--mono); }
+.education-card hr { border: 0; border-top: 1px solid rgba(255,255,255,.5); margin: 2rem 0 1.4rem; }
+.education-card h4 { margin: 1.5rem 0 .35rem; font-size: 1.15rem; letter-spacing: -.06em; }
+
 .process { display: grid; grid-template-columns: 1fr 1.2fr; gap: 8vw; align-items: start; background: #d3cbbd; }
 .process h2 { font-size: clamp(3.7rem, 6.7vw, 7rem); }
 .process ol { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--ink); }
@@ -110,8 +125,10 @@ h1 span { display: inline-block; transform: translateX(9vw); }
 .contact h2 { position: relative; z-index: 1; font-size: clamp(4.6rem, 10vw, 11rem); }
 .contact h2 em { color: var(--ink); }
 .contact-bottom { position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; }
+.contact-channels { display: flex; flex-direction: column; align-items: flex-start; gap: .85rem; }
 .email-link { font-size: clamp(1.35rem, 2.7vw, 3rem); font-weight: 600; line-height: .95; letter-spacing: -.09em; border-bottom: 2px solid var(--paper); padding-bottom: .3rem; }
-.email-link b { color: var(--ink); }
+.email-link b, .phone-link b { color: var(--ink); }
+.phone-link { font: 500 .72rem var(--mono); padding-bottom: .25rem; border-bottom: 1px solid currentColor; }
 .contact-bottom p { margin: 0; font: .61rem/1.45 var(--mono); }
 .contact-orbit { position: absolute; right: -7rem; bottom: -7rem; width: 23rem; aspect-ratio: 1; display: grid; place-content: center; border: 1px solid rgba(255,255,255,.75); border-radius: 50%; color: white; font: .67rem var(--mono); text-align: center; animation: spin 20s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -153,6 +170,12 @@ footer p, footer > a { margin: 0; font: .56rem/1.3 var(--mono); }
   .service-item h3 { font-size: 2.8rem; }
   .service-item p { grid-column: 2 / -1; margin-top: .3rem; }
   .service-item i { grid-column: 3; grid-row: 1; }
+  .experience h2 { margin-bottom: 2.6rem; }
+  .experience-grid { display: block; }
+  .role { grid-template-columns: 4.7rem 1fr; gap: .6rem; }
+  .role h3 { font-size: 2rem; }
+  .education-card { position: static; margin-top: 2.2rem; padding: 1.25rem; }
+  .education-card h3 { margin-top: 2.3rem; }
   .process { display: block; }
   .process ol { margin-top: 3rem; }
   .contact { min-height: 39rem; }
