@@ -184,10 +184,24 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 @media (max-width:760px) { .ugc-services { padding:3.5rem 1.2rem; }.ugc-services-heading { display:block; }.ugc-services-heading h2 { font-size:clamp(3rem,14vw,4.6rem); }.ugc-service-grid { display:block; margin-top:2.5rem; }.ugc-service-grid article,.ugc-service-grid article:not(:first-child) { min-height:0; display:grid; grid-template-columns:2.5rem 1fr; gap:.5rem; padding:1.2rem 0; border-right:0; border-bottom:1px solid var(--paper); }.ugc-service-grid h3 { margin:0; font-size:2rem; }.ugc-service-grid p { grid-column:2; font-size:.9rem; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
 @media (max-width:760px) { .contact-actions { align-self:flex-start; flex-direction:column; gap:.85rem; margin-top:auto; } }
-
 .channel-body .channel-link { grid-column:2; width:max-content; max-width:33rem; margin:1rem 0 0; border-bottom:1px solid currentColor; padding-bottom:.2rem; font:.7rem var(--mono); letter-spacing:0; }
-.script-projects { grid-column:2; margin:1rem 0 0; padding-left:1.1rem; color:var(--red); font:.78rem var(--mono); }
-.script-projects a { border-bottom:1px solid currentColor; color:inherit; padding-bottom:.15rem; }
+.script-showcase { grid-column:2; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; max-width:34rem; margin-top:1.25rem; }
+.script-showcase figure { margin:0; overflow:hidden; background:var(--ink); }
+.script-showcase img { display:block; width:100%; aspect-ratio:1587 / 2245; object-fit:cover; transition:transform .45s ease; }
+.script-showcase figure:hover img { transform:scale(1.035); }
+.script-showcase figcaption { min-height:3.1rem; padding:.65rem .7rem; background:var(--ink); color:var(--paper); font:.64rem/1.25 var(--mono); }
+.channel-body .script-inquiry { margin-top:1.15rem; font-size:.95rem; }
+.script-inquiry a { border-bottom:1px solid currentColor; color:var(--red); font-family:var(--mono); }
+
+.video-showcase { background:var(--ink); color:var(--paper); }
+.video-showcase .section-bar span:last-child { color:var(--red); }
+.video-showcase-intro { display:flex; align-items:end; justify-content:space-between; gap:2rem; margin-top:4.3rem; }
+.video-showcase-intro p { max-width:16rem; margin:0 0 .35rem; font-size:1rem; line-height:1.15; letter-spacing:-.035em; }
+.video-embed-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; margin-top:4rem; }
+.video-embed-grid article { min-width:0; }
+.video-embed { overflow:hidden; aspect-ratio:16 / 9; border:1px solid rgba(241,239,240,.55); background:#090909; }
+.video-embed iframe { display:block; width:100%; height:100%; border:0; }
+.video-embed-grid p { margin:.8rem 0 0; color:var(--paper); font:.65rem var(--mono); }
 
 .graphic-services { padding:5rem 5vw; background:var(--ink); color:var(--paper); }
 .graphic-services-heading { display:flex; align-items:end; justify-content:space-between; gap:2rem; }
@@ -220,3 +234,4 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 .behance-note a { border-bottom:1px solid currentColor; }
 
 @media (max-width:760px) { .graphic-services,.behance-showcase { padding:3.5rem 1.2rem; }.graphic-services-heading,.behance-heading { display:block; }.graphic-services-heading h2,.behance-heading h2 { font-size:clamp(3rem,14vw,4.6rem); }.graphic-service-grid,.behance-project-grid { display:block; margin-top:2.5rem; }.graphic-service-grid article,.graphic-service-grid article:not(:first-child) { min-height:0; display:grid; grid-template-columns:2.5rem 1fr; gap:.5rem; padding:1.2rem 0; border-right:0; border-bottom:1px solid var(--paper); }.graphic-service-grid h3 { margin:0; font-size:2rem; }.graphic-service-grid p { grid-column:2; font-size:.9rem; }.behance-heading > a { display:inline-block; margin-top:1.4rem; font-size:.65rem; }.behance-project-grid a,.behance-project-grid a:not(:first-child) { min-height:12rem; padding:1.2rem 0; border-right:0; border-bottom:1px solid var(--paper); }.behance-project-grid b { font-size:2.4rem; }.behance-note { font-size:.68rem; } }
+@media (max-width:760px) { .script-showcase { gap:.55rem; margin-top:1rem; }.script-showcase figcaption { padding:.55rem; font-size:.58rem; }.channel-body .script-inquiry { font-size:.9rem; }.video-showcase-intro { display:block; margin-top:2.8rem; }.video-showcase-intro p { margin:1.5rem 0 0; font-size:.95rem; }.video-embed-grid { grid-template-columns:1fr; gap:1.6rem; margin-top:2.8rem; }.video-embed-grid p { margin-top:.65rem; font-size:.68rem; } }
