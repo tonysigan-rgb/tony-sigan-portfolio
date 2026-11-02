@@ -166,7 +166,7 @@
 
       footer { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding:1.6rem 1.25rem max(1.6rem, env(safe-area-inset-bottom)); background:var(--red); color:var(--white); font:.66rem var(--mono); }
       footer a { border-bottom:1px solid currentColor; }
-      .toast { position:fixed; left:50%; bottom:1.5rem; transform:translate(-50%,2rem); opacity:0; padding:.7rem 1rem; border-radius:.6rem; background:var(--paper); color:var(--ink); font:.7rem var(--mono); transition:all .25s; pointer-events:none; z-index:200; }
+      .toast { position:fixed; left:50%; bottom:1.5rem; max-width:90vw; text-align:center; transform:translate(-50%,2rem); opacity:0; padding:.7rem 1rem; border-radius:.6rem; background:var(--paper); color:var(--ink); font:.7rem var(--mono); transition:all .25s; pointer-events:none; z-index:200; }
       .toast.show { opacity:1; transform:translate(-50%,0); }
 
       /* ---------- Phone: the player IS the screen ---------- */
@@ -415,16 +415,24 @@
       }
 
       /* ---------------- YouTube ---------------- */
-      window.onYouTubeIframeAPIReady = () => {
-        const first = EPISODES[current].id || EPISODES.find((e) => e.id)?.id;
+      // nativeMode (iPhone only): YouTube plays in the iPhone's own full-screen video player.
+      let nativeMode = false;
+      function buildPlayer(videoId, start, inline) {
+        if (yt) { try { yt.destroy(); } catch (_) {} }
+        if (!$("yt")) { const d = document.createElement("div"); d.id = "yt"; P.insertBefore(d, P.firstChild); }
+        ready = false;
         yt = new YT.Player("yt", {
-          videoId: first,
-          playerVars: { playsinline: 1, controls: 0, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1 },
+          videoId,
+          playerVars: { playsinline: inline ? 1 : 0, controls: 0, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1, start: Math.floor(start || 0) },
           events: {
-            onReady: () => { ready = true; fitVideo(); if (!EPISODES[current].id) yt.stopVideo(); },
+            onReady: () => {
+              ready = true; fitVideo();
+              if (!EPISODES[current].id) yt.stopVideo();
+              if (!inline) yt.playVideo();   // works on some iPhones; otherwise the viewer taps the video
+            },
             onStateChange: (e) => {
               const S = YT.PlayerState;
-              if (e.data === S.PLAYING) { playing = true; P.classList.add("started"); P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
+              if (e.data === S.PLAYING) { playing = true; P.classList.add("started"); if (!nativeMode) P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
               if (e.data === S.PAUSED) { playing = false; P.classList.add("paused"); setCenter(); reveal(true); }
               if (e.data === S.ENDED) {
                 playing = false;
@@ -435,7 +443,8 @@
             },
           },
         });
-      };
+      }
+      window.onYouTubeIframeAPIReady = () => buildPlayer(EPISODES[current].id || EPISODES.find((e) => e.id)?.id, 0, true);
       setInterval(() => {
         if (!ready || !yt.getDuration) return;
         const d = yt.getDuration(), t = yt.getCurrentTime();
@@ -532,25 +541,37 @@
       }
       window.addEventListener("resize", fitVideo);
       window.addEventListener("orientationchange", () => setTimeout(fitVideo, 300));
+      const isStandalone = () => window.navigator.standalone || matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches;
       function enterFs() {
         const req = P.requestFullscreen || P.webkitRequestFullscreen;
         if (req) {
-          // navigationUI:"hide" asks Chrome on Android to hide its bars completely
+          // Android / desktop: true full screen. navigationUI:"hide" asks Chrome to hide its bars completely.
           let r; try { r = req.call(P, { navigationUI: "hide" }); } catch (_) { r = req.call(P); }
-          if (r && r.then) r.then(() => { try { screen.orientation.lock("portrait").catch(() => {}); } catch (_) {} }, fallbackFs);
-        } else fallbackFs();
+          if (r && r.then) r.then(() => { try { screen.orientation.lock("portrait").catch(() => {}); } catch (_) {} }, iphoneFs);
+        } else iphoneFs();
       }
-      // iPhone Safari doesn't allow websites to go truly full screen (only its own video player can).
-      // We fill the whole screen instead; saved to the home screen, the page opens with no Safari bars at all.
-      function fallbackFs() {
-        immersive = true; P.classList.add("immersive"); setFs(true);
-        window.scrollTo(0, 1);
-        const standalone = window.navigator.standalone || matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches;
+      // iPhone: Safari and Chrome never let a web page hide their bars. Two ways round it:
+      //  - opened from the Home Screen, there are no bars at all -> keep our own full screen with the episode button
+      //  - in the browser -> hand the video to the iPhone's own full-screen player (no bars, like a normal phone video)
+      function iphoneFs() {
+        if (isStandalone()) { immersive = true; P.classList.add("immersive"); setFs(true); return; }
+        nativeMode = true;
+        P.classList.add("native-tap", "native");
+        $("fsIcon").innerHTML = ICON_FS_OUT;
+        $("fsBtn").setAttribute("aria-label", "Back to normal player");
+        const t = ready && yt.getCurrentTime ? yt.getCurrentTime() : 0;
+        buildPlayer(EPISODES[current].id, t, false);
+        hint("TAP THE VIDEO TO PLAY FULL SCREEN", 3000);
         let shown = false; try { shown = localStorage.getItem("drama-a2hs") === "1"; } catch (_) {}
-        if (!standalone && !shown) {
-          setTimeout(() => hint("NO SAFARI BARS: SHARE → ADD TO HOME SCREEN", 3500), 1500);
-          try { localStorage.setItem("drama-a2hs", "1"); } catch (_) {}
-        }
+        if (!shown) { setTimeout(() => toast("TIP: SHARE → ADD TO HOME SCREEN FOR AN APP-LIKE PLAYER"), 3500); try { localStorage.setItem("drama-a2hs", "1"); } catch (_) {} }
+      }
+      function leaveNative() {
+        nativeMode = false;
+        P.classList.remove("native-tap", "native");
+        $("fsIcon").innerHTML = ICON_FS_IN;
+        $("fsBtn").setAttribute("aria-label", "Full screen");
+        const t = ready && yt.getCurrentTime ? yt.getCurrentTime() : 0;
+        buildPlayer(EPISODES[current].id, t, true);
       }
       function exitFs() {
         if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
@@ -559,7 +580,7 @@
       const fsChange = () => setFs(!!(document.fullscreenElement || document.webkitFullscreenElement) || immersive);
       document.addEventListener("fullscreenchange", fsChange);
       document.addEventListener("webkitfullscreenchange", fsChange);
-      $("fsBtn").onclick = () => (P.classList.contains("fs") ? exitFs() : enterFs());
+      $("fsBtn").onclick = () => (nativeMode ? leaveNative() : P.classList.contains("fs") ? exitFs() : enterFs());
 
       /* ---------------- other controls ---------------- */
       const go = (dir) => { const n = nextAvail(current, dir); if (n >= 0) play(n, true); };
@@ -570,7 +591,7 @@
       $("auto").onclick = () => { autoplay = !autoplay; setAuto(); try { localStorage.setItem("drama-autoplay", autoplay ? "1" : "0"); } catch (_) {} };
       setAuto();
 
-      function toast(msg) { $("toast").textContent = msg; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 1600); }
+      function toast(msg) { $("toast").textContent = msg; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), msg.length > 30 ? 4500 : 1600); }
       async function share() {
         const data = { title: `${SERIES} — EP${pad(current + 1)}`, url: location.href };
         if (navigator.share) { try { await navigator.share(data); return; } catch (_) { return; } }
