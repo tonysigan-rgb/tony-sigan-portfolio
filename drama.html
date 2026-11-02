@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="P.S. I Think, I Like You — a slow-burn short drama by Tony Sigan. Watch every episode here." />
     <meta name="theme-color" content="#000000" />
+    <!-- Lets the page open with no browser bars when saved to the phone's home screen -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="P.S. I Like You" />
+    <link rel="manifest" href="drama.webmanifest" />
+    <link rel="apple-touch-icon" href="drama-icon.png" />
     <title>P.S. I Think, I Like You — Tony Sigan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +37,9 @@
 
       /* ---------- Player ---------- */
       .player { position:relative; width:100%; aspect-ratio:9/16; max-height:calc(100svh - 7rem); margin:0 auto; background:#000; border-radius:1.1rem; overflow:hidden; border:1px solid var(--line); box-shadow:0 0 5rem rgba(193,10,10,.12); user-select:none; -webkit-user-select:none; }
-      .player #yt, .player iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+      /* iframe is sized by fitVideo(): video fills the frame, YouTube's own title bar and logo are pushed outside and cropped */
+      .player #yt, .player iframe { position:absolute; left:0; top:0; width:100%; height:100%; border:0; pointer-events:none; }
+      .player.native-tap iframe { pointer-events:auto; }
 
       .soon { position:absolute; inset:0; z-index:1; display:none; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; text-align:center; padding:2rem; background:radial-gradient(circle at 50% 35%, rgba(193,10,10,.35), #000 70%); }
       .soon.show { display:flex; }
@@ -38,8 +47,8 @@
       .soon small { font:.7rem var(--mono); color:var(--muted); }
 
       /* tap layer sits over the video and catches taps / swipes */
-      .tap { position:absolute; inset:0; z-index:2; pointer-events:none; touch-action:pan-y; }
-      .player.started .tap, .player.locked .tap { pointer-events:auto; }
+      .tap { position:absolute; inset:0; z-index:2; touch-action:pan-y; }
+      .player.native-tap .tap { pointer-events:none; }
       .player.fs .tap { touch-action:none; }
 
       /* overlay UI */
@@ -74,7 +83,7 @@
 
       .center { position:absolute; left:50%; top:50%; width:4.4rem; height:4.4rem; margin:-2.2rem 0 0 -2.2rem; display:grid; place-items:center; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); color:var(--white); opacity:0; transform:scale(.85); transition:opacity .2s, transform .2s; pointer-events:none !important; }
       .center svg { width:1.8rem; height:1.8rem; }
-      .player.paused.started .center, .player.flash .center { opacity:1; transform:scale(1); pointer-events:auto !important; }
+      .player.paused .center, .player.flash .center { opacity:1; transform:scale(1); pointer-events:auto !important; }
 
       .progress { position:absolute; left:0; right:0; bottom:0; height:1.1rem; display:flex; align-items:flex-end; pointer-events:auto; cursor:pointer; }
       .progress span { display:block; width:100%; height:3px; background:rgba(255,255,255,.22); }
@@ -88,12 +97,15 @@
       .player.fs.reveal .ui { opacity:1; }
       .player.fs.reveal .ui button, .player.fs.reveal .ui .progress { pointer-events:auto !important; }
       .player.fs .meta, .player.fs .bar .home, .player.fs .rail .hide-fs, .player.fs .bar .ep-badge, .player.fs .bar .series { display:none; }
-      .player.fs .rail { bottom:2.2rem; }
+      .player.fs .rail { bottom:max(2.2rem, env(safe-area-inset-bottom)); }
+      .player.fs .rail .eps-btn .ic { width:3.4rem; height:3.4rem; box-shadow:0 0 0 .35rem rgba(193,10,10,.3); }
+      .player.fs .rail .eps-btn .ic svg { width:1.55rem; height:1.55rem; }
+      .player.fs .rail .eps-btn span:last-child { font-size:.62rem; }
       .player.fs .shade.b { height:9rem; }
-      .player.fs.paused.started .center { opacity:0; }
-      .player.fs.reveal.paused.started .center, .player.fs.flash .center { opacity:1; }
+      .player.fs.paused .center { opacity:0; }
+      .player.fs.reveal.paused .center, .player.fs.flash .center { opacity:1; }
       .player.immersive { position:fixed; inset:0; z-index:100; width:100vw; height:100vh; height:100dvh; max-height:none; aspect-ratio:auto; margin:0; }
-      .swipe-hint { position:absolute; z-index:4; left:50%; top:50%; transform:translate(-50%,-50%); padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,.6); color:#fff; font:.65rem var(--mono); opacity:0; transition:opacity .3s; pointer-events:none; text-align:center; white-space:nowrap; }
+      .swipe-hint { position:absolute; z-index:4; left:50%; top:36%; transform:translate(-50%,-50%); padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,.6); color:#fff; font:.65rem var(--mono); opacity:0; transition:opacity .3s; pointer-events:none; text-align:center; white-space:nowrap; }
       .swipe-hint.show { opacity:1; }
 
       /* ---------- Episode sheet (slides up over the video) ---------- */
@@ -182,7 +194,7 @@
 
     <main class="watch">
       <section class="stage" aria-label="Episode player">
-        <div class="player" id="player">
+        <div class="player paused" id="player">
           <div id="yt"></div>
           <div class="soon" id="soon"><small>COMING SOON</small><b id="soonEp">EP02</b><small>NEW EPISODE DROPPING SHORTLY</small></div>
           <div class="tap" id="tap" aria-hidden="true"></div>
@@ -271,9 +283,46 @@
          ================================================================ */
       const SYNOPSIS = "Some feelings don't arrive all at once — they sneak in, one small moment at a time. A slow-burn romance told in bite-sized episodes, made for watching on your phone.";
       const EPISODES = [
-        { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU?feature=share", plot: "" },
-        { title: "Episode 2", url: "", plot: "" },
-        { title: "Episode 3", url: "", plot: "" },
+        { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
+        { title: "Episode 2", url: "https://youtube.com/shorts/l2laDNERx4g", plot: "" },
+        { title: "Episode 3", url: "https://youtube.com/shorts/QcVYUBwM1fk", plot: "" },
+        { title: "Episode 4", url: "", plot: "" },
+        { title: "Episode 5", url: "", plot: "" },
+        { title: "Episode 6", url: "", plot: "" },
+        { title: "Episode 7", url: "", plot: "" },
+        { title: "Episode 8", url: "", plot: "" },
+        { title: "Episode 9", url: "", plot: "" },
+        { title: "Episode 10", url: "", plot: "" },
+        { title: "Episode 11", url: "", plot: "" },
+        { title: "Episode 12", url: "", plot: "" },
+        { title: "Episode 13", url: "", plot: "" },
+        { title: "Episode 14", url: "", plot: "" },
+        { title: "Episode 15", url: "", plot: "" },
+        { title: "Episode 16", url: "", plot: "" },
+        { title: "Episode 17", url: "", plot: "" },
+        { title: "Episode 18", url: "", plot: "" },
+        { title: "Episode 19", url: "", plot: "" },
+        { title: "Episode 20", url: "", plot: "" },
+        { title: "Episode 21", url: "", plot: "" },
+        { title: "Episode 22", url: "", plot: "" },
+        { title: "Episode 23", url: "", plot: "" },
+        { title: "Episode 24", url: "", plot: "" },
+        { title: "Episode 25", url: "", plot: "" },
+        { title: "Episode 26", url: "", plot: "" },
+        { title: "Episode 27", url: "", plot: "" },
+        { title: "Episode 28", url: "", plot: "" },
+        { title: "Episode 29", url: "", plot: "" },
+        { title: "Episode 30", url: "", plot: "" },
+        { title: "Episode 31", url: "", plot: "" },
+        { title: "Episode 32", url: "", plot: "" },
+        { title: "Episode 33", url: "", plot: "" },
+        { title: "Episode 34", url: "", plot: "" },
+        { title: "Episode 35", url: "", plot: "" },
+        { title: "Episode 36", url: "", plot: "" },
+        { title: "Episode 37", url: "", plot: "" },
+        { title: "Episode 38", url: "", plot: "" },
+        { title: "Episode 39", url: "", plot: "" },
+        { title: "Episode 40", url: "", plot: "" },
       ];
       const SERIES = "P.S. I Think, I Like You";
       const PER_PAGE = 30;
@@ -372,10 +421,10 @@
           videoId: first,
           playerVars: { playsinline: 1, controls: 0, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1 },
           events: {
-            onReady: () => { ready = true; if (!EPISODES[current].id) yt.stopVideo(); },
+            onReady: () => { ready = true; fitVideo(); if (!EPISODES[current].id) yt.stopVideo(); },
             onStateChange: (e) => {
               const S = YT.PlayerState;
-              if (e.data === S.PLAYING) { playing = true; P.classList.add("started"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
+              if (e.data === S.PLAYING) { playing = true; P.classList.add("started"); P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
               if (e.data === S.PAUSED) { playing = false; P.classList.add("paused"); setCenter(); reveal(true); }
               if (e.data === S.ENDED) {
                 playing = false;
@@ -426,15 +475,32 @@
       $("tap").addEventListener("click", () => {
         if (swiped) return;
         if (P.classList.contains("sheet-open")) return closeSheet();
+        if (!P.classList.contains("started")) { firstPlay(); reveal(); return; }
         if (P.classList.contains("fs")) {
-          // Full screen: clean screen. A tap brings back the episode button & play/pause.
+          // Full screen: clean screen. A touch brings up the episode button + play/pause.
           if (P.classList.contains("reveal")) P.classList.remove("reveal"); else reveal();
         } else { togglePlay(); flash(); }
       });
-      $("center").onclick = () => { togglePlay(); reveal(); };
+      $("center").onclick = () => { P.classList.contains("started") ? togglePlay() : firstPlay(); reveal(); };
+      // Desktop: moving the mouse in full screen also brings the buttons back
+      P.addEventListener("mousemove", () => { if (P.classList.contains("fs")) reveal(); });
+
+      // Some phones (mostly iPhone) block starting a video from outside the YouTube frame.
+      // If our tap doesn't start it, let the next tap go straight to YouTube's player.
+      function firstPlay() {
+        if (!ready || !EPISODES[current].id) return;
+        yt.playVideo();
+        setTimeout(() => {
+          const st = yt.getPlayerState();
+          if (st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING) {
+            P.classList.add("native-tap");
+            hint("TAP ONCE MORE TO PLAY");
+          }
+        }, 900);
+      }
 
       let hintTimer;
-      function hint(msg) { $("swipeHint").textContent = msg; $("swipeHint").classList.add("show"); clearTimeout(hintTimer); hintTimer = setTimeout(() => $("swipeHint").classList.remove("show"), 1400); }
+      function hint(msg, ms) { $("swipeHint").textContent = msg; $("swipeHint").classList.add("show"); clearTimeout(hintTimer); hintTimer = setTimeout(() => $("swipeHint").classList.remove("show"), ms || 1400); }
 
       /* ---------------- episode sheet ---------------- */
       function openSheet() { P.classList.add("sheet-open"); reveal(true); }
@@ -450,14 +516,41 @@
         document.body.classList.toggle("lock", on);
         $("fsIcon").innerHTML = on ? ICON_FS_OUT : ICON_FS_IN;
         $("fsBtn").setAttribute("aria-label", on ? "Exit full screen" : "Full screen");
-        if (on) hint("TAP FOR EPISODES · SWIPE UP FOR NEXT");
+        if (on) hint("TAP FOR EPISODES · SWIPE UP FOR NEXT", 2200);
+        requestAnimationFrame(fitVideo); setTimeout(fitVideo, 300);
       }
+
+      /* Size the YouTube frame like "cover": the video fills the screen edge to edge,
+         and YouTube's own title bar (top) and logo (bottom) sit outside and get cropped. */
+      function fitVideo() {
+        const f = P.querySelector("iframe"); if (!f) return;
+        const W = P.clientWidth, H = P.clientHeight;
+        let vw, vh;
+        if (W / H > 9 / 16) { vw = W; vh = W * 16 / 9; } else { vh = H; vw = H * 9 / 16; }
+        const crop = Math.round(Math.max(64, vh * 0.1));
+        Object.assign(f.style, { width: vw + "px", height: vh + crop * 2 + "px", left: (W - vw) / 2 + "px", top: (H - vh) / 2 - crop + "px" });
+      }
+      window.addEventListener("resize", fitVideo);
+      window.addEventListener("orientationchange", () => setTimeout(fitVideo, 300));
       function enterFs() {
         const req = P.requestFullscreen || P.webkitRequestFullscreen;
         if (req) {
-          const r = req.call(P);
-          if (r && r.catch) r.catch(() => { immersive = true; P.classList.add("immersive"); setFs(true); });
-        } else { immersive = true; P.classList.add("immersive"); setFs(true); }   // iPhone: fill the screen instead
+          // navigationUI:"hide" asks Chrome on Android to hide its bars completely
+          let r; try { r = req.call(P, { navigationUI: "hide" }); } catch (_) { r = req.call(P); }
+          if (r && r.then) r.then(() => { try { screen.orientation.lock("portrait").catch(() => {}); } catch (_) {} }, fallbackFs);
+        } else fallbackFs();
+      }
+      // iPhone Safari doesn't allow websites to go truly full screen (only its own video player can).
+      // We fill the whole screen instead; saved to the home screen, the page opens with no Safari bars at all.
+      function fallbackFs() {
+        immersive = true; P.classList.add("immersive"); setFs(true);
+        window.scrollTo(0, 1);
+        const standalone = window.navigator.standalone || matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches;
+        let shown = false; try { shown = localStorage.getItem("drama-a2hs") === "1"; } catch (_) {}
+        if (!standalone && !shown) {
+          setTimeout(() => hint("NO SAFARI BARS: SHARE → ADD TO HOME SCREEN", 3500), 1500);
+          try { localStorage.setItem("drama-a2hs", "1"); } catch (_) {}
+        }
       }
       function exitFs() {
         if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
