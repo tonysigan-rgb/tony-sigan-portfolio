@@ -175,6 +175,32 @@
       .ost-embed iframe { display:block; width:100%; height:352px; border:0; }
       .ost-btn { display:inline-flex; margin-top:1rem; padding:.8rem 1rem; border-radius:.6rem; background:var(--red); color:var(--white); font:.68rem var(--mono); }
       .ost-btn:hover { background:#a20808; }
+      .ost.playing .ost-disc { animation-play-state:running; }
+      .ost-disc { animation-play-state:paused; }
+      .mp { margin-top:1.1rem; }
+      .mp-hidden { position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none; left:-9999px; }
+      .mp-now { display:flex; align-items:center; gap:.8rem; }
+      .mp-now div { flex:1; min-width:0; }
+      .mp-now b { display:block; font-size:1rem; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .mp-now span { font:.62rem var(--mono); color:var(--muted); }
+      .mp-ctrls { display:flex; align-items:center; gap:.45rem; }
+      .mp-ctrls button { width:2.5rem; height:2.5rem; display:grid; place-items:center; border-radius:50%; border:1px solid var(--line); }
+      .mp-ctrls button svg { width:1rem; height:1rem; }
+      .mp-ctrls .mp-play { width:3rem; height:3rem; background:var(--red); border-color:var(--red); color:#fff; }
+      .mp-bar { position:relative; height:1.2rem; margin-top:.7rem; cursor:pointer; display:flex; align-items:center; }
+      .mp-bar span { width:100%; height:4px; border-radius:2px; background:rgba(241,239,240,.15); overflow:hidden; }
+      .mp-bar i { display:block; height:100%; width:0; background:var(--red); }
+      .mp-time { display:flex; justify-content:space-between; font:.6rem var(--mono); color:var(--muted); }
+      .mp-list { list-style:none; margin:.9rem 0 0; padding:0; border-top:1px solid var(--line); max-height:19rem; overflow-y:auto; }
+      .mp-list li button { width:100%; display:flex; align-items:center; gap:.8rem; padding:.7rem .2rem; border-bottom:1px solid var(--line); text-align:left; }
+      .mp-list li button:hover { background:rgba(241,239,240,.04); }
+      .mp-list .n { width:1.4rem; font:.65rem var(--mono); color:var(--muted); }
+      .mp-list .t { flex:1; min-width:0; }
+      .mp-list .t b { display:block; font-size:.92rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .mp-list .t small { font:.6rem var(--mono); color:var(--muted); }
+      .mp-list li.on .n, .mp-list li.on b { color:var(--red); }
+      .mp-list li.on .n { font-size:0; }
+      .mp-list li.on .n::before { content:"♪"; font-size:.9rem; }
       footer { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding:1.6rem 1.25rem max(1.6rem, env(safe-area-inset-bottom)); background:var(--red); color:var(--white); font:.66rem var(--mono); }
       footer a { border-bottom:1px solid currentColor; }
       .toast { position:fixed; left:50%; bottom:1.5rem; max-width:90vw; text-align:center; transform:translate(-50%,2rem); opacity:0; padding:.7rem 1rem; border-radius:.6rem; background:var(--paper); color:var(--ink); font:.7rem var(--mono); transition:all .25s; pointer-events:none; z-index:200; }
@@ -283,6 +309,20 @@
           <div class="ost-top"><span class="ost-disc" aria-hidden="true"></span><div><p>OFFICIAL PLAYLIST</p><h3>THE SOUNDTRACK</h3></div></div>
           <p class="note">The music behind the slow burn — every track from the series in one playlist.</p>
           <div class="ost-embed" id="ostEmbed" hidden></div>
+          <div class="mp" id="mp" hidden>
+            <div class="mp-now">
+              <div><b id="mpTitle">—</b><span id="mpArtist"></span></div>
+              <div class="mp-ctrls">
+                <button id="mpPrev" aria-label="Previous track"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4.5v15L9 12z"/><rect x="5" y="4.5" width="2.6" height="15" rx="1"/></svg></button>
+                <button class="mp-play" id="mpPlay" aria-label="Play soundtrack"><svg id="mpIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
+                <button id="mpNext" aria-label="Next track"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4.5v15l10-7.5z"/><rect x="16.4" y="4.5" width="2.6" height="15" rx="1"/></svg></button>
+              </div>
+            </div>
+            <div class="mp-bar" id="mpBar"><span><i id="mpFill"></i></span></div>
+            <div class="mp-time"><span id="mpCur">0:00</span><span id="mpDur">0:00</span></div>
+            <ol class="mp-list" id="mpList"></ol>
+            <div class="mp-hidden"><div id="mpYt"></div></div>
+          </div>
           <a class="ost-btn" id="ostLink" href="#" target="_blank" rel="noreferrer">LISTEN ON EPIDEMIC SOUND ↗</a>
         </div>
       </section>
@@ -349,6 +389,10 @@
          - SPOTIFY_URL: optional. Paste a Spotify playlist link with the same tracks and a full music player appears on the page. */
       const PLAYLIST_URL = "https://www.epidemicsound.com/playlist/73t08f4w20qjr9vem29r618nku6jr8bw/";
       const SPOTIFY_URL = "";
+      /* SOUNDTRACK PLAYER — each song's YouTube link. The music player appears once at least one link is here.
+         { title: "Song name", artist: "Artist", url: "https://www.youtube.com/watch?v=..." }, */
+      const TRACKS = [
+      ];
       const PER_PAGE = 30;
 
       /* ---------------- setup ---------------- */
@@ -368,6 +412,7 @@
 
       $("synopsis").textContent = SYNOPSIS;
       $("ostLink").href = PLAYLIST_URL;
+      if (TRACKS.some((t) => getId(t.url))) { $("ostLink").style.background = "transparent"; $("ostLink").style.border = "1px solid var(--line)"; }
       (() => {
         const m = SPOTIFY_URL.match(/playlist\/([A-Za-z0-9]+)/);
         if (!m) return;
@@ -464,7 +509,7 @@
             },
             onStateChange: (e) => {
               const S = YT.PlayerState;
-              if (e.data === S.PLAYING) { if (yt.getCurrentTime() < 1) advancedFrom = -1; playing = true; P.classList.add("started"); if (!nativeMode) P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
+              if (e.data === S.PLAYING) { if (yt.getCurrentTime() < 1) advancedFrom = -1; if (mpOn && mp) mp.pauseVideo(); playing = true; P.classList.add("started"); if (!nativeMode) P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
               if (e.data === S.PAUSED) { playing = false; P.classList.add("paused"); setCenter(); reveal(true); }
               if (e.data === S.ENDED) {
                 playing = false;
@@ -474,7 +519,59 @@
           },
         });
       }
-      window.onYouTubeIframeAPIReady = () => buildPlayer(EPISODES[current].id || EPISODES.find((e) => e.id)?.id, 0, true);
+      window.onYouTubeIframeAPIReady = () => { buildPlayer(EPISODES[current].id || EPISODES.find((e) => e.id)?.id, 0, true); buildMusic(); };
+
+      /* ---------------- soundtrack player (YouTube audio, video hidden) ---------------- */
+      TRACKS.forEach((t) => (t.id = getId(t.url)));
+      const tracks = TRACKS.filter((t) => t.id);
+      let mp = null, mpReady = false, mpIdx = 0, mpOn = false;
+      const fmt = (x) => { x = Math.max(0, Math.floor(x || 0)); return `${Math.floor(x / 60)}:${String(x % 60).padStart(2, "0")}`; };
+      function mpRender() {
+        const t = tracks[mpIdx]; if (!t) return;
+        $("mpTitle").textContent = t.title || `Track ${mpIdx + 1}`;
+        $("mpArtist").textContent = (t.artist || "").toUpperCase();
+        [...$("mpList").children].forEach((li, i) => li.classList.toggle("on", i === mpIdx));
+        $("mpIcon").innerHTML = mpOn ? ICON_PAUSE : ICON_PLAY;
+        $("soundtrack").classList.toggle("playing", mpOn);
+      }
+      function buildMusic() {
+        if (!tracks.length) return;
+        $("mp").hidden = false;
+        $("mpList").innerHTML = "";
+        tracks.forEach((t, i) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<button><span class="n">${pad(i + 1)}</span><span class="t"><b></b><small></small></span></button>`;
+          li.querySelector("b").textContent = t.title || `Track ${i + 1}`;
+          li.querySelector("small").textContent = (t.artist || "").toUpperCase();
+          li.querySelector("button").onclick = () => mpPlayAt(i);
+          $("mpList").appendChild(li);
+        });
+        mp = new YT.Player("mpYt", {
+          videoId: tracks[0].id, width: 200, height: 120,
+          playerVars: { playsinline: 1, controls: 0, rel: 0, modestbranding: 1 },
+          events: {
+            onReady: () => { mpReady = true; mpRender(); },
+            onStateChange: (e) => {
+              if (e.data === YT.PlayerState.PLAYING) { mpOn = true; if (ready && playing) yt.pauseVideo(); }   // music pauses the episode
+              if (e.data === YT.PlayerState.PAUSED) mpOn = false;
+              if (e.data === YT.PlayerState.ENDED) { mpPlayAt((mpIdx + 1) % tracks.length); return; }
+              mpRender();
+            },
+          },
+        });
+        mpRender();
+      }
+      function mpPlayAt(i) { if (!mpReady) return; mpIdx = i; mp.loadVideoById(tracks[i].id); mpOn = true; mpRender(); }
+      $("mpPlay").onclick = () => { if (!mpReady) return; mpOn ? mp.pauseVideo() : mp.playVideo(); };
+      $("mpNext").onclick = () => mpPlayAt((mpIdx + 1) % tracks.length);
+      $("mpPrev").onclick = () => mpPlayAt((mpIdx - 1 + tracks.length) % tracks.length);
+      $("mpBar").onclick = (e) => { if (!mpReady) return; const r = $("mpBar").getBoundingClientRect(); mp.seekTo(((e.clientX - r.left) / r.width) * mp.getDuration(), true); };
+      setInterval(() => {
+        if (!mpReady || !mp.getDuration) return;
+        const d = mp.getDuration(), t = mp.getCurrentTime();
+        $("mpFill").style.width = d ? `${(t / d) * 100}%` : "0";
+        $("mpCur").textContent = fmt(t); $("mpDur").textContent = fmt(d);
+      }, 500);
       setInterval(() => {
         if (!ready || !yt.getDuration) return;
         const d = yt.getDuration(), t = yt.getCurrentTime();
