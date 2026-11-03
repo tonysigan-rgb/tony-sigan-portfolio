@@ -339,7 +339,8 @@
 
       let current = 0, page = 0, yt = null, ready = false, playing = false;
       let autoplay = true, hideTimer = null, flashTimer = null, immersive = false;
-      try { autoplay = localStorage.getItem("drama-autoplay") !== "0"; } catch (_) {}
+      try { autoplay = localStorage.getItem("drama-autonext") !== "0"; } catch (_) {}
+      let advancedFrom = -1, mutedStart = false;
 
       $("synopsis").textContent = SYNOPSIS;
       $("epCount").textContent = `${pad(total)} EPISODES`;
@@ -410,7 +411,7 @@
         const u = new URL(location.href); u.searchParams.set("ep", i + 1); history.replaceState(null, "", u);
         render();
         if (!ep.id) { if (ready) yt.stopVideo(); return; }
-        if (ready) (user || autoplay) ? yt.loadVideoById(ep.id) : yt.cueVideoById(ep.id);
+        if (ready) { (user || autoplay) ? yt.loadVideoById(ep.id) : yt.cueVideoById(ep.id); if (!user && autoplay) ensurePlaying(); }
         if (user && isPhone() && !P.classList.contains("fs")) window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -432,13 +433,11 @@
             },
             onStateChange: (e) => {
               const S = YT.PlayerState;
-              if (e.data === S.PLAYING) { playing = true; P.classList.add("started"); if (!nativeMode) P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
+              if (e.data === S.PLAYING) { if (yt.getCurrentTime() < 1) advancedFrom = -1; playing = true; P.classList.add("started"); if (!nativeMode) P.classList.remove("native-tap"); P.classList.remove("paused"); setCenter(); scheduleHide(); }
               if (e.data === S.PAUSED) { playing = false; P.classList.add("paused"); setCenter(); reveal(true); }
               if (e.data === S.ENDED) {
                 playing = false;
-                const n = nextAvail(current, 1);
-                if (autoplay && n >= 0) play(n, false);
-                else { P.classList.add("paused"); setCenter(); openSheet(); }
+                autoNext();
               }
             },
           },
@@ -449,7 +448,37 @@
         if (!ready || !yt.getDuration) return;
         const d = yt.getDuration(), t = yt.getCurrentTime();
         if (d > 0) $("bar").style.width = `${(t / d) * 100}%`;
+        // Backup in case YouTube doesn't report "ended" (or starts looping the Short)
+        if (playing && d > 1 && t >= d - 0.3) autoNext();
       }, 250);
+
+      /* ---------------- auto-play next episode ---------------- */
+      function autoNext() {
+        if (advancedFrom === current) return;          // only once per episode
+        advancedFrom = current;
+        const n = nextAvail(current, 1);
+        if (autoplay && n >= 0) {
+          hint(`UP NEXT · EP${pad(n + 1)}`, 1500);
+          play(n, false);
+        } else {
+          if (ready) yt.pauseVideo();
+          playing = false; P.classList.add("paused"); setCenter();
+          if (n < 0 && current + 1 < total) hint(`EP${pad(current + 2)} COMING SOON`, 2500);
+          openSheet();
+        }
+      }
+      // If the phone blocks the next episode from starting with sound, start it muted
+      // and let one tap bring the sound back.
+      function ensurePlaying() {
+        setTimeout(() => {
+          if (!ready) return;
+          const st = yt.getPlayerState();
+          if (st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING) {
+            yt.mute(); yt.playVideo(); mutedStart = true;
+            hint("TAP FOR SOUND", 2500);
+          }
+        }, 1500);
+      }
 
       function togglePlay() {
         if (!ready || !EPISODES[current].id) return;
@@ -484,6 +513,7 @@
       $("tap").addEventListener("click", () => {
         if (swiped) return;
         if (P.classList.contains("sheet-open")) return closeSheet();
+        if (mutedStart && ready) { yt.unMute(); mutedStart = false; hint("SOUND ON", 900); return; }
         if (!P.classList.contains("started")) { firstPlay(); reveal(); return; }
         if (P.classList.contains("fs")) {
           // Full screen: clean screen. A touch brings up the episode button + play/pause.
@@ -588,7 +618,7 @@
       $("next").onclick = $("nextRail").onclick = () => go(1);
 
       function setAuto() { $("auto").setAttribute("aria-pressed", autoplay); $("autoLabel").textContent = autoplay ? "AUTO ON" : "AUTO OFF"; }
-      $("auto").onclick = () => { autoplay = !autoplay; setAuto(); try { localStorage.setItem("drama-autoplay", autoplay ? "1" : "0"); } catch (_) {} };
+      $("auto").onclick = () => { autoplay = !autoplay; setAuto(); try { localStorage.setItem("drama-autonext", autoplay ? "1" : "0"); } catch (_) {} };
       setAuto();
 
       function toast(msg) { $("toast").textContent = msg; $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), msg.length > 30 ? 4500 : 1600); }
