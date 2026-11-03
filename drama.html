@@ -164,6 +164,17 @@
       .share a, .share button { border:1px solid var(--line); border-radius:.6rem; padding:.7rem .85rem; font:.68rem var(--mono); transition:border-color .2s; }
       .share a:hover, .share button:hover { border-color:var(--paper); }
 
+      .ost { margin-top:2.4rem; padding:1.2rem; border:1px solid var(--line); border-radius:1rem; background:linear-gradient(135deg, rgba(193,10,10,.22), rgba(241,239,240,.03) 60%); }
+      .ost-top { display:flex; align-items:center; gap:1rem; }
+      .ost-disc { width:3.4rem; height:3.4rem; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; background:radial-gradient(circle, var(--red) 0 18%, #111 19% 100%); box-shadow:inset 0 0 0 .35rem #1d1d20, inset 0 0 0 .4rem rgba(255,255,255,.08); animation:spin 6s linear infinite; }
+      @keyframes spin { to { transform:rotate(360deg); } }
+      .ost p { margin:0; font:.65rem var(--mono); color:var(--muted); }
+      .ost h3 { margin:.25rem 0 0; font-size:1.25rem; letter-spacing:-.03em; }
+      .ost .note { margin-top:.9rem; font:.95rem/1.4 var(--display); color:rgba(241,239,240,.8); }
+      .ost-embed { margin-top:1rem; border-radius:.8rem; overflow:hidden; }
+      .ost-embed iframe { display:block; width:100%; height:352px; border:0; }
+      .ost-btn { display:inline-flex; margin-top:1rem; padding:.8rem 1rem; border-radius:.6rem; background:var(--red); color:var(--white); font:.68rem var(--mono); }
+      .ost-btn:hover { background:#a20808; }
       footer { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding:1.6rem 1.25rem max(1.6rem, env(safe-area-inset-bottom)); background:var(--red); color:var(--white); font:.66rem var(--mono); }
       footer a { border-bottom:1px solid currentColor; }
       .toast { position:fixed; left:50%; bottom:1.5rem; max-width:90vw; text-align:center; transform:translate(-50%,2rem); opacity:0; padding:.7rem 1rem; border-radius:.6rem; background:var(--paper); color:var(--ink); font:.7rem var(--mono); transition:all .25s; pointer-events:none; z-index:200; }
@@ -265,6 +276,14 @@
           <button id="copy">COPY EPISODE LINK</button>
           <a id="ytLink" href="#" target="_blank" rel="noreferrer">WATCH ON YOUTUBE ↗</a>
           <a href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">TIKTOK ↗</a>
+          <a href="#soundtrack">SOUNDTRACK ♪</a>
+        </div>
+
+        <div class="ost" id="soundtrack">
+          <div class="ost-top"><span class="ost-disc" aria-hidden="true"></span><div><p>OFFICIAL PLAYLIST</p><h3>THE SOUNDTRACK</h3></div></div>
+          <p class="note">The music behind the slow burn — every track from the series in one playlist.</p>
+          <div class="ost-embed" id="ostEmbed" hidden></div>
+          <a class="ost-btn" id="ostLink" href="#" target="_blank" rel="noreferrer">LISTEN ON EPIDEMIC SOUND ↗</a>
         </div>
       </section>
     </main>
@@ -325,6 +344,11 @@
         { title: "Episode 40", url: "", plot: "" },
       ];
       const SERIES = "P.S. I Think, I Like You";
+      /* SOUNDTRACK
+         - PLAYLIST_URL: the Epidemic Sound playlist (opens on Epidemic Sound; they don't offer a player to put on other websites).
+         - SPOTIFY_URL: optional. Paste a Spotify playlist link with the same tracks and a full music player appears on the page. */
+      const PLAYLIST_URL = "https://www.epidemicsound.com/playlist/73t08f4w20qjr9vem29r618nku6jr8bw/";
+      const SPOTIFY_URL = "";
       const PER_PAGE = 30;
 
       /* ---------------- setup ---------------- */
@@ -343,6 +367,13 @@
       let advancedFrom = -1, mutedStart = false;
 
       $("synopsis").textContent = SYNOPSIS;
+      $("ostLink").href = PLAYLIST_URL;
+      (() => {
+        const m = SPOTIFY_URL.match(/playlist\/([A-Za-z0-9]+)/);
+        if (!m) return;
+        $("ostEmbed").innerHTML = `<iframe src="https://open.spotify.com/embed/playlist/${m[1]}?theme=0" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="Soundtrack playlist"></iframe>`;
+        $("ostEmbed").hidden = false;
+      })();
       $("epCount").textContent = `${pad(total)} EPISODES`;
       $("released").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       $("sheetCount").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
