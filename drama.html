@@ -52,8 +52,8 @@
       .soon small { font:.7rem var(--mono); color:var(--muted); }
       .soon { z-index:3; background-color:#000 !important; }
       .player.locked .center { display:none; }
-      .in-app .bar .home, .in-app .top { display:none !important; }
-      .in-app .bar { padding-left:3.6rem; }
+      .in-app .top { display:none !important; }
+      .in-app .bar .home { display:grid !important; }
       .sub-top { margin-left:auto; margin-right:1rem; display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:2rem; background:var(--red); color:#fff; font:.64rem var(--mono); }
       .sub-top:hover { background:#a20808; }
       .early-ctas { display:flex; flex-direction:column; align-items:center; gap:.9rem; margin-top:.6rem; }
@@ -363,7 +363,7 @@
     <footer><span>© 2026 TONY SIGAN ANAK LAPOK</span><a href="index.html">RETURN TO FRONT SELECT ↑</a></footer>
     <div class="toast" id="toast">LINK COPIED</div>
 
-    <script>if (/[?&]app=1/.test(location.search)) document.documentElement.classList.add("in-app");</script>
+    <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
     <script src="pluffy-data.js?v=20261105e"></script>
     <script>
       /* ================================================================

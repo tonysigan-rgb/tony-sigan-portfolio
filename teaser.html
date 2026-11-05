@@ -29,7 +29,8 @@
       .shade-t { position:absolute; inset:0 0 auto; height:7rem; background:linear-gradient(rgba(0,0,0,.6),transparent); }
       .shade-b { position:absolute; inset:auto 0 0; height:15rem; background:linear-gradient(transparent,rgba(0,0,0,.85)); }
       .bar { position:absolute; top:0; left:0; right:0; display:flex; align-items:center; gap:.55rem; padding:max(.85rem, env(safe-area-inset-top)) .9rem .8rem; }
-      .in-app .bar { padding-left:3.7rem; }
+      .backbtn { width:2.3rem; height:2.3rem; display:grid; place-items:center; border-radius:50%; background:rgba(0,0,0,.4); }
+      .backbtn svg { width:1.1rem; height:1.1rem; }
       .badge { padding:.3rem .5rem; border-radius:.35rem; background:#111; border:1px solid var(--red2); font:.62rem var(--mono); letter-spacing:.04em; }
       .series { font-weight:600; font-size:.85rem; }
       .center { position:absolute; left:50%; top:50%; width:4.6rem; height:4.6rem; margin:-2.3rem 0 0 -2.3rem; display:grid; place-items:center; border-radius:50%; background:rgba(224,27,27,.92); box-shadow:0 0 0 .5rem rgba(224,27,27,.25); }
@@ -60,7 +61,7 @@
         <div class="tap" id="tap"></div>
         <div class="ui">
           <div class="shade-t"></div><div class="shade-b"></div>
-          <div class="bar"><span class="badge">TEASER</span><span class="series">The Deadline</span></div>
+          <div class="bar"><a class="backbtn" id="backBtn" href="pluffyminis.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a><span class="badge">TEASER</span><span class="series">The Deadline</span></div>
           <button class="center" id="center" aria-label="Play teaser"><svg id="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
           <div class="meta">
             <small>◷ COMING SOON · PLUFFY MINIS ORIGINAL</small>
@@ -88,7 +89,7 @@
       const $ = (id) => document.getElementById(id);
       const P = $("P");
       const inApp = /[?&]app=1/.test(location.search);
-      if (inApp) { document.documentElement.classList.add("in-app"); $("more").style.display = "none"; }
+      if (inApp) { document.documentElement.classList.add("in-app"); $("more").style.display = "none"; $("backBtn").href = "app.html#/series/deadline"; }
       const SUB = (window.PLUFFY && window.PLUFFY.subscribe) || "https://www.youtube.com/@itsmetslFilms?sub_confirmation=1";
       $("sub").href = $("sub2").href = SUB;
 

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b0d" />
+    <title>pluffy minis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />
+    <style>
+      /* ============================================================
+         pluffy minis — APP SCREENS (shown inside the phone app)
+         Edit this file on GitHub and the app updates on next open.
+         Screens:  #/  All Series   ·   #/series/<key>  Series page
+         ============================================================ */
+      :root { --red:#e01b1b; --red2:#c10a0a; --bg:#0b0b0d; --card:#16171a; --line:rgba(255,255,255,.1); --muted:rgba(255,255,255,.55); --mono:"DM Mono",monospace; --display:"DM Sans",Arial,sans-serif; }
+      * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+      html,body { margin:0; background:var(--bg); color:#fff; font-family:var(--display); }
+      a { color:inherit; text-decoration:none; }
+      button { font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; }
+      .page { max-width:560px; margin:0 auto; padding:max(.6rem, env(safe-area-inset-top)) 1rem max(3rem, env(safe-area-inset-bottom)); animation:in .25s ease; }
+      @keyframes in { from { opacity:0; transform:translateY(6px); } }
+      .header { display:flex; align-items:center; padding:.8rem 0; }
+      .dot { width:.5rem; height:.5rem; border-radius:50%; background:var(--red); margin-right:.4rem; }
+      .logo { font-weight:800; font-size:1.4rem; letter-spacing:-.06em; }
+      .logo span { font-weight:500; color:rgba(255,255,255,.6); margin-left:.1rem; }
+      .kicker { color:var(--red); font:.68rem var(--mono); letter-spacing:.08em; margin:.6rem 0 0; }
+      h1 { font-size:2.1rem; letter-spacing:-.06em; margin:.2rem 0 1.1rem; font-weight:800; }
+      .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+      .card { position:relative; display:block; }
+      .card img { display:block; width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:.9rem; }
+      .tag { position:absolute; top:.6rem; left:.6rem; padding:.28rem .45rem; background:var(--red2); font:.56rem var(--mono); letter-spacing:.04em; }
+      .tag.dark { background:#111; border:1px solid var(--red); }
+      .card h3 { margin:.55rem 0 .1rem; font-size:1rem; letter-spacing:-.02em; }
+      .small { color:var(--muted); font:.62rem var(--mono); letter-spacing:.05em; }
+      .footer { text-align:center; color:rgba(255,255,255,.4); font:.6rem var(--mono); margin-top:2.4rem; letter-spacing:.05em; }
+      .back { display:inline-block; padding:.9rem 0; color:rgba(255,255,255,.75); font-weight:600; }
+      .hero { position:relative; overflow:hidden; border-radius:1.1rem; padding:1.1rem; text-align:center; background:var(--card); }
+      .hero .bg { position:absolute; inset:-2rem; background-size:cover; background-position:center; filter:blur(24px) brightness(.45); }
+      .hero > *:not(.bg) { position:relative; }
+      .hero img { width:12rem; aspect-ratio:9/16; object-fit:cover; border-radius:.9rem; display:block; margin:0 auto 1rem; box-shadow:0 1rem 2rem rgba(0,0,0,.5); }
+      .badge { display:inline-block; padding:.32rem .65rem; border-radius:2rem; background:var(--red2); font:.6rem var(--mono); letter-spacing:.04em; }
+      .badge.dark { background:rgba(255,255,255,.12); }
+      .hero h2 { font-size:1.9rem; letter-spacing:-.05em; margin:.7rem 0 .3rem; line-height:1; }
+      .tags { color:rgba(255,255,255,.6); font:.62rem var(--mono); letter-spacing:.05em; }
+      .blurb { color:rgba(255,255,255,.85); line-height:1.4; margin:.6rem 0 0; }
+      .btn { display:inline-flex; align-items:center; gap:.5rem; margin-top:1.1rem; padding:.85rem 1.5rem; border-radius:2rem; background:var(--red); font-weight:700; }
+      .early { display:block; margin-top:.9rem; padding:.8rem; border-radius:.8rem; background:var(--red2); text-align:center; font:.66rem var(--mono); letter-spacing:.04em; }
+      .eps-head { display:flex; justify-content:space-between; align-items:baseline; margin:1.7rem 0 .75rem; }
+      .eps-head h3 { margin:0; font-size:1.35rem; letter-spacing:-.04em; }
+      .eps { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
+      .ep { position:relative; aspect-ratio:1; display:grid; place-items:center; border-radius:.6rem; border:1px solid var(--line); background:rgba(255,255,255,.03); font:600 1.05rem var(--display); }
+      .ep.out { border-color:rgba(255,255,255,.3); }
+      .ep.early { border-color:var(--red); }
+      .ep.locked { color:rgba(255,255,255,.28); pointer-events:none; }
+      .ep small { position:absolute; bottom:.25rem; font:.42rem var(--mono); letter-spacing:.05em; color:rgba(255,255,255,.3); }
+      .ep.early small { color:var(--red); }
+      .soon { margin-top:1.7rem; }
+      .soon h3 { margin:0 0 .4rem; font-size:1.35rem; letter-spacing:-.04em; }
+      .soon p { color:rgba(255,255,255,.8); margin:0; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script src="pluffy-data.js?v=20261105e"></script>
+    <script>
+      /* ---------- SERIES (add a new show here) ---------- */
+      const SERIES = [
+        {
+          key: "ps",
+          title: "P.S. I Think, I Like You",
+          poster: "assets/projects/ps-i-like-you-poster.jpg",
+          tags: ["BL ROMCOM", "SLOW-BURN", "VERTICAL SERIES"],
+          blurb: "Some feelings don't arrive all at once — they sneak in, one small moment at a time. A slow-burn romance told in bite-sized episodes.",
+          player: "drama.html",          // episodes come from pluffy-data.js
+        },
+        {
+          key: "deadline",
+          title: "The Deadline",
+          poster: "assets/projects/the-deadline-poster.jpg",
+          tags: ["BL", "OFFICE DRAMA", "COMING SOON"],
+          blurb: "One office. One night. One deadline neither of them can afford to miss.",
+          teaser: "teaser.html",
+        },
+      ];
+
+      const pad = (n) => String(n).padStart(2, "0");
+      const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const vid = (u) => ((u || "").match(/(?:shorts\/|youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/) || [])[1];
+      const rel = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
+      const eps = (window.PLUFFY && window.PLUFFY.episodes) || [];
+      const now = Date.now();
+      const status = eps.map((e, i) => ({ n: i + 1, out: !!vid(e.url) && rel(e) <= now, early: !!vid(e.url) && rel(e) > now }));
+      const outCount = status.filter((s) => s.out).length;
+      const early = status.find((s) => s.early);
+      const label = (s) => (s.teaser ? "UPCOMING" : outCount > 1 ? `EP01–${pad(outCount)} OUT NOW` : "EP01 OUT NOW");
+
+      function library() {
+        return `<div class="page">
+          <div class="header"><span class="dot"></span><span class="logo">pluffy<span>minis</span></span></div>
+          <p class="kicker">PLUFFY MINIS ORIGINALS</p>
+          <h1>All Series</h1>
+          <div class="grid2">
+            ${SERIES.map((s) => `
+              <a class="card" href="#/series/${s.key}">
+                <img src="${s.poster}" alt="${esc(s.title)} poster" />
+                <span class="tag${s.teaser ? " dark" : ""}">${label(s)}</span>
+                <h3>${esc(s.title)}</h3>
+                <div class="small">${esc(s.tags.slice(0, 2).join(" · "))}</div>
+              </a>`).join("")}
+          </div>
+          <p class="footer">© 2026 PLUFFY MINIS · TONY SIGAN ANAK LAPOK</p>
+        </div>`;
+      }
+
+      function seriesPage(s) {
+        const total = eps.length || 40;
+        const top = `<div class="page">
+          <a class="back" href="#/">‹&nbsp; All Series</a>
+          <div class="hero">
+            <div class="bg" style="background-image:url('${s.poster}')"></div>
+            <img src="${s.poster}" alt="${esc(s.title)} poster" />
+            <span class="badge${s.teaser ? " dark" : ""}">${s.teaser ? "◷ COMING SOON" : "● NOW STREAMING"} · PLUFFY MINIS ORIGINAL</span>
+            <h2>${esc(s.title)}</h2>
+            <div class="tags">${esc(s.tags.join(" · "))}${s.player ? ` · ${total} EPISODES` : ""}</div>
+            <p class="blurb">${esc(s.blurb)}</p>
+            <a class="btn" href="${s.teaser ? s.teaser + "?app=1" : s.player + "?ep=1&app=1"}">▶ ${s.teaser ? "Watch teaser" : "Start watching · EP01"}</a>
+          </div>`;
+        if (!s.player) return top + `<div class="soon"><h3>Episodes</h3><p>Episodes are coming soon. Watch the teaser while you wait.</p></div></div>`;
+        return top + `
+          ${early ? `<a class="early" href="${s.player}?ep=${early.n}&app=1">EP${pad(early.n)} IS FREE HERE ON MONDAY · SUBSCRIBERS WATCH IT NOW →</a>` : ""}
+          <div class="eps-head"><h3>Episodes</h3><span class="small">${pad(outCount)} / ${pad(total)} RELEASED</span></div>
+          <div class="eps">
+            ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${e.n}${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}</a>`).join("")}
+          </div>
+        </div>`;
+      }
+
+      function route() {
+        const m = location.hash.match(/^#\/series\/([\w-]+)/);
+        const s = m && SERIES.find((x) => x.key === m[1]);
+        document.getElementById("app").innerHTML = s ? seriesPage(s) : library();
+        window.scrollTo(0, 0);
+      }
+      addEventListener("hashchange", route);
+      route();
+    </script>
+  </body>
+</html>
