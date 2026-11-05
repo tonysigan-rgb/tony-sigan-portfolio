@@ -374,6 +374,20 @@
       const EPISODES = window.PLUFFY.episodes.map((e) => ({ ...e }));
       const SUBSCRIBE = window.PLUFFY.subscribe;
       document.getElementById("subTop").href = document.getElementById("subInfo").href = SUBSCRIBE;
+      /* "Subscribe & watch now": opens YouTube's subscribe prompt in a small pop-up
+         and unlocks the early episode right here in the player (remembered 7 days). */
+      function subscribeAndWatch(i) {
+        const w = 520, h = 680, l = Math.max(0, (screen.width - w) / 2), t = Math.max(0, (screen.height - h) / 2);
+        window.open(SUBSCRIBE, "pluffy-subscribe", `width=${w},height=${h},left=${l},top=${t}`);
+        try { localStorage.setItem("pluffy-sub-until", String(Date.now() + 7 * 864e5)); } catch (_) {}
+        unlockEarly();
+        const rel = pad(EPISODES.filter((x) => x.id).length);
+        $("released").textContent = $("sheetCount").textContent = `${rel} / ${pad(total)} RELEASED`;
+        const a = document.getElementById("subInfo"); a.style.display = "none";
+        play(typeof i === "number" ? i : current, true);
+        toast("THANKS FOR SUBSCRIBING — ENJOY THE EPISODE");
+      }
+      document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); subscribeAndWatch(current); });
       document.getElementById("earlyCheck").onclick = () => checkSubscription();
       const SERIES = "P.S. I Think, I Like You";
       /* SOUNDTRACK
@@ -465,7 +479,7 @@
       $("epCount").textContent = `${pad(total)} EPISODES`;
       $("released").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       // Under the episode list: point straight at the early episode on YouTube when there is one
-      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = `https://youtube.com/shorts/${EPISODES[e].yt}`; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW ↗`; } })();
+      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = SUBSCRIBE; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW`; a.removeAttribute("target"); a.onclick = (ev) => { ev.preventDefault(); subscribeAndWatch(e); }; } })();
       $("sheetCount").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       $("chipText").textContent = `ALL EPISODES · ${pad(total)}`;
 
@@ -523,8 +537,8 @@
         $("soon").classList.toggle("show", !ep.id);
         $("earlyCtas").hidden = !ep.early;
         $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
-        $("soonSub").textContent = ep.early ? "SUBSCRIBED? WATCH IT ON YOUTUBE NOW" : "NEW EPISODE EVERY MONDAY";
-        if (ep.early) { $("earlySub").href = `https://youtube.com/shorts/${ep.yt}`; $("earlyCheck").hidden = $("earlyPriv").hidden = !window.PLUFFY.googleClientId; }
+        $("soonSub").textContent = ep.early ? "SUBSCRIBERS WATCH IT NOW" : "NEW EPISODE EVERY MONDAY";
+        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = $("earlyPriv").hidden = !window.PLUFFY.googleClientId; }
         $("soonEp").textContent = `EP${pad(current + 1)}`;
         P.classList.toggle("locked", !ep.id);
         $("bar").style.width = "0";

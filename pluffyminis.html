@@ -291,7 +291,7 @@
 
       if (earlyEp >= 0) {
         const d = new Date(eps[earlyEp].release + "T00:00:00+08:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
-        $("earlyStrip").outerHTML = `<div class="early-strip" style="margin-top:4.2rem">EP${p2(earlyEp + 1)} IS FREE HERE ON ${d} · SUBSCRIBED? WATCH IT NOW ON YOUTUBE <a href="https://youtube.com/shorts/${(eps[earlyEp].url.match(/(?:shorts\/|youtu\.be\/|[?&]v=)([\w-]{11})/) || [])[1]}" target="_blank" rel="noreferrer">SUBSCRIBE &amp; WATCH NOW →</a></div>`;
+        $("earlyStrip").outerHTML = `<div class="early-strip" style="margin-top:4.2rem">EP${p2(earlyEp + 1)} IS FREE HERE ON ${d} · SUBSCRIBERS WATCH IT NOW <a href="drama.html?ep=${earlyEp + 1}">SUBSCRIBE &amp; WATCH NOW →</a></div>`;
         document.querySelector(".hero").style.marginTop = "0";
       }
 
