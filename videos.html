@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=teaser-20261105" />
+    <link rel="stylesheet" href="styles.css?v=pluffy-20261105" />
   </head>
   <body class="library-page">
     <div class="outer-shell">
@@ -40,12 +40,9 @@
             </div>
           </section>
 
-          <section class="playlist-section solo-section" aria-labelledby="drama-title">
-            <div class="playlist-heading"><div><p>SHORT DRAMA / AI SERIES</p><h2 id="drama-title">PLUFFY MINIS<br /><em>ORIGINAL.</em></h2></div><a href="drama.html">WATCH NOW →</a></div>
-            <div class="playlist-row" aria-label="Short drama series">
-              <article class="playlist-card poster-card"><a class="clean-thumbnail" href="drama.html" aria-label="Watch P.S. I Think, I Like You, episodes 1 to 4 out now"><img src="assets/projects/ps-i-like-you-poster.jpg" alt="P.S. I Think, I Like You poster" /><span class="poster-tag">EP01–04 OUT NOW</span></a></article>
-              <article class="playlist-card poster-card is-upcoming"><a class="clean-thumbnail" href="https://youtube.com/shorts/NqRSRWf0IjQ" data-teaser="NqRSRWf0IjQ" target="_blank" rel="noreferrer" aria-label="The Deadline, upcoming series. Watch the teaser"><img src="assets/projects/the-deadline-poster.jpg" alt="The Deadline poster" /><span class="poster-tag">UPCOMING · ▶ TEASER</span></a></article>
-            </div>
+          <section class="playlist-section solo-section pluffy-section" aria-labelledby="drama-title">
+            <div class="playlist-heading"><div><p>SHORT DRAMA / AI SERIES</p><h2 id="drama-title">PLUFFY MINIS<br /><em>ORIGINAL.</em></h2></div></div>
+            <a class="pluffy-cta" href="pluffyminis.html"><span>ENTER PLUFFY MINIS</span><b>→</b></a>
           </section>
 
           <footer class="library-footer"><p>© 2026 TONY SIGAN ANAK LAPOK</p><a href="index.html">RETURN TO FRONT SELECT ↑</a></footer>
@@ -53,28 +50,5 @@
       </div>
     </div>
     <script src="video-library.js?v=topviews-20260811"></script>
-    <div class="teaser" id="teaser" hidden role="dialog" aria-modal="true" aria-label="The Deadline teaser">
-      <div class="teaser-box">
-        <div class="teaser-head"><span><b>THE DEADLINE</b> / OFFICIAL TEASER</span><button id="teaserClose" aria-label="Close teaser">✕</button></div>
-        <div class="teaser-frame" id="teaserFrame"></div>
-        <p class="teaser-foot">UPCOMING · A PLUFFY MINIS ORIGINAL</p>
-      </div>
-    </div>
-    <script>
-      (function () {
-        var box = document.getElementById("teaser"), frame = document.getElementById("teaserFrame");
-        function close() { box.hidden = true; frame.innerHTML = ""; }
-        document.querySelectorAll("[data-teaser]").forEach(function (a) {
-          a.addEventListener("click", function (e) {
-            e.preventDefault();
-            frame.innerHTML = '<iframe src="https://www.youtube.com/embed/' + a.dataset.teaser + '?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="The Deadline teaser"></iframe>';
-            box.hidden = false;
-          });
-        });
-        document.getElementById("teaserClose").onclick = close;
-        box.addEventListener("click", function (e) { if (e.target === box) close(); });
-        document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !box.hidden) close(); });
-      })();
-    </script>
   </body>
 </html>

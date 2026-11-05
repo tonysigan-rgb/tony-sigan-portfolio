@@ -256,3 +256,6 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 .teaser-frame { position:relative; aspect-ratio:9 / 16; overflow:hidden; border:1px solid rgba(241,239,240,.2); background:#000; }
 .teaser-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
 .teaser-foot { margin:.6rem 0 0; font:.62rem var(--mono); color:rgba(241,239,240,.6); text-align:center; }
+.pluffy-cta { display:inline-flex; align-items:center; gap:1.2rem; margin-top:.4rem; padding:1.1rem 1.4rem 1.1rem 1.6rem; background:var(--red); color:var(--white); font:.8rem var(--mono); letter-spacing:.04em; transition:background .25s, gap .25s; }
+.pluffy-cta b { font-size:1.2rem; font-weight:400; }
+.pluffy-cta:hover { background:var(--ink); gap:1.8rem; }

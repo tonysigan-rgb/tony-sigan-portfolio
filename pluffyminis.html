@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="pluffy minis — original AI short dramas. Bite-sized episodes made for your phone." />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta property="og:title" content="pluffy minis — original short dramas" />
+    <meta property="og:description" content="Bite-sized romance, made for your phone. Watch free." />
+    <meta property="og:image" content="https://tonysigan-rgb.github.io/tony-sigan-portfolio/assets/projects/ps-i-like-you-cover.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>pluffy minis — Original Short Dramas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />
+    <style>
+      :root { --red:#c10a0a; --red2:#e01b1b; --bg:#0b0b0d; --card:#16171a; --line:rgba(255,255,255,.1); --txt:#f1eff0; --muted:rgba(241,239,240,.6); --mono:"DM Mono",monospace; --display:"DM Sans",Arial,sans-serif; }
+      * { box-sizing:border-box; }
+      html { scroll-behavior:smooth; }
+      body { margin:0; background:var(--bg); color:var(--txt); font-family:var(--display); -webkit-tap-highlight-color:transparent; }
+      a { color:inherit; text-decoration:none; }
+      button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; padding:0; }
+      img { display:block; max-width:100%; }
+      .wrap { width:min(78rem, 100% - 2.5rem); margin:0 auto; }
+
+      /* ---------- Header ---------- */
+      .nav { position:fixed; z-index:50; top:0; left:0; right:0; transition:background .3s, border-color .3s; border-bottom:1px solid transparent; }
+      .nav.solid { background:rgba(11,11,13,.92); backdrop-filter:blur(12px); border-color:var(--line); }
+      .nav .wrap { display:flex; align-items:center; gap:2rem; height:4.2rem; }
+      .logo { display:flex; align-items:baseline; gap:.15rem; font-weight:800; font-size:1.35rem; letter-spacing:-.05em; }
+      .logo i { width:.5rem; height:.5rem; border-radius:50%; background:var(--red2); align-self:center; margin-right:.25rem; box-shadow:0 0 0 .2rem rgba(224,27,27,.25); }
+      .logo span { font-weight:500; color:var(--muted); }
+      .links { display:flex; gap:1.5rem; font-size:.9rem; color:var(--muted); }
+      .links a:hover, .links a.on { color:var(--txt); }
+      .nav .back { margin-left:auto; font:.66rem var(--mono); border:1px solid var(--line); padding:.55rem .75rem; border-radius:2rem; }
+      .nav .back:hover { border-color:var(--txt); }
+
+      /* ---------- Hero carousel ---------- */
+      .hero { position:relative; height:min(92svh, 46rem); min-height:34rem; overflow:hidden; }
+      .slide { position:absolute; inset:0; opacity:0; transition:opacity .8s ease; pointer-events:none; }
+      .slide.on { opacity:1; pointer-events:auto; }
+      .slide .bg { position:absolute; inset:-3rem; background-size:cover; background-position:center 30%; filter:blur(34px) brightness(.45) saturate(1.2); transform:scale(1.1); }
+      .slide::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(11,11,13,.92) 0%, rgba(11,11,13,.5) 45%, rgba(11,11,13,.1) 70%), linear-gradient(0deg, var(--bg) 0%, transparent 35%); }
+      .slide .wrap { position:relative; z-index:2; height:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:3rem; padding-top:3rem; }
+      .s-txt { max-width:34rem; }
+      .badge { display:inline-flex; align-items:center; gap:.45rem; padding:.4rem .7rem; border-radius:2rem; background:var(--red); font:.64rem var(--mono); letter-spacing:.04em; }
+      .badge.dark { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); }
+      .s-txt h1 { margin:1.1rem 0 .8rem; font-size:clamp(2.6rem,6vw,5rem); line-height:.88; letter-spacing:-.06em; font-weight:800; }
+      .s-tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+      .s-tags span { font:.64rem var(--mono); color:var(--muted); border:1px solid var(--line); border-radius:2rem; padding:.3rem .6rem; }
+      .s-txt p { margin:0; font-size:1.05rem; line-height:1.45; color:rgba(241,239,240,.82); }
+      .ctas { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.6rem; }
+      .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.95rem 1.3rem; border-radius:3rem; font-weight:700; font-size:.95rem; transition:transform .2s, background .2s; }
+      .btn:hover { transform:translateY(-2px); }
+      .btn.primary { background:var(--red2); color:#fff; }
+      .btn.primary:hover { background:var(--red); }
+      .btn.ghost { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); }
+      .btn svg { width:1rem; height:1rem; }
+      .s-poster { width:clamp(13rem,22vw,19rem); aspect-ratio:9/16; border-radius:1rem; overflow:hidden; box-shadow:0 2rem 4rem rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1); transform:rotate(2deg); }
+      .s-poster img { width:100%; height:100%; object-fit:cover; }
+      .dots { position:absolute; z-index:5; left:50%; bottom:1.8rem; transform:translateX(-50%); display:flex; gap:.45rem; }
+      .dots button { width:.5rem; height:.5rem; border-radius:1rem; background:rgba(255,255,255,.35); transition:width .3s, background .3s; }
+      .dots button.on { width:1.6rem; background:var(--red2); }
+
+      /* ---------- Rows ---------- */
+      section.row { padding:2.6rem 0 0; }
+      .row-head { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; }
+      .row-head h2 { margin:0; font-size:clamp(1.35rem,2.4vw,1.8rem); letter-spacing:-.04em; display:flex; align-items:center; gap:.6rem; }
+      .row-head h2 i { width:.3rem; height:1.3rem; border-radius:1rem; background:var(--red2); }
+      .row-head a { font:.66rem var(--mono); color:var(--muted); }
+      .row-head a:hover { color:var(--txt); }
+      .scroller { display:grid; grid-auto-flow:column; grid-auto-columns:clamp(9.5rem,15vw,12.5rem); gap:.9rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.6rem; scrollbar-width:none; }
+      .scroller::-webkit-scrollbar { display:none; }
+
+      .card { scroll-snap-align:start; }
+      .thumb { position:relative; display:block; aspect-ratio:9/16; border-radius:.8rem; overflow:hidden; background:var(--card); }
+      .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .5s ease, filter .3s; }
+      .thumb:hover img { transform:scale(1.05); filter:brightness(.6); }
+      .thumb .rank { position:absolute; left:.5rem; top:.5rem; min-width:1.6rem; height:1.6rem; padding:0 .4rem; display:grid; place-items:center; border-radius:.35rem; background:var(--red2); font:700 .8rem var(--display); }
+      .thumb .corner { position:absolute; right:.5rem; top:.5rem; padding:.25rem .45rem; border-radius:.3rem; background:rgba(0,0,0,.6); font:.56rem var(--mono); }
+      .thumb .play { position:absolute; left:50%; top:50%; width:3rem; height:3rem; margin:-1.5rem 0 0 -1.5rem; display:grid; place-items:center; border-radius:50%; background:rgba(224,27,27,.92); opacity:0; transform:scale(.8); transition:.25s; }
+      .thumb .play svg { width:1.1rem; height:1.1rem; margin-left:.15rem; }
+      .thumb:hover .play { opacity:1; transform:scale(1); }
+      .thumb .hover-tag { position:absolute; left:50%; bottom:.8rem; transform:translateX(-50%); white-space:nowrap; padding:.45rem .65rem; background:var(--red); font:.6rem var(--mono); opacity:0; transition:opacity .25s; }
+      .thumb .hover-tag.dark { background:#111; border:1px solid var(--red2); }
+      .thumb:hover .hover-tag { opacity:1; }
+      .card h3 { margin:.6rem 0 .15rem; font-size:.95rem; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .card p { margin:0; font:.6rem var(--mono); color:var(--muted); }
+      .ep-thumb img { object-position:center; }
+
+      /* ---------- Gallery ---------- */
+      .gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(13rem,1fr)); gap:1.1rem; }
+      .gallery .thumb { border-radius:.9rem; }
+      .gallery .hover-tag { top:50%; bottom:auto; transform:translate(-50%,-50%); padding:.6rem .85rem; font-size:.68rem; }
+
+      /* ---------- Genres ---------- */
+      .genres { display:flex; flex-wrap:wrap; gap:.5rem; }
+      .genres span { padding:.7rem 1rem; border-radius:3rem; background:var(--card); border:1px solid var(--line); font-size:.9rem; }
+      .genres span b { color:var(--red2); font-weight:600; margin-right:.3rem; }
+
+      /* ---------- Follow block ---------- */
+      .follow { margin:3.4rem auto 0; padding:2.2rem; border-radius:1.4rem; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1.6rem; background:linear-gradient(120deg, rgba(193,10,10,.45), rgba(22,23,26,1) 55%); border:1px solid var(--line); }
+      .follow .mark { width:4.2rem; height:4.2rem; border-radius:1rem; display:grid; place-items:center; background:var(--red2); font-weight:800; font-size:1.5rem; letter-spacing:-.06em; }
+      .follow h2 { margin:0; font-size:clamp(1.4rem,2.6vw,2rem); letter-spacing:-.04em; }
+      .follow p { margin:.3rem 0 0; color:var(--muted); }
+      .follow .ctas { margin:0; }
+
+      footer { margin-top:3.6rem; border-top:1px solid var(--line); padding:2rem 0 max(2rem, env(safe-area-inset-bottom)); }
+      footer .wrap { display:flex; flex-wrap:wrap; justify-content:space-between; gap:1.2rem; font:.66rem var(--mono); color:var(--muted); }
+      footer nav { display:flex; flex-wrap:wrap; gap:1.2rem; }
+      footer a:hover { color:var(--txt); }
+
+      /* ---------- Teaser modal ---------- */
+      .modal { position:fixed; z-index:100; inset:0; display:grid; place-items:center; padding:1rem; background:rgba(0,0,0,.88); backdrop-filter:blur(6px); }
+      .modal[hidden] { display:none; }
+      .modal-box { width:min(24rem, calc((100svh - 8rem) * 9 / 16), 100%); }
+      .modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:.6rem; font:.66rem var(--mono); }
+      .modal-head b { color:var(--red2); font-weight:500; }
+      .modal-head button { width:2.2rem; height:2.2rem; border-radius:50%; border:1px solid rgba(255,255,255,.3); }
+      .modal-frame { position:relative; aspect-ratio:9/16; border-radius:.8rem; overflow:hidden; background:#000; }
+      .modal-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+      @media (max-width:760px) {
+        .links { display:none; }
+        .hero { height:auto; min-height:0; }
+        .slide { position:relative; display:none; }
+        .slide.on { display:block; }
+        .slide .wrap { grid-template-columns:1fr; gap:1.4rem; padding:5.2rem 0 3.6rem; }
+        .s-poster { order:-1; width:min(62vw,15rem); margin:0 auto; transform:none; }
+        .s-txt { text-align:center; margin:0 auto; }
+        .s-tags, .ctas { justify-content:center; }
+        .slide::after { background:linear-gradient(0deg, var(--bg) 0%, rgba(11,11,13,.55) 60%, rgba(11,11,13,.3)); }
+        .dots { bottom:1.2rem; }
+        .gallery { grid-template-columns:repeat(2,1fr); gap:.7rem; }
+        .follow { grid-template-columns:1fr; text-align:center; justify-items:center; padding:1.8rem 1.2rem; }
+        .thumb .hover-tag { opacity:1; }
+      }
+      @media (hover:none) { .thumb .hover-tag { opacity:1; } }
+    </style>
+  </head>
+  <body>
+    <header class="nav" id="nav">
+      <div class="wrap">
+        <a class="logo" href="pluffyminis.html"><i></i>pluffy<span>minis</span></a>
+        <nav class="links"><a class="on" href="#top">Home</a><a href="#trending">Trending</a><a href="#episodes">New Episodes</a><a href="#gallery">All Series</a></nav>
+        <a class="back" href="videos.html">← TONY SIGAN</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" id="hero" aria-label="Featured series"></section>
+
+      <div class="wrap">
+        <section class="row" id="trending">
+          <div class="row-head"><h2><i></i>Trending Series</h2><a href="#gallery">SEE ALL →</a></div>
+          <div class="scroller" id="trendingRow"></div>
+        </section>
+
+        <section class="row" id="episodes">
+          <div class="row-head"><h2><i></i>New Episodes</h2><a href="drama.html">P.S. I THINK, I LIKE YOU →</a></div>
+          <div class="scroller" id="episodeRow"></div>
+        </section>
+
+        <section class="row">
+          <div class="row-head"><h2><i></i>Browse by Mood</h2></div>
+          <div class="genres"><span><b>♥</b>BL Romance</span><span><b>✦</b>Slow-burn</span><span><b>☺</b>Romcom</span><span><b>⚡</b>Office Drama</span><span><b>✧</b>First Love</span><span><b>◐</b>Forbidden</span></div>
+        </section>
+
+        <section class="row" id="gallery">
+          <div class="row-head"><h2><i></i>All Series · Video Gallery</h2><a href="#top">BACK TO TOP ↑</a></div>
+          <div class="gallery" id="galleryGrid"></div>
+        </section>
+
+        <div class="follow">
+          <span class="mark">p.</span>
+          <div><h2>New episodes, every week.</h2><p>Follow pluffy minis so you never miss the next one.</p></div>
+          <div class="ctas">
+            <a class="btn primary" href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">Follow on TikTok</a>
+            <a class="btn ghost" href="https://www.instagram.com/itsmetslfilms" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>© 2026 PLUFFY MINIS · BY TONY SIGAN ANAK LAPOK</span>
+        <nav><a href="videos.html">VIDEO LIBRARY</a><a href="index.html">PORTFOLIO</a><a href="mailto:tonysigan@tonysiganlapok.com">CONTACT</a></nav>
+      </div>
+    </footer>
+
+    <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="Teaser">
+      <div class="modal-box">
+        <div class="modal-head"><span><b id="modalTitle">THE DEADLINE</b> / OFFICIAL TEASER</span><button id="modalClose" aria-label="Close">✕</button></div>
+        <div class="modal-frame" id="modalFrame"></div>
+      </div>
+    </div>
+
+    <script>
+      /* ================================================================
+         EDIT YOUR SERIES HERE
+         status: "out"  -> label shows `label`, card opens `link`
+                 "soon" -> label shows UPCOMING, card plays the `teaser` (YouTube ID)
+         ================================================================ */
+      const SERIES = [
+        {
+          title: "P.S. I Think, I Like You",
+          poster: "assets/projects/ps-i-like-you-poster.jpg",
+          status: "out", label: "EP01–04 OUT NOW", link: "drama.html",
+          tags: ["BL ROMCOM", "SLOW-BURN", "40 EPISODES"],
+          blurb: "Some feelings don't arrive all at once — they sneak in, one small moment at a time.",
+        },
+        {
+          title: "The Deadline",
+          poster: "assets/projects/the-deadline-poster.jpg",
+          status: "soon", label: "UPCOMING", teaser: "NqRSRWf0IjQ",
+          tags: ["BL", "OFFICE DRAMA", "COMING SOON"],
+          blurb: "One office. One night. One deadline neither of them can afford to miss.",
+        },
+      ];
+      // Released episodes shown in "New Episodes" (YouTube Shorts IDs, newest last)
+      const EPISODES = ["nPlVttY9neU", "exbzsaH_mzE", "K53sfH6Mbok", "VnYPPxy1yxw"];
+
+      const $ = (id) => document.getElementById(id);
+      const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>';
+      const attrs = (s) => s.status === "soon" ? `href="https://youtube.com/shorts/${s.teaser}" data-teaser="${s.teaser}" data-title="${esc(s.title)}" target="_blank" rel="noreferrer"` : `href="${s.link}"`;
+
+      /* Hero */
+      $("hero").innerHTML = SERIES.map((s, i) => `
+        <div class="slide${i === 0 ? " on" : ""}">
+          <div class="bg" style="background-image:url('${s.poster}')"></div>
+          <div class="wrap">
+            <div class="s-txt">
+              <span class="badge${s.status === "soon" ? " dark" : ""}">${s.status === "soon" ? "◷ COMING SOON" : "● NOW STREAMING"} · PLUFFY MINIS ORIGINAL</span>
+              <h1>${esc(s.title)}</h1>
+              <div class="s-tags">${s.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+              <p>${esc(s.blurb)}</p>
+              <div class="ctas">
+                <a class="btn primary" ${attrs(s)}>${PLAY}${s.status === "soon" ? "Watch Teaser" : "Watch Now"}</a>
+                <a class="btn ghost" href="#gallery">All Series</a>
+              </div>
+            </div>
+            <a class="s-poster" ${attrs(s)} aria-label="${esc(s.title)}"><img src="${s.poster}" alt="${esc(s.title)} poster" /></a>
+          </div>
+        </div>`).join("") + `<div class="dots">${SERIES.map((_, i) => `<button class="${i === 0 ? "on" : ""}" aria-label="Show slide ${i + 1}"></button>`).join("")}</div>`;
+
+      let slide = 0, timer;
+      const slides = [...document.querySelectorAll(".slide")], dots = [...document.querySelectorAll(".dots button")];
+      function show(n) { slide = (n + slides.length) % slides.length; slides.forEach((s, i) => s.classList.toggle("on", i === slide)); dots.forEach((d, i) => d.classList.toggle("on", i === slide)); }
+      function auto() { clearInterval(timer); timer = setInterval(() => show(slide + 1), 6000); }
+      dots.forEach((d, i) => (d.onclick = () => { show(i); auto(); }));
+      let sx = 0;
+      $("hero").addEventListener("touchstart", (e) => (sx = e.touches[0].clientX), { passive: true });
+      $("hero").addEventListener("touchend", (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) { show(slide + (dx < 0 ? 1 : -1)); auto(); } });
+      auto();
+
+      /* Cards */
+      const card = (s, i, rank) => `
+        <article class="card">
+          <a class="thumb" ${attrs(s)} aria-label="${esc(s.title)} — ${esc(s.label)}">
+            <img src="${s.poster}" alt="${esc(s.title)} poster" loading="lazy" />
+            ${rank ? `<span class="rank">${i + 1}</span>` : ""}
+            <span class="hover-tag${s.status === "soon" ? " dark" : ""}">${s.status === "soon" ? "UPCOMING · ▶ TEASER" : esc(s.label)}</span>
+          </a>
+          <h3>${esc(s.title)}</h3><p>${esc(s.tags.slice(0, 2).join(" · "))}</p>
+        </article>`;
+      $("trendingRow").innerHTML = SERIES.map((s, i) => card(s, i, true)).join("");
+      $("galleryGrid").innerHTML = SERIES.map((s, i) => `<div class="card"><a class="thumb" ${attrs(s)} aria-label="${esc(s.title)} — ${esc(s.label)}"><img src="${s.poster}" alt="${esc(s.title)} poster" loading="lazy" /><span class="hover-tag${s.status === "soon" ? " dark" : ""}">${s.status === "soon" ? "UPCOMING · ▶ TEASER" : esc(s.label)}</span></a></div>`).join("");
+
+      $("episodeRow").innerHTML = EPISODES.map((id, i) => ({ id, n: i + 1 })).reverse().map((e) => `
+        <article class="card">
+          <a class="thumb ep-thumb" href="drama.html?ep=${e.n}" aria-label="Watch episode ${e.n}">
+            <img src="https://i.ytimg.com/vi/${e.id}/hqdefault.jpg" alt="" loading="lazy" onerror="this.src='assets/projects/ps-i-like-you-poster.jpg'" />
+            <span class="corner">EP${String(e.n).padStart(2, "0")}</span>
+            <span class="play">${PLAY}</span>
+          </a>
+          <h3>Episode ${e.n}</h3><p>P.S. I THINK, I LIKE YOU</p>
+        </article>`).join("");
+
+      /* Teaser modal */
+      const modal = $("modal"), frame = $("modalFrame");
+      function closeModal() { modal.hidden = true; frame.innerHTML = ""; }
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest("[data-teaser]"); if (!a) return;
+        e.preventDefault();
+        $("modalTitle").textContent = a.dataset.title.toUpperCase();
+        frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${a.dataset.teaser}?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Teaser"></iframe>`;
+        modal.hidden = false;
+      });
+      $("modalClose").onclick = closeModal;
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
+
+      /* Header turns solid on scroll */
+      const nav = $("nav");
+      const onScroll = () => nav.classList.toggle("solid", scrollY > 40);
+      addEventListener("scroll", onScroll, { passive: true }); onScroll();
+    </script>
+  </body>
+</html>
