@@ -20,6 +20,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [startedAt] = useState(() => Date.now());   // fresh copy of the screens every launch
 
   // Android back button goes back a page inside the app
   useEffect(() => {
@@ -47,7 +48,8 @@ export default function App() {
             <WebView
               key={reloadKey}
               ref={web}
-              source={{ uri: HOME }}
+              source={{ uri: `${HOME}?t=${startedAt}` }}
+              cacheMode="LOAD_NO_CACHE"
               style={{ flex: 1, backgroundColor: BG }}
               originWhitelist={["https://*"]}
               allowsInlineMediaPlayback

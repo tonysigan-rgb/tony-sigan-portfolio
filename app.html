@@ -144,6 +144,13 @@
         </div>`;
       }
 
+      // Always open the newest version of the players (skips the phone's 10-minute saved copy)
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest("a[href]"); if (!a) return;
+        const h = a.getAttribute("href");
+        if (/^(drama|teaser)\.html/.test(h)) { e.preventDefault(); location.href = h + (h.includes("?") ? "&" : "?") + "t=" + Date.now(); }
+      });
+
       function route() {
         const m = location.hash.match(/^#\/series\/([\w-]+)/);
         const s = m && SERIES.find((x) => x.key === m[1]);
