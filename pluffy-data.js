@@ -11,6 +11,10 @@
 window.PLUFFY = {
   channel: "https://www.youtube.com/@itsmetslFilms",
   subscribe: "https://www.youtube.com/@itsmetslFilms?sub_confirmation=1",
+  handle: "@itsmetslFilms",
+  // Google sign-in for "subscribers watch early". Paste your OAuth Client ID here to switch it on
+  // (looks like 1234567890-abc123.apps.googleusercontent.com). Empty = only the Subscribe button shows.
+  googleClientId: "",
   episodes: [
     { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
     { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
