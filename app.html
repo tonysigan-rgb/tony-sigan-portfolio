@@ -40,7 +40,8 @@
       .tag.dark { background:#111; border:1px solid var(--red); }
       .card h3 { margin:.55rem 0 .1rem; font-size:1rem; letter-spacing:-.02em; }
       .small { color:var(--muted); font:.62rem var(--mono); letter-spacing:.05em; }
-      .made { display:block; width:11rem; margin:2.6rem auto 0; opacity:.9; }
+      .made-k { margin:2.6rem 0 .45rem; text-align:center; color:rgba(255,255,255,.55); font:.62rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+      .made { display:block; width:8rem; margin:0 auto; opacity:.9; }
       .made img { display:block; width:100%; height:auto; }
       .footer { text-align:center; color:rgba(255,255,255,.4); font:.6rem var(--mono); margin-top:1rem; letter-spacing:.05em; }
       .back { display:inline-block; padding:.9rem 0; color:rgba(255,255,255,.75); font-weight:600; }
@@ -105,7 +106,8 @@
       const early = status.find((s) => s.early);
       const label = (s) => (s.teaser ? "UPCOMING" : outCount > 1 ? `EP01–${pad(outCount)} OUT NOW` : "EP01 OUT NOW");
 
-      const FOOTER = `<a class="made" href="https://wandura.ai" target="_blank" rel="noreferrer" aria-label="Made with Wandura.ai"><img src="assets/made-with-wandura.png" alt="Made with Wandura.ai" /></a>
+      const FOOTER = `<p class="made-k">All the series are</p>
+          <a class="made" href="https://wandura.ai" target="_blank" rel="noreferrer" aria-label="Made with Wandura.ai"><img src="assets/made-with-wandura.png" alt="Made with Wandura.ai" /></a>
           <p class="footer">© 2026 PLUFFY MINIS · TONY SIGAN ANAK LAPOK</p>`;
 
       function library() {
