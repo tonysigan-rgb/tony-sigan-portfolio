@@ -142,7 +142,7 @@
     <header class="nav" id="nav">
       <div class="wrap">
         <a class="logo" href="pluffyminis.html"><i></i>pluffy<span>minis</span></a>
-        <nav class="links"><a class="on" href="#top">Home</a><a href="#trending">Trending</a><a href="#gallery">All Series</a></nav>
+        <nav class="links"><a class="on" href="#top">Home</a><a href="#gallery">All Series</a></nav>
         <a class="back" href="videos.html">← TONY SIGAN</a>
       </div>
     </header>
@@ -151,11 +151,6 @@
       <section class="hero" id="hero" aria-label="Featured series"></section>
 
       <div class="wrap">
-        <section class="row" id="trending">
-          <div class="row-head"><h2><i></i>Trending Series</h2><a href="#gallery">SEE ALL →</a></div>
-          <div class="scroller" id="trendingRow"></div>
-        </section>
-
         <section class="row" id="gallery">
           <div class="row-head"><h2><i></i>All Series · Video Gallery</h2><a href="#top">BACK TO TOP ↑</a></div>
           <div class="gallery" id="galleryGrid"></div>
@@ -255,7 +250,6 @@
           </a>
           <h3>${esc(s.title)}</h3><p>${esc(s.tags.slice(0, 2).join(" · "))}</p>
         </article>`;
-      $("trendingRow").innerHTML = SERIES.map((s, i) => card(s, i, true)).join("");
       $("galleryGrid").innerHTML = SERIES.map((s, i) => `<div class="card"><a class="thumb" ${attrs(s)} aria-label="${esc(s.title)} — ${esc(s.label)}"><img src="${s.poster}" alt="${esc(s.title)} poster" loading="lazy" /><span class="hover-tag${s.status === "soon" ? " dark" : ""}">${s.status === "soon" ? "UPCOMING · ▶ TEASER" : esc(s.label)}</span></a></div>`).join("");
 
 
