@@ -239,3 +239,10 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 .poster-card { max-width:20rem; background:transparent; }
 .poster-card .clean-thumbnail { aspect-ratio:9 / 16; }
 @media (max-width:760px) { .poster-card { max-width:17rem; } }
+.poster-card .poster-tag { position:absolute; z-index:2; left:50%; top:50%; transform:translate(-50%,-50%) scale(.92); padding:.65rem .9rem; background:var(--red); color:var(--white); font:.72rem var(--mono); letter-spacing:.04em; white-space:nowrap; opacity:0; transition:opacity .25s ease,transform .25s ease; pointer-events:none; }
+.poster-card .clean-thumbnail:hover .poster-tag, .poster-card .clean-thumbnail:focus-visible .poster-tag { opacity:1; transform:translate(-50%,-50%) scale(1); }
+.poster-card .clean-thumbnail:hover img { filter:brightness(.55); }
+.poster-card.is-upcoming .clean-thumbnail { cursor:default; }
+.poster-card.is-upcoming .poster-tag { background:var(--ink); border:1px solid var(--red); }
+@media (hover:none) { .poster-card .poster-tag { top:auto; bottom:.8rem; transform:translateX(-50%); opacity:1; } }
+.playlist-row:has(.poster-card) { grid-auto-columns:minmax(14rem,20rem); }
