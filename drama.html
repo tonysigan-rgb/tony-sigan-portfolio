@@ -383,7 +383,7 @@
          and unlocks the early episode right here in the player (remembered 7 days). */
       function subscribeAndWatch(i) {
         const w = 520, h = 680, l = Math.max(0, (screen.width - w) / 2), t = Math.max(0, (screen.height - h) / 2);
-        window.open(SUBSCRIBE, "pluffy-subscribe", `width=${w},height=${h},left=${l},top=${t}`);
+        try { window.open(SUBSCRIBE, "_blank", `width=${w},height=${h},left=${l},top=${t}`); } catch (_) {}
         try { localStorage.setItem("pluffy-sub-until", String(Date.now() + 7 * 864e5)); } catch (_) {}
         unlockEarly();
         const rel = pad(EPISODES.filter((x) => x.id).length);
@@ -392,7 +392,11 @@
         play(typeof i === "number" ? i : current, true);
         toast("THANKS FOR SUBSCRIBING — ENJOY THE EPISODE");
       }
-      document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); checkSubscription(current); });
+      // Inside the phone app Google blocks its sign-in screen, so there the button opens YouTube's
+      // subscribe prompt (in the YouTube app) and plays the episode here.
+      const IN_APP = /[?&]app=1/.test(location.search);
+      const unlockFlow = (i) => (IN_APP ? subscribeAndWatch(i) : checkSubscription(i));
+      document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); unlockFlow(current); });
       document.getElementById("earlyCheck").onclick = () => checkSubscription();
       const SERIES = "P.S. I Think, I Like You";
       /* SOUNDTRACK
@@ -506,7 +510,7 @@
       $("epCount").textContent = `${pad(total)} EPISODES`;
       $("released").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       // Under the episode list: point straight at the early episode on YouTube when there is one
-      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = SUBSCRIBE; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW`; a.removeAttribute("target"); a.onclick = (ev) => { ev.preventDefault(); play(e, true); checkSubscription(e); }; } })();
+      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = SUBSCRIBE; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW`; a.removeAttribute("target"); a.onclick = (ev) => { ev.preventDefault(); play(e, true); unlockFlow(e); }; } })();
       $("sheetCount").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       $("chipText").textContent = `ALL EPISODES · ${pad(total)}`;
 
