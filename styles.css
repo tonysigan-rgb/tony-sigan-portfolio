@@ -259,3 +259,15 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 .pluffy-cta { display:inline-flex; align-items:center; gap:1.2rem; margin-top:.4rem; padding:1.1rem 1.4rem 1.1rem 1.6rem; background:var(--red); color:var(--white); font:.8rem var(--mono); letter-spacing:.04em; transition:background .25s, gap .25s; }
 .pluffy-cta b { font-size:1.2rem; font-weight:400; }
 .pluffy-cta:hover { background:var(--ink); gap:1.8rem; }
+.getapp-card { max-width:23.5rem; margin-top:2rem; padding:1.6rem 1.3rem; border-radius:1.2rem; text-align:center; color:#fff; background:linear-gradient(160deg,#16171a 0%,#1d1112 55%,#3a0d0d 100%); border:1px solid rgba(255,255,255,.12); }
+.getapp-card .ga-k { margin:0; font:.66rem var(--mono); color:#e01b1b; letter-spacing:.08em; }
+.getapp-card h3 { margin:.5rem 0 .4rem; font-size:1.8rem; letter-spacing:-.04em; line-height:1; }
+.getapp-card .ga-t { margin:0 auto; color:rgba(255,255,255,.6); font-size:1rem; line-height:1.3; }
+.getapp-card .ga-btns { display:flex; flex-direction:column; align-items:center; gap:.7rem; margin-top:1.2rem; }
+.getapp-card .ga-store { display:flex; align-items:center; gap:.8rem; width:15rem; padding:.75rem 1.1rem; border-radius:.9rem; background:#fff; white-space:nowrap; color:#0b0b0d; text-align:left; transition:transform .2s; }
+.getapp-card .ga-store:hover { transform:translateY(-2px); }
+.getapp-card .ga-store.ghost { background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.22); }
+.getapp-card .ga-store svg { width:1.6rem; height:1.6rem; flex:0 0 auto; }
+.getapp-card .ga-store span { display:flex; flex-direction:column; font-weight:700; font-size:1rem; line-height:1.1; }
+.getapp-card .ga-store small { font:.56rem var(--mono); letter-spacing:.06em; opacity:.7; }
+.getapp-card .ga-note { margin:1.1rem 0 0; font:.6rem/1.5 var(--mono); color:rgba(255,255,255,.55); }
