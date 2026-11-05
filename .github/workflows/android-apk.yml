@@ -1,0 +1,47 @@
+name: Build pluffy minis Android app
+
+# Builds the Android APK from android-app/ and publishes it as
+# https://github.com/tonysigan-rgb/tony-sigan-portfolio/releases/download/android-latest/pluffy-minis.apk
+# The app shows the website's screens, so design changes on the site do NOT need a new APK.
+on:
+  push:
+    branches: [main]
+    paths: ["android-app/**", ".github/workflows/android-apk.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install app packages
+        run: npm ci
+      - name: Generate the Android project
+        run: npx expo prebuild --platform android --no-install
+      - name: Build the APK
+        working-directory: android-app/android
+        run: ./gradlew assembleRelease --no-daemon
+      - name: Publish the APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk pluffy-minis.apk
+          gh release view android-latest >/dev/null 2>&1 || gh release create android-latest --title "pluffy minis — Android app" --notes "Latest Android app. Download pluffy-minis.apk and open it on your phone."
+          gh release upload android-latest pluffy-minis.apk --clobber
