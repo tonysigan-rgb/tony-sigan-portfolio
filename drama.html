@@ -259,6 +259,7 @@
               <a class="early-btn" id="earlySub" href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>SUBSCRIBE FOR FREE</a>
               <button class="early-link" id="earlyCheck" hidden>SUBSCRIBED? SIGN IN WITH GOOGLE TO UNLOCK</button>
               <small class="early-msg" id="earlyMsg"></small>
+              <a class="early-link" id="earlyPriv" href="privacy.html" target="_blank" style="opacity:.6;border:0" hidden>PRIVACY POLICY</a>
             </div></div>
           <div class="tap" id="tap" aria-hidden="true"></div>
 
@@ -521,7 +522,7 @@
         $("earlyCtas").hidden = !ep.early;
         $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
         $("soonSub").textContent = ep.early ? "SUBSCRIBERS WATCH IT NOW" : "NEW EPISODE EVERY MONDAY";
-        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = !window.PLUFFY.googleClientId; }
+        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = $("earlyPriv").hidden = !window.PLUFFY.googleClientId; }
         $("soonEp").textContent = `EP${pad(current + 1)}`;
         P.classList.toggle("locked", !ep.id);
         $("bar").style.width = "0";
