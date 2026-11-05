@@ -52,11 +52,6 @@
       .soon small { font:.7rem var(--mono); color:var(--muted); }
       .soon { z-index:3; background-color:#000 !important; }
       .player.locked .center { display:none; }
-      .player.yt-controls .tap { pointer-events:none; }
-      .player.yt-controls iframe { pointer-events:auto; }
-      .player.yt-controls .meta, .player.yt-controls .progress, .player.yt-controls .shade.b, .player.yt-controls .center { display:none !important; }
-      .player.yt-controls .rail { bottom:5.5rem; }
-      #qualityBtn[aria-pressed="true"] .ic { background:#fff; color:#c10a0a; }
       .in-app .top { display:none !important; }
       .in-app .bar .home { display:grid !important; }
       .sub-top { margin-left:auto; margin-right:1rem; display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:2rem; background:var(--red); color:#fff; font:.64rem var(--mono); }
@@ -286,7 +281,6 @@
             <div class="rail">
               <button class="eps-btn" id="epsBtn" aria-label="Episode list"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg></span><span id="epsLabel">EPISODES</span></button>
               <button class="auto-btn hide-fs" id="auto" aria-pressed="true" aria-label="Auto-play next episode"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></span><span id="autoLabel">AUTO ON</span></button>
-              <button id="qualityBtn" aria-label="Video quality"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M7 9.5v5M7 12h3.2M10.2 9.5v5M13.5 9.5v5h1.8a2.5 2.5 0 0 0 0-5z"/></svg></span><span id="qualityLabel">QUALITY</span></button>
               <button class="hide-fs" id="shareBtn" aria-label="Share episode"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></span><span>SHARE</span></button>
               <button class="hide-fs" id="nextRail" aria-label="Next episode"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4.5v15l10-7.5z"/><rect x="16.5" y="4.5" width="2.6" height="15" rx="1"/></svg></span><span>NEXT</span></button>
             </div>
@@ -598,14 +592,13 @@
       /* ---------------- YouTube ---------------- */
       // nativeMode (iPhone only): YouTube plays in the iPhone's own full-screen video player.
       let nativeMode = false;
-      let ytControls = false;   // true = YouTube's own controls shown (⚙ → Quality)
       function buildPlayer(videoId, start, inline) {
         if (yt) { try { yt.destroy(); } catch (_) {} }
         if (!$("yt")) { const d = document.createElement("div"); d.id = "yt"; P.insertBefore(d, P.firstChild); }
         ready = false;
         yt = new YT.Player("yt", {
           videoId,
-          playerVars: { playsinline: inline ? 1 : 0, controls: ytControls ? 1 : 0, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1, start: Math.floor(start || 0) },
+          playerVars: { playsinline: inline ? 1 : 0, controls: 0, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1, start: Math.floor(start || 0) },
           events: {
             onReady: () => {
               ready = true; fitVideo();
@@ -796,25 +789,12 @@
 
       /* Size the YouTube frame like "cover": the video fills the screen edge to edge,
          and YouTube's own title bar (top) and logo (bottom) sit outside and get cropped. */
-      /* Quality: YouTube no longer lets sites set the quality, so this shows YouTube's own controls,
-         where viewers pick it from ⚙ → Quality. Tap again to go back to the clean player. */
-      function toggleQuality() {
-        if (!EPISODES[current].id) return;
-        ytControls = !ytControls;
-        P.classList.toggle("yt-controls", ytControls);
-        $("qualityBtn").setAttribute("aria-pressed", ytControls);
-        $("qualityLabel").textContent = ytControls ? "DONE" : "QUALITY";
-        const t = ready && yt.getCurrentTime ? yt.getCurrentTime() : 0;
-        buildPlayer(EPISODES[current].id, t, !nativeMode);
-        if (ytControls) hint("TAP ⚙ ON THE VIDEO → QUALITY", 3200);
-      }
-
       function fitVideo() {
         const f = P.querySelector("iframe"); if (!f) return;
         const W = P.clientWidth, H = P.clientHeight;
         let vw, vh;
         if (W / H > 9 / 16) { vw = W; vh = W * 16 / 9; } else { vh = H; vw = H * 9 / 16; }
-        const crop = ytControls ? 0 : Math.round(Math.max(64, vh * 0.1));
+        const crop = Math.round(Math.max(64, vh * 0.1));
         Object.assign(f.style, { width: vw + "px", height: vh + crop * 2 + "px", left: (W - vw) / 2 + "px", top: (H - vh) / 2 - crop + "px" });
       }
       window.addEventListener("resize", fitVideo);
@@ -866,7 +846,6 @@
       $("next").onclick = $("nextRail").onclick = () => go(1);
 
       function setAuto() { $("auto").setAttribute("aria-pressed", autoplay); $("autoLabel").textContent = autoplay ? "AUTO ON" : "AUTO OFF"; }
-      $("qualityBtn").onclick = toggleQuality;
       $("auto").onclick = () => { autoplay = !autoplay; setAuto(); try { localStorage.setItem("drama-autonext", autoplay ? "1" : "0"); } catch (_) {} };
       setAuto();
 
