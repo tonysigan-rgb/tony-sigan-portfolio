@@ -50,6 +50,19 @@
       .soon.show { display:flex; }
       .soon b { font-size:3.2rem; letter-spacing:-.06em; line-height:.9; }
       .soon small { font:.7rem var(--mono); color:var(--muted); }
+      .soon { z-index:3; }
+      .player.locked .center { display:none; }
+      .sub-top { margin-left:auto; margin-right:1rem; display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:2rem; background:var(--red); color:#fff; font:.64rem var(--mono); }
+      .sub-top:hover { background:#a20808; }
+      .early-ctas { display:flex; flex-direction:column; align-items:center; gap:.9rem; margin-top:.6rem; }
+      .early-ctas[hidden] { display:none; }
+      .early-btn { display:inline-flex; align-items:center; gap:.5rem; padding:.9rem 1.2rem; border-radius:3rem; background:var(--red); color:#fff; font:700 .85rem var(--display); }
+      .early-btn svg { width:1.15rem; height:1.15rem; }
+      .early-link { font:.6rem var(--mono); color:rgba(255,255,255,.8); border-bottom:1px solid currentColor; padding-bottom:.15rem; }
+      .ep.early { color:var(--paper); border-color:rgba(193,10,10,.6); }
+      .ep.early::after { content:attr(data-day); position:absolute; bottom:.2rem; font-size:.42rem; letter-spacing:.03em; color:var(--red); }
+      .ep.early.active { color:#fff; }
+      .ep.early.active::after { color:#fff; }
 
       /* tap layer sits over the video and catches taps / swipes */
       .tap { position:absolute; inset:0; z-index:2; touch-action:pan-y; }
@@ -231,21 +244,26 @@
   <body>
     <header class="top">
       <a class="brand" href="index.html">TONY SIGAN<span>/ SHORT DRAMA</span></a>
-      <a class="back" href="videos.html">← VIDEO LIBRARY</a>
+      <a class="sub-top" id="subTop" href="#" target="_blank" rel="noreferrer">▶ SUBSCRIBE FOR FREE</a>
+      <a class="back" href="pluffyminis.html">← PLUFFY MINIS</a>
     </header>
 
     <main class="watch">
       <section class="stage" aria-label="Episode player">
         <div class="player paused" id="player">
           <div id="yt"></div>
-          <div class="soon" id="soon"><small>COMING SOON</small><b id="soonEp">EP02</b><small>NEW EPISODE DROPPING SHORTLY</small></div>
+          <div class="soon" id="soon"><small id="soonTop">COMING SOON</small><b id="soonEp">EP02</b><small id="soonSub">NEW EPISODE DROPPING SHORTLY</small>
+            <div class="early-ctas" id="earlyCtas" hidden>
+              <a class="early-btn" id="earlySub" href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>SUBSCRIBE FOR FREE</a>
+              <a class="early-link" id="earlyWatch" href="#" target="_blank" rel="noreferrer">ALREADY SUBSCRIBED? WATCH EARLY ON YOUTUBE ↗</a>
+            </div></div>
           <div class="tap" id="tap" aria-hidden="true"></div>
 
           <div class="ui" id="ui">
             <div class="shade t"></div><div class="shade b"></div>
 
             <div class="bar">
-              <a class="icon-btn home" href="videos.html" aria-label="Back to video library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <a class="icon-btn home" href="pluffyminis.html" aria-label="Back to pluffy minis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
               <div class="grow"><span class="ep-badge" id="badge">EP01</span><span class="series">P.S. I Think, I Like You</span></div>
               <button class="icon-btn" id="fsBtn" aria-label="Full screen"><svg id="fsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
             </div>
@@ -305,6 +323,7 @@
 
         <div class="share">
           <button id="copy">COPY EPISODE LINK</button>
+          <a id="subInfo" href="#" target="_blank" rel="noreferrer" style="background:var(--red);border-color:var(--red);color:#fff">SUBSCRIBE FOR FREE · WATCH EARLY ↗</a>
           <a id="ytLink" href="#" target="_blank" rel="noreferrer">WATCH ON YOUTUBE ↗</a>
           <a href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">TIKTOK ↗</a>
           <a href="#soundtrack">SOUNDTRACK ♪</a>
@@ -336,9 +355,10 @@
     <footer><span>© 2026 TONY SIGAN ANAK LAPOK</span><a href="index.html">RETURN TO FRONT SELECT ↑</a></footer>
     <div class="toast" id="toast">LINK COPIED</div>
 
+    <script src="pluffy-data.js?v=20261105"></script>
     <script>
       /* ================================================================
-         EDIT YOUR SERIES HERE
+         EDIT YOUR SERIES HERE  (episodes + Monday schedule: see pluffy-data.js)
          - url:   paste the YouTube link (Shorts, youtu.be or watch?v=).
                   Leave it "" and the episode shows as "SOON".
          - plot:  optional one- or two-line summary for that episode.
@@ -346,48 +366,10 @@
          splits into 1–30, 31–60 ... tabs automatically.
          ================================================================ */
       const SYNOPSIS = "Some feelings don't arrive all at once — they sneak in, one small moment at a time. A slow-burn romance told in bite-sized episodes, made for watching on your phone.";
-      const EPISODES = [
-        { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
-        { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
-        { title: "Episode 3", url: "https://youtube.com/shorts/K53sfH6Mbok", plot: "" },
-        { title: "Episode 4", url: "https://youtube.com/shorts/VnYPPxy1yxw", plot: "" },
-        { title: "Episode 5", url: "", plot: "" },
-        { title: "Episode 6", url: "", plot: "" },
-        { title: "Episode 7", url: "", plot: "" },
-        { title: "Episode 8", url: "", plot: "" },
-        { title: "Episode 9", url: "", plot: "" },
-        { title: "Episode 10", url: "", plot: "" },
-        { title: "Episode 11", url: "", plot: "" },
-        { title: "Episode 12", url: "", plot: "" },
-        { title: "Episode 13", url: "", plot: "" },
-        { title: "Episode 14", url: "", plot: "" },
-        { title: "Episode 15", url: "", plot: "" },
-        { title: "Episode 16", url: "", plot: "" },
-        { title: "Episode 17", url: "", plot: "" },
-        { title: "Episode 18", url: "", plot: "" },
-        { title: "Episode 19", url: "", plot: "" },
-        { title: "Episode 20", url: "", plot: "" },
-        { title: "Episode 21", url: "", plot: "" },
-        { title: "Episode 22", url: "", plot: "" },
-        { title: "Episode 23", url: "", plot: "" },
-        { title: "Episode 24", url: "", plot: "" },
-        { title: "Episode 25", url: "", plot: "" },
-        { title: "Episode 26", url: "", plot: "" },
-        { title: "Episode 27", url: "", plot: "" },
-        { title: "Episode 28", url: "", plot: "" },
-        { title: "Episode 29", url: "", plot: "" },
-        { title: "Episode 30", url: "", plot: "" },
-        { title: "Episode 31", url: "", plot: "" },
-        { title: "Episode 32", url: "", plot: "" },
-        { title: "Episode 33", url: "", plot: "" },
-        { title: "Episode 34", url: "", plot: "" },
-        { title: "Episode 35", url: "", plot: "" },
-        { title: "Episode 36", url: "", plot: "" },
-        { title: "Episode 37", url: "", plot: "" },
-        { title: "Episode 38", url: "", plot: "" },
-        { title: "Episode 39", url: "", plot: "" },
-        { title: "Episode 40", url: "", plot: "" },
-      ];
+      // Episode list lives in pluffy-data.js (one place for all pages)
+      const EPISODES = window.PLUFFY.episodes.map((e) => ({ ...e }));
+      const SUBSCRIBE = window.PLUFFY.subscribe;
+      document.getElementById("subTop").href = document.getElementById("subInfo").href = SUBSCRIBE;
       const SERIES = "P.S. I Think, I Like You";
       /* SOUNDTRACK
          - PLAYLIST_URL: the Epidemic Sound playlist (opens on Epidemic Sound; they don't offer a player to put on other websites).
@@ -404,7 +386,14 @@
       const $ = (id) => document.getElementById(id);
       const P = $("player");
       const getId = (url) => { const m = (url || "").match(/(?:shorts\/|youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/); return m ? m[1] : null; };
-      EPISODES.forEach((e) => (e.id = getId(e.url)));
+      const releaseTime = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
+      EPISODES.forEach((e) => {
+        const vid = getId(e.url);
+        e.early = !!vid && releaseTime(e) > Date.now();   // on YouTube already, unlocks here on Monday
+        e.yt = vid;
+        e.id = e.early ? null : vid;
+      });
+      const dayLabel = (e) => new Date(e.release + "T00:00:00+08:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
       const pad = (n) => String(n).padStart(2, "0");
       const total = EPISODES.length;
       const released = EPISODES.filter((e) => e.id).length;
@@ -451,10 +440,11 @@
         for (let i = page * PER_PAGE; i < Math.min(total, (page + 1) * PER_PAGE); i++) {
           const ep = EPISODES[i];
           const b = document.createElement("button");
-          b.className = "ep" + (ep.id ? "" : " locked") + (i === current ? " active" : "");
+          b.className = "ep" + (ep.early ? " early" : ep.id ? "" : " locked") + (i === current ? " active" : "");
+          if (ep.early) b.dataset.day = dayLabel(ep).split(" ").slice(1).join(" ");
           b.textContent = i + 1;
           b.setAttribute("aria-label", ep.id ? `Play episode ${i + 1}` : `Episode ${i + 1}, coming soon`);
-          b.onclick = () => { if (!ep.id) return; closeSheet(); play(i, true); };
+          b.onclick = () => { if (!ep.id && !ep.early) return; closeSheet(); play(i, true); };
           gridEl.appendChild(b);
         }
       }
@@ -480,6 +470,10 @@
         $("ytLink").href = ep.id ? `https://youtube.com/shorts/${ep.id}` : "#";
         $("ytLink").style.display = ep.id ? "" : "none";
         $("soon").classList.toggle("show", !ep.id);
+        $("earlyCtas").hidden = !ep.early;
+        $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
+        $("soonSub").textContent = ep.early ? "SUBSCRIBERS WATCH IT EARLY ON YOUTUBE" : "NEW EPISODE EVERY MONDAY";
+        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyWatch").href = `https://youtube.com/shorts/${ep.yt}`; }
         $("soonEp").textContent = `EP${pad(current + 1)}`;
         P.classList.toggle("locked", !ep.id);
         $("bar").style.width = "0";
@@ -596,6 +590,8 @@
         } else {
           if (ready) yt.pauseVideo();
           playing = false; P.classList.add("paused"); setCenter();
+          const nx = EPISODES[current + 1];
+          if (n < 0 && nx && nx.early) { play(current + 1, false); return; }   // show the "watch early" screen
           if (n < 0 && current + 1 < total) hint(`EP${pad(current + 2)} COMING SOON`, 2500);
           openSheet();
         }

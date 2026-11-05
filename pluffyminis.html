@@ -32,7 +32,12 @@
       .logo span { font-weight:500; color:var(--muted); }
       .links { display:flex; gap:1.5rem; font-size:.9rem; color:var(--muted); }
       .links a:hover, .links a.on { color:var(--txt); }
-      .nav .back { margin-left:auto; font:.66rem var(--mono); border:1px solid var(--line); padding:.55rem .75rem; border-radius:2rem; }
+      .nav .sub { margin-left:auto; white-space:nowrap; display:inline-flex; align-items:center; gap:.45rem; padding:.55rem .95rem; border-radius:2rem; background:var(--red2); color:#fff; font:700 .8rem var(--display); transition:background .2s, transform .2s; }
+      .nav .sub:hover { background:var(--red); transform:translateY(-1px); }
+      .nav .sub svg { width:1rem; height:1rem; }
+      .early-strip { display:flex; align-items:center; justify-content:center; gap:.6rem; flex-wrap:wrap; padding:.7rem 1rem; background:var(--red); color:#fff; font:.68rem var(--mono); text-align:center; }
+      .early-strip a { border-bottom:1px solid currentColor; }
+      .nav .back { font:.66rem var(--mono); border:1px solid var(--line); padding:.55rem .75rem; border-radius:2rem; }
       .nav .back:hover { border-color:var(--txt); }
 
       /* ---------- Hero carousel ---------- */
@@ -122,6 +127,11 @@
 
       @media (max-width:760px) {
         .links { display:none; }
+        .nav .wrap { gap:.6rem; }
+        .nav .sub { font-size:.72rem; padding:.5rem .75rem; }
+        .nav .back { padding:.5rem .65rem; font-size:0; }
+        .nav .back::before { content:"←"; font-size:.85rem; }
+        .logo { font-size:1.15rem; }
         .hero { height:auto; min-height:0; }
         .slide { position:relative; display:none; }
         .slide.on { display:block; }
@@ -143,11 +153,13 @@
       <div class="wrap">
         <a class="logo" href="pluffyminis.html"><i></i>pluffy<span>minis</span></a>
         <nav class="links"><a class="on" href="#top">Home</a><a href="#gallery">All Series</a></nav>
+        <a class="sub" href="https://www.youtube.com/@itsmetslFilms?sub_confirmation=1" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>Subscribe for free</a>
         <a class="back" href="videos.html">← TONY SIGAN</a>
       </div>
     </header>
 
     <main id="top">
+      <div id="earlyStrip"></div>
       <section class="hero" id="hero" aria-label="Featured series"></section>
 
       <div class="wrap">
@@ -181,6 +193,7 @@
       </div>
     </div>
 
+    <script src="pluffy-data.js?v=20261105"></script>
     <script>
       /* ================================================================
          EDIT YOUR SERIES HERE
@@ -206,6 +219,14 @@
       // Released episodes shown in "New Episodes" (YouTube Shorts IDs, newest last)
       const EPISODES = ["nPlVttY9neU", "exbzsaH_mzE", "K53sfH6Mbok", "VnYPPxy1yxw"];
 
+      // "EP01–03 OUT NOW" label + early-access notice come from the Monday schedule in pluffy-data.js
+      const relT = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
+      const ytOk = (e) => /(?:shorts\/|youtu\.be\/|[?&]v=)[\w-]{11}/.test(e.url || "");
+      const eps = window.PLUFFY.episodes;
+      const outCount = eps.filter((e) => ytOk(e) && relT(e) <= Date.now()).length;
+      const earlyEp = eps.findIndex((e) => ytOk(e) && relT(e) > Date.now());
+      const p2 = (n) => String(n).padStart(2, "0");
+      SERIES[0].label = outCount > 1 ? `EP01–${p2(outCount)} OUT NOW` : "EP01 OUT NOW";
       const $ = (id) => document.getElementById(id);
       const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
       const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>';
@@ -267,6 +288,12 @@
       $("modalClose").onclick = closeModal;
       modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
+
+      if (earlyEp >= 0) {
+        const d = new Date(eps[earlyEp].release + "T00:00:00+08:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
+        $("earlyStrip").outerHTML = `<div class="early-strip" style="margin-top:4.2rem">EP${p2(earlyEp + 1)} IS FREE HERE ON ${d} · SUBSCRIBERS WATCH IT NOW <a href="${window.PLUFFY.subscribe}" target="_blank" rel="noreferrer">SUBSCRIBE FOR FREE →</a></div>`;
+        document.querySelector(".hero").style.marginTop = "0";
+      }
 
       /* Header turns solid on scroll */
       const nav = $("nav");
