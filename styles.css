@@ -242,7 +242,17 @@ footer { display:flex; justify-content:space-between; align-items:end; gap:1rem;
 .poster-card .poster-tag { position:absolute; z-index:2; left:50%; top:50%; transform:translate(-50%,-50%) scale(.92); padding:.65rem .9rem; background:var(--red); color:var(--white); font:.72rem var(--mono); letter-spacing:.04em; white-space:nowrap; opacity:0; transition:opacity .25s ease,transform .25s ease; pointer-events:none; }
 .poster-card .clean-thumbnail:hover .poster-tag, .poster-card .clean-thumbnail:focus-visible .poster-tag { opacity:1; transform:translate(-50%,-50%) scale(1); }
 .poster-card .clean-thumbnail:hover img { filter:brightness(.55); }
-.poster-card.is-upcoming .clean-thumbnail { cursor:default; }
+.poster-card.is-upcoming .clean-thumbnail { cursor:pointer; }
 .poster-card.is-upcoming .poster-tag { background:var(--ink); border:1px solid var(--red); }
 @media (hover:none) { .poster-card .poster-tag { top:auto; bottom:.8rem; transform:translateX(-50%); opacity:1; } }
 .playlist-row:has(.poster-card) { grid-auto-columns:minmax(14rem,20rem); }
+.teaser { position:fixed; z-index:300; inset:0; display:grid; place-items:center; padding:1rem; background:rgba(9,9,9,.88); backdrop-filter:blur(6px); }
+.teaser[hidden] { display:none; }
+.teaser-box { width:min(24rem, calc((100svh - 8rem) * 9 / 16), 100%); color:var(--paper); }
+.teaser-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:.6rem; font:.68rem var(--mono); }
+.teaser-head b { color:var(--red); font-weight:500; }
+.teaser-head button { width:2.2rem; height:2.2rem; border:1px solid rgba(241,239,240,.3); border-radius:50%; background:none; color:inherit; cursor:pointer; }
+.teaser-head button:hover { border-color:var(--red); color:var(--red); }
+.teaser-frame { position:relative; aspect-ratio:9 / 16; overflow:hidden; border:1px solid rgba(241,239,240,.2); background:#000; }
+.teaser-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.teaser-foot { margin:.6rem 0 0; font:.62rem var(--mono); color:rgba(241,239,240,.6); text-align:center; }
