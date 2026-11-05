@@ -40,7 +40,9 @@
       .tag.dark { background:#111; border:1px solid var(--red); }
       .card h3 { margin:.55rem 0 .1rem; font-size:1rem; letter-spacing:-.02em; }
       .small { color:var(--muted); font:.62rem var(--mono); letter-spacing:.05em; }
-      .footer { text-align:center; color:rgba(255,255,255,.4); font:.6rem var(--mono); margin-top:2.4rem; letter-spacing:.05em; }
+      .made { display:block; width:11rem; margin:2.6rem auto 0; opacity:.9; }
+      .made img { display:block; width:100%; height:auto; }
+      .footer { text-align:center; color:rgba(255,255,255,.4); font:.6rem var(--mono); margin-top:1rem; letter-spacing:.05em; }
       .back { display:inline-block; padding:.9rem 0; color:rgba(255,255,255,.75); font-weight:600; }
       .hero { position:relative; overflow:hidden; border-radius:1.1rem; padding:1.1rem; text-align:center; background:var(--card); }
       .hero .bg { position:absolute; inset:-2rem; background-size:cover; background-position:center; filter:blur(24px) brightness(.45); }
@@ -103,6 +105,9 @@
       const early = status.find((s) => s.early);
       const label = (s) => (s.teaser ? "UPCOMING" : outCount > 1 ? `EP01–${pad(outCount)} OUT NOW` : "EP01 OUT NOW");
 
+      const FOOTER = `<a class="made" href="https://wandura.ai" target="_blank" rel="noreferrer" aria-label="Made with Wandura.ai"><img src="assets/made-with-wandura.png" alt="Made with Wandura.ai" /></a>
+          <p class="footer">© 2026 PLUFFY MINIS · TONY SIGAN ANAK LAPOK</p>`;
+
       function library() {
         return `<div class="page">
           <div class="header"><span class="dot"></span><span class="logo">pluffy<span>minis</span></span></div>
@@ -117,7 +122,7 @@
                 <div class="small">${esc(s.tags.slice(0, 2).join(" · "))}</div>
               </a>`).join("")}
           </div>
-          <p class="footer">© 2026 PLUFFY MINIS · TONY SIGAN ANAK LAPOK</p>
+          ${FOOTER}
         </div>`;
       }
 
@@ -134,13 +139,14 @@
             <p class="blurb">${esc(s.blurb)}</p>
             <a class="btn" href="${s.teaser ? s.teaser + "?app=1" : s.player + "?ep=1&app=1"}">▶ ${s.teaser ? "Watch teaser" : "Start watching · EP01"}</a>
           </div>`;
-        if (!s.player) return top + `<div class="soon"><h3>Episodes</h3><p>Episodes are coming soon. Watch the teaser while you wait.</p></div></div>`;
+        if (!s.player) return top + `<div class="soon"><h3>Episodes</h3><p>Episodes are coming soon. Watch the teaser while you wait.</p></div>${FOOTER}</div>`;
         return top + `
           ${early ? `<a class="early" href="${s.player}?ep=${early.n}&app=1">EP${pad(early.n)} IS FREE HERE ON MONDAY · SUBSCRIBERS WATCH IT NOW →</a>` : ""}
           <div class="eps-head"><h3>Episodes</h3><span class="small">${pad(outCount)} / ${pad(total)} RELEASED</span></div>
           <div class="eps">
             ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "is-early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${e.n}${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}</a>`).join("")}
           </div>
+          ${FOOTER}
         </div>`;
       }
 
