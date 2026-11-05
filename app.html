@@ -22,7 +22,7 @@
          ============================================================ */
       :root { --red:#e01b1b; --red2:#c10a0a; --bg:#0b0b0d; --card:#16171a; --line:rgba(255,255,255,.1); --muted:rgba(255,255,255,.55); --mono:"DM Mono",monospace; --display:"DM Sans",Arial,sans-serif; }
       * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-      html,body { margin:0; background:var(--bg); color:#fff; font-family:var(--display); }
+      html,body { margin:0; background:var(--bg); color:#fff; font-family:var(--display); overflow-x:hidden; }
       a { color:inherit; text-decoration:none; }
       button { font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; }
       .page { max-width:560px; margin:0 auto; padding:max(.6rem, env(safe-area-inset-top)) 1rem max(3rem, env(safe-area-inset-bottom)); animation:in .25s ease; }
@@ -55,13 +55,13 @@
       .early { display:block; margin-top:.9rem; padding:.8rem; border-radius:.8rem; background:var(--red2); text-align:center; font:.66rem var(--mono); letter-spacing:.04em; }
       .eps-head { display:flex; justify-content:space-between; align-items:baseline; margin:1.7rem 0 .75rem; }
       .eps-head h3 { margin:0; font-size:1.35rem; letter-spacing:-.04em; }
-      .eps { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; }
-      .ep { position:relative; aspect-ratio:1; display:grid; place-items:center; border-radius:.6rem; border:1px solid var(--line); background:rgba(255,255,255,.03); font:600 1.05rem var(--display); }
+      .eps { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:.4rem; width:100%; }
+      .ep { position:relative; min-width:0; aspect-ratio:1 / 1; display:grid; place-items:center; border-radius:.5rem; border:1px solid var(--line); background:rgba(255,255,255,.03); font:600 .9rem var(--display); }
       .ep.out { border-color:rgba(255,255,255,.3); }
-      .ep.early { border-color:var(--red); }
+      .ep.is-early { border-color:var(--red); }
       .ep.locked { color:rgba(255,255,255,.28); pointer-events:none; }
-      .ep small { position:absolute; bottom:.25rem; font:.42rem var(--mono); letter-spacing:.05em; color:rgba(255,255,255,.3); }
-      .ep.early small { color:var(--red); }
+      .ep small { position:absolute; bottom:.18rem; font:.36rem var(--mono); letter-spacing:.05em; color:rgba(255,255,255,.3); }
+      .ep.is-early small { color:var(--red); }
       .soon { margin-top:1.7rem; }
       .soon h3 { margin:0 0 .4rem; font-size:1.35rem; letter-spacing:-.04em; }
       .soon p { color:rgba(255,255,255,.8); margin:0; }
@@ -139,7 +139,7 @@
           ${early ? `<a class="early" href="${s.player}?ep=${early.n}&app=1">EP${pad(early.n)} IS FREE HERE ON MONDAY · SUBSCRIBERS WATCH IT NOW →</a>` : ""}
           <div class="eps-head"><h3>Episodes</h3><span class="small">${pad(outCount)} / ${pad(total)} RELEASED</span></div>
           <div class="eps">
-            ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${e.n}${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}</a>`).join("")}
+            ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "is-early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${e.n}${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}</a>`).join("")}
           </div>
         </div>`;
       }
