@@ -110,6 +110,19 @@
       .follow p { margin:.3rem 0 0; color:var(--muted); }
       .follow .ctas { margin:0; }
 
+      .getapp { margin:3.4rem auto 0; padding:2rem; border-radius:1.4rem; display:grid; grid-template-columns:1fr auto; gap:1.2rem 2rem; align-items:center; background:linear-gradient(135deg, #16171a, rgba(193,10,10,.35)); border:1px solid var(--line); }
+      .getapp-k { margin:0; font:.66rem var(--mono); color:var(--red2); letter-spacing:.08em; }
+      .getapp h2 { margin:.35rem 0 .3rem; font-size:clamp(1.5rem,2.8vw,2.2rem); letter-spacing:-.04em; }
+      .getapp-txt p:last-child { margin:0; color:var(--muted); max-width:32rem; }
+      .getapp-btns { display:flex; flex-direction:column; gap:.6rem; }
+      .store { display:flex; align-items:center; gap:.7rem; padding:.75rem 1.1rem; border-radius:.9rem; background:#fff; color:#0b0b0d; min-width:13rem; transition:transform .2s; }
+      .store:hover { transform:translateY(-2px); }
+      .store.ghost { background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.2); }
+      .store svg { width:1.6rem; height:1.6rem; flex:0 0 auto; }
+      .store span { display:flex; flex-direction:column; font-weight:700; font-size:1rem; line-height:1.1; }
+      .store small { font:.58rem var(--mono); font-weight:400; letter-spacing:.06em; opacity:.7; }
+      .getapp-note { grid-column:1 / -1; margin:0; font:.62rem var(--mono); color:var(--muted); letter-spacing:.02em; }
+      @media (max-width:760px) { .getapp { grid-template-columns:1fr; text-align:center; padding:1.6rem 1.2rem; } .getapp-txt p:last-child { margin:0 auto; } .getapp-btns { align-items:center; } }
       footer { margin-top:3.6rem; border-top:1px solid var(--line); padding:2rem 0 max(2rem, env(safe-area-inset-bottom)); }
       footer .wrap { display:flex; flex-wrap:wrap; justify-content:space-between; gap:1.2rem; font:.66rem var(--mono); color:var(--muted); }
       footer nav { display:flex; flex-wrap:wrap; gap:1.2rem; }
@@ -152,7 +165,7 @@
     <header class="nav" id="nav">
       <div class="wrap">
         <a class="logo" href="pluffyminis.html"><i></i>pluffy<span>minis</span></a>
-        <nav class="links"><a class="on" href="#top">Home</a><a href="#gallery">All Series</a></nav>
+        <nav class="links"><a class="on" href="#top">Home</a><a href="#gallery">All Series</a><a href="#getapp">Get the app</a></nav>
         <a class="sub" href="https://www.youtube.com/@itsmetslFilms?sub_confirmation=1" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>Subscribe for free</a>
         <a class="back" href="videos.html">← TONY SIGAN</a>
       </div>
@@ -167,6 +180,25 @@
           <div class="row-head"><h2><i></i>All Series · Video Gallery</h2><a href="#top">BACK TO TOP ↑</a></div>
           <div class="gallery" id="galleryGrid"></div>
         </section>
+
+        <div class="getapp" id="getapp">
+          <div class="getapp-txt">
+            <p class="getapp-k">THE PLUFFY MINIS APP</p>
+            <h2>Watch on your phone.</h2>
+            <p>Every series in one app, with the same player. New designs and episodes appear automatically — no app updates needed.</p>
+          </div>
+          <div class="getapp-btns">
+            <a class="store" href="https://github.com/tonysigan-rgb/tony-sigan-portfolio/releases/download/android-latest/pluffy-minis.apk" id="apkBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.5l1.7-3a.4.4 0 0 0-.7-.4l-1.7 3a10.6 10.6 0 0 0-9.8 0l-1.7-3a.4.4 0 1 0-.7.4l1.7 3A9.9 9.9 0 0 0 1.5 17h21a9.9 9.9 0 0 0-4.9-7.5zM7 14.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+              <span><small>DOWNLOAD FOR</small>Android (APK)</span>
+            </a>
+            <a class="store ghost" href="app.html" id="iosBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9a4.8 4.8 0 0 0-3.8-2c-1.6-.2-3.1.9-3.9.9s-2-.9-3.4-.9a5 5 0 0 0-4.2 2.6c-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6s1.7-.8 3.3-.8 2 .8 3.4.8 2.2-1.3 3-2.5a10 10 0 0 0 1.4-2.8 4.4 4.4 0 0 1-2.4-4.2zM13.9 5a4.3 4.3 0 0 0 1-3.2 4.5 4.5 0 0 0-2.9 1.5 4.2 4.2 0 0 0-1.1 3.1A3.7 3.7 0 0 0 13.9 5z"/></svg>
+              <span><small>ON IPHONE</small>Add to Home Screen</span>
+            </a>
+          </div>
+          <p class="getapp-note" id="getappNote">Android: open the downloaded file and allow “install unknown apps” if asked. iPhone: open the app page in Safari → Share → Add to Home Screen.</p>
+        </div>
 
         <div class="follow">
           <span class="mark">p.</span>
