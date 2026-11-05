@@ -260,7 +260,7 @@
           <div class="soon" id="soon"><small id="soonTop">COMING SOON</small><b id="soonEp">EP02</b><small id="soonSub">NEW EPISODE DROPPING SHORTLY</small>
             <div class="early-ctas" id="earlyCtas" hidden>
               <a class="early-btn" id="earlySub" href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>SUBSCRIBE &amp; WATCH NOW</a>
-              <small class="early-note">CONTINUE WITH GOOGLE · ALREADY SUBSCRIBED? IT PLAYS STRAIGHT AWAY</small>
+              <small class="early-note" id="earlyNote">CONTINUE WITH GOOGLE · ALREADY SUBSCRIBED? IT PLAYS STRAIGHT AWAY</small>
               <button class="early-link" id="earlyCheck" hidden>SUBSCRIBED? SIGN IN WITH GOOGLE TO UNLOCK</button>
               <small class="early-msg" id="earlyMsg"></small>
               <a class="early-link" id="earlyPriv" href="privacy.html" target="_blank" style="opacity:.6;border:0" hidden>PRIVACY POLICY</a>
@@ -396,6 +396,7 @@
       // subscribe prompt (in the YouTube app) and plays the episode here.
       const IN_APP = /[?&]app=1/.test(location.search);
       const unlockFlow = (i) => (IN_APP ? subscribeAndWatch(i) : checkSubscription(i));
+      if (IN_APP) { document.getElementById("earlyNote").textContent = "OPENS YOUTUBE TO SUBSCRIBE · THEN IT PLAYS HERE"; document.getElementById("earlyPriv").style.display = "none"; }
       document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); unlockFlow(current); });
       document.getElementById("earlyCheck").onclick = () => checkSubscription();
       const SERIES = "P.S. I Think, I Like You";
