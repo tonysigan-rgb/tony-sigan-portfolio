@@ -18,6 +18,8 @@ window.PLUFFY = {
   // To switch back on, put this value back in the quotes below:
   // 537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com
   googleClientId: "",
+  // Used only when the page is opened with ?demo=1 (for recording Google's review video)
+  demoClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
     { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
     { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
@@ -61,3 +63,4 @@ window.PLUFFY = {
     { title: "Episode 40", url: "", plot: "" },
   ],
 };
+if (/[?&]demo=1/.test(location.search) && !window.PLUFFY.googleClientId) window.PLUFFY.googleClientId = window.PLUFFY.demoClientId;
