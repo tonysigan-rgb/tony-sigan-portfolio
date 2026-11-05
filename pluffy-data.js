@@ -14,7 +14,10 @@ window.PLUFFY = {
   handle: "@itsmetslFilms",
   // Google sign-in for "subscribers watch early". Paste your OAuth Client ID here to switch it on
   // (looks like 1234567890-abc123.apps.googleusercontent.com). Empty = only the Subscribe button shows.
-  googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
+  // Paused until Google approves the app (testing mode blocks everyone not on the tester list).
+  // To switch back on, put this value back in the quotes below:
+  // 537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com
+  googleClientId: "",
   episodes: [
     { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
     { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
