@@ -58,6 +58,7 @@
       .early-ctas[hidden] { display:none; }
       .early-btn { display:inline-flex; align-items:center; gap:.5rem; padding:.9rem 1.2rem; border-radius:3rem; background:var(--red); color:#fff; font:700 .85rem var(--display); }
       .early-btn svg { width:1.15rem; height:1.15rem; }
+      .early-note { font:.55rem var(--mono); color:rgba(255,255,255,.6); margin-top:-.4rem; max-width:17rem; }
       .early-msg { min-height:1em; font:.6rem var(--mono); color:#ffb3b3; max-width:16rem; }
       .early-link[hidden] { display:none; }
       .early-link { font:.6rem var(--mono); color:rgba(255,255,255,.8); border-bottom:1px solid currentColor; padding-bottom:.15rem; }
@@ -257,6 +258,7 @@
           <div class="soon" id="soon"><small id="soonTop">COMING SOON</small><b id="soonEp">EP02</b><small id="soonSub">NEW EPISODE DROPPING SHORTLY</small>
             <div class="early-ctas" id="earlyCtas" hidden>
               <a class="early-btn" id="earlySub" href="#" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>SUBSCRIBE &amp; WATCH NOW</a>
+              <small class="early-note">CONTINUE WITH GOOGLE · ALREADY SUBSCRIBED? IT PLAYS STRAIGHT AWAY</small>
               <button class="early-link" id="earlyCheck" hidden>SUBSCRIBED? SIGN IN WITH GOOGLE TO UNLOCK</button>
               <small class="early-msg" id="earlyMsg"></small>
               <a class="early-link" id="earlyPriv" href="privacy.html" target="_blank" style="opacity:.6;border:0" hidden>PRIVACY POLICY</a>
@@ -359,7 +361,7 @@
     <footer><span>© 2026 TONY SIGAN ANAK LAPOK</span><a href="index.html">RETURN TO FRONT SELECT ↑</a></footer>
     <div class="toast" id="toast">LINK COPIED</div>
 
-    <script src="pluffy-data.js?v=20261105d"></script>
+    <script src="pluffy-data.js?v=20261105e"></script>
     <script>
       /* ================================================================
          EDIT YOUR SERIES HERE  (episodes + Monday schedule: see pluffy-data.js)
@@ -387,7 +389,7 @@
         play(typeof i === "number" ? i : current, true);
         toast("THANKS FOR SUBSCRIBING — ENJOY THE EPISODE");
       }
-      document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); subscribeAndWatch(current); });
+      document.getElementById("earlySub").addEventListener("click", (ev) => { ev.preventDefault(); checkSubscription(current); });
       document.getElementById("earlyCheck").onclick = () => checkSubscription();
       const SERIES = "P.S. I Think, I Like You";
       /* SOUNDTRACK
@@ -422,38 +424,60 @@
       }
       try { if (+localStorage.getItem("pluffy-sub-until") > Date.now()) unlockEarly(); } catch (_) {}
 
-      function checkSubscription() {
+      /* One Google button: check the account -> if subscribed, play; if not, subscribe it to the channel, then play. */
+      function checkSubscription(i) {
         const cid = window.PLUFFY.googleClientId;
         if (!cid) return;
+        const target = typeof i === "number" ? i : current;
         const msg = (t) => ($("earlyMsg").textContent = t);
         const go = () => {
           const client = google.accounts.oauth2.initTokenClient({
             client_id: cid,
-            scope: "https://www.googleapis.com/auth/youtube.readonly",
+            scope: "https://www.googleapis.com/auth/youtube.force-ssl",
             callback: async (r) => {
               if (!r.access_token) return msg("SIGN-IN CANCELLED");
-              msg("CHECKING YOUR SUBSCRIPTION…");
+              msg("CHECKING YOUR YOUTUBE ACCOUNT…");
+              const H = { Authorization: "Bearer " + r.access_token };
               try {
-                const H = { headers: { Authorization: "Bearer " + r.access_token } };
-                const ch = await (await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(window.PLUFFY.handle)}`, H)).json();
+                const ch = await (await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(window.PLUFFY.handle)}`, { headers: H })).json();
                 const channelId = ch.items && ch.items[0] && ch.items[0].id;
-                const sub = await (await fetch(`https://www.googleapis.com/youtube/v3/subscriptions?part=id&mine=true&forChannelId=${channelId}`, H)).json();
+                if (!channelId) throw new Error("channel");
+                const sub = await (await fetch(`https://www.googleapis.com/youtube/v3/subscriptions?part=id&mine=true&forChannelId=${channelId}`, { headers: H })).json();
+                let fresh = false;
+                if (!(sub.items && sub.items.length)) {
+                  msg("SUBSCRIBING YOU TO THE CHANNEL…");
+                  const res = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet", {
+                    method: "POST", headers: { ...H, "Content-Type": "application/json" },
+                    body: JSON.stringify({ snippet: { resourceId: { kind: "youtube#channel", channelId } } }),
+                  });
+                  if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    const reason = (((err.error || {}).errors || [])[0] || {}).reason || "";
+                    if (reason !== "subscriptionDuplicate") throw new Error(reason || "subscribe");
+                  }
+                  fresh = true;
+                }
                 try { google.accounts.oauth2.revoke(r.access_token, () => {}); } catch (_) {}
-                if (sub.items && sub.items.length) {
-                  try { localStorage.setItem("pluffy-sub-until", String(Date.now() + 7 * 864e5)); } catch (_) {}
-                  unlockEarly(); msg(""); const rel = pad(EPISODES.filter((e) => e.id).length); $("released").textContent = $("sheetCount").textContent = `${rel} / ${pad(total)} RELEASED`; render(); play(current, true);
-                  toast("THANKS FOR SUBSCRIBING — UNLOCKED");
-                } else msg("THIS GOOGLE ACCOUNT ISN'T SUBSCRIBED YET. SUBSCRIBE, THEN TRY AGAIN.");
-              } catch (_) { msg("COULDN'T CHECK RIGHT NOW. PLEASE TRY AGAIN."); }
+                try { localStorage.setItem("pluffy-sub-until", String(Date.now() + 7 * 864e5)); } catch (_) {}
+                unlockEarly(); msg("");
+                const rel = pad(EPISODES.filter((e) => e.id).length);
+                $("released").textContent = $("sheetCount").textContent = `${rel} / ${pad(total)} RELEASED`;
+                const si = document.getElementById("subInfo"); if (si) si.style.display = "none";
+                play(target, true);
+                toast(fresh ? "SUBSCRIBED — THANK YOU! ENJOY THE EPISODE" : "WELCOME BACK, SUBSCRIBER — ENJOY");
+              } catch (e) {
+                try { google.accounts.oauth2.revoke(r.access_token, () => {}); } catch (_) {}
+                msg(e.message === "subscriptionForbidden" ? "THIS ACCOUNT CAN'T SUBSCRIBE (E.G. IT'S THE CHANNEL ITSELF)." : "SOMETHING WENT WRONG. PLEASE TRY AGAIN.");
+              }
             },
           });
           client.requestAccessToken();
         };
         if (window.google && google.accounts) return go();
-        const s = document.createElement("script");
-        s.src = "https://accounts.google.com/gsi/client"; s.onload = go;
-        s.onerror = () => msg("COULDN'T LOAD GOOGLE SIGN-IN.");
-        document.head.appendChild(s);
+        const sc = document.createElement("script");
+        sc.src = "https://accounts.google.com/gsi/client"; sc.onload = go;
+        sc.onerror = () => msg("COULDN'T LOAD GOOGLE SIGN-IN.");
+        document.head.appendChild(sc);
       }
 
       const dayLabel = (e) => new Date(e.release + "T00:00:00+08:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
@@ -479,7 +503,7 @@
       $("epCount").textContent = `${pad(total)} EPISODES`;
       $("released").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       // Under the episode list: point straight at the early episode on YouTube when there is one
-      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = SUBSCRIBE; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW`; a.removeAttribute("target"); a.onclick = (ev) => { ev.preventDefault(); subscribeAndWatch(e); }; } })();
+      (() => { const e = EPISODES.findIndex((x) => x.early); if (e >= 0) { const a = document.getElementById("subInfo"); a.href = SUBSCRIBE; a.textContent = `SUBSCRIBE & WATCH EP${pad(e + 1)} NOW`; a.removeAttribute("target"); a.onclick = (ev) => { ev.preventDefault(); play(e, true); checkSubscription(e); }; } })();
       $("sheetCount").textContent = `${pad(released)} / ${pad(total)} RELEASED`;
       $("chipText").textContent = `ALL EPISODES · ${pad(total)}`;
 
@@ -538,7 +562,7 @@
         $("earlyCtas").hidden = !ep.early;
         $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
         $("soonSub").textContent = ep.early ? "SUBSCRIBERS WATCH IT NOW" : "NEW EPISODE EVERY MONDAY";
-        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = $("earlyPriv").hidden = !window.PLUFFY.googleClientId; }
+        if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = true; $("earlyPriv").hidden = false; }
         $("soonEp").textContent = `EP${pad(current + 1)}`;
         P.classList.toggle("locked", !ep.id);
         $("bar").style.width = "0";
