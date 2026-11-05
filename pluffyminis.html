@@ -281,6 +281,7 @@
       document.addEventListener("click", (e) => {
         const a = e.target.closest("[data-teaser]"); if (!a) return;
         e.preventDefault();
+        location.href = "teaser.html"; return;   // teaser plays in the pluffy minis teaser player
         $("modalTitle").textContent = a.dataset.title.toUpperCase();
         frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${a.dataset.teaser}?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Teaser"></iframe>`;
         modal.hidden = false;
