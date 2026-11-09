@@ -52,6 +52,10 @@
       .soon small { font:.7rem var(--mono); color:var(--muted); }
       .soon { z-index:3; background-color:#000 !important; }
       .player.locked .center { display:none; }
+      /* Series logo watermark (top left of the video) */
+      .watermark { position:absolute; z-index:2; top:4.1rem; left:.9rem; width:5.2rem; height:auto; opacity:.72; pointer-events:none; filter:drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+      .player.fs .watermark { top:max(1rem, env(safe-area-inset-top)); }
+      .player.locked .watermark { display:none; }
       .in-app .top { display:none !important; }
       .in-app .bar .home { display:grid !important; }
       .sub-top { margin-left:auto; margin-right:1rem; display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:2rem; background:var(--red); color:#fff; font:.64rem var(--mono); }
@@ -267,6 +271,7 @@
               <small class="early-msg" id="earlyMsg"></small>
               <a class="early-link" id="earlyPriv" href="privacy.html" target="_blank" style="opacity:.6;border:0" hidden>PRIVACY POLICY</a>
             </div></div>
+          <img class="watermark" src="assets/ps-logo-white.png" alt="" aria-hidden="true" />
           <div class="tap" id="tap" aria-hidden="true"></div>
 
           <div class="ui" id="ui">
