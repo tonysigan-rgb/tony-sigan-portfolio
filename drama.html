@@ -153,6 +153,7 @@
       /* ---------- Shared: episode grid + range tabs ---------- */
       .ranges { display:flex; gap:.4rem; margin-top:.9rem; overflow-x:auto; }
       .ranges:empty { display:none; }
+      .ranges .teaser-pill { flex:0 0 auto; padding:.4rem .75rem; border-radius:2rem; background:var(--red); border:1px solid var(--red); color:#fff; font:.62rem var(--mono); letter-spacing:.04em; }
       .ranges button { flex:0 0 auto; padding:.4rem .75rem; border-radius:2rem; border:1px solid var(--line); font:.62rem var(--mono); color:var(--muted); }
       .ranges button.on { border-color:var(--paper); color:var(--paper); }
       .eps { display:grid; grid-template-columns:repeat(auto-fill,minmax(3.4rem,1fr)); gap:.5rem; }
@@ -540,6 +541,12 @@
             rangeEl.appendChild(b);
           }
         }
+        // Series teaser: opens the teaser player
+        const t = document.createElement("a");
+        t.className = "teaser-pill";
+        t.href = "teaser.html?series=ps" + (/[?&]app=1/.test(location.search) ? "&app=1" : "");
+        t.innerHTML = "▶ TEASER";
+        rangeEl.prepend(t);
         gridEl.innerHTML = "";
         for (let i = page * PER_PAGE; i < Math.min(total, (page + 1) * PER_PAGE); i++) {
           const ep = EPISODES[i];

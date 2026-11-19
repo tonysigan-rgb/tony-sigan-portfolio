@@ -51,6 +51,7 @@
       .player.ended .end { display:flex; }
       .end small { font:.65rem var(--mono); color:rgba(255,255,255,.65); letter-spacing:.05em; }
       .end b { font-size:2rem; letter-spacing:-.04em; }
+      [hidden] { display:none !important; }
     </style>
   </head>
   <body>
@@ -61,23 +62,25 @@
         <div class="tap" id="tap"></div>
         <div class="ui">
           <div class="shade-t"></div><div class="shade-b"></div>
-          <div class="bar"><a class="backbtn" id="backBtn" href="pluffyminis.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a><span class="badge">TEASER</span><span class="series">The Deadline</span></div>
+          <div class="bar"><a class="backbtn" id="backBtn" href="pluffyminis.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a><span class="badge">TEASER</span><span class="series" id="tSeries">The Deadline</span></div>
           <button class="center" id="center" aria-label="Play teaser"><svg id="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
           <div class="meta">
-            <small>◷ COMING SOON · PLUFFY MINIS ORIGINAL</small>
-            <h1>The Deadline</h1>
-            <p>One office. One night. One deadline neither of them can afford to miss.</p>
+            <small id="tKicker">◷ COMING SOON · PLUFFY MINIS ORIGINAL</small>
+            <h1 id="tTitle">The Deadline</h1>
+            <p id="tBlurb">One office. One night. One deadline neither of them can afford to miss.</p>
             <div class="ctas">
               <a class="pill" id="sub" href="#" target="_blank" rel="noreferrer">▶ Subscribe for updates</a>
+              <a class="pill" id="watchEp" href="drama.html?ep=1" hidden>▶ Watch EP01</a>
               <a class="pill ghost" href="pluffyminis.html" id="more">All series</a>
             </div>
           </div>
           <div class="progress" id="progress"><span><i id="fill"></i></span></div>
         </div>
         <div class="end">
-          <small>THE DEADLINE · COMING SOON</small>
-          <b>See you soon.</b>
+          <small id="eKicker">THE DEADLINE · COMING SOON</small>
+          <b id="eTitle">See you soon.</b>
           <a class="pill" id="sub2" href="#" target="_blank" rel="noreferrer">▶ Subscribe so you don't miss it</a>
+          <a class="pill" id="watchEp2" href="drama.html?ep=1" hidden>▶ Start watching · EP01</a>
           <button class="pill ghost" id="replay">↺ Watch again</button>
         </div>
       </div>
@@ -85,11 +88,35 @@
 
     <script src="pluffy-data.js?v=20261105e"></script>
     <script>
-      const TEASER = "NqRSRWf0IjQ";
+      /* One teaser player for every series: teaser.html?series=ps  ·  teaser.html (= The Deadline) */
+      const TEASERS = {
+        deadline: { id: "NqRSRWf0IjQ", title: "The Deadline", poster: "assets/projects/the-deadline-poster.jpg",
+          kicker: "◷ COMING SOON · PLUFFY MINIS ORIGINAL", blurb: "One office. One night. One deadline neither of them can afford to miss.",
+          endKicker: "THE DEADLINE · COMING SOON", endTitle: "See you soon.", back: "pluffyminis.html", appBack: "app.html#/series/deadline" },
+        ps: { id: "F8JIqLAV76I", title: "P.S. I Think, I Like You", poster: "assets/projects/ps-i-like-you-poster.jpg",
+          kicker: "● NOW STREAMING · PLUFFY MINIS ORIGINAL", blurb: "Some feelings don't arrive all at once — they sneak in, one small moment at a time.",
+          endKicker: "P.S. I THINK, I LIKE YOU · NOW STREAMING", endTitle: "Ready for the full story?", back: "drama.html", appBack: "app.html#/series/ps", watch: true },
+      };
+      const key = (location.search.match(/[?&]series=([\w-]+)/) || [])[1];
+      const T = TEASERS[key] || TEASERS.deadline;
+      const TEASER = T.id;
       const $ = (id) => document.getElementById(id);
       const P = $("P");
       const inApp = /[?&]app=1/.test(location.search);
-      if (inApp) { document.documentElement.classList.add("in-app"); $("more").style.display = "none"; $("backBtn").href = "app.html#/series/deadline"; }
+      document.title = `${T.title} — Teaser · pluffy minis`;
+      document.querySelector(".poster").style.backgroundImage = `url("${T.poster}")`;
+      $("tSeries").textContent = $("tTitle").textContent = T.title;
+      $("tKicker").textContent = T.kicker; $("tBlurb").textContent = T.blurb;
+      $("eKicker").textContent = T.endKicker; $("eTitle").textContent = T.endTitle;
+      $("backBtn").href = inApp ? T.appBack : T.back;
+      if (T.watch) {   // series already streaming: offer EP01 instead of "subscribe for updates"
+        const ep1 = "drama.html?ep=1" + (inApp ? "&app=1" : "");
+        $("watchEp").href = $("watchEp2").href = ep1;
+        $("watchEp").hidden = $("watchEp2").hidden = false;
+        $("sub").hidden = true; $("sub2").textContent = "▶ Subscribe for new episodes";
+        $("sub2").classList.add("ghost");
+      }
+      if (inApp) { document.documentElement.classList.add("in-app"); $("more").style.display = "none"; }
       const SUB = (window.PLUFFY && window.PLUFFY.subscribe) || "https://www.youtube.com/@itsmetslFilms?sub_confirmation=1";
       $("sub").href = $("sub2").href = SUB;
 
