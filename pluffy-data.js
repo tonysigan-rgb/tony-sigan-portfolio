@@ -21,7 +21,7 @@ window.PLUFFY = {
     { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
     { title: "Episode 3", url: "https://youtube.com/shorts/K53sfH6Mbok", plot: "" },
     { title: "Episode 4", url: "https://youtube.com/shorts/VnYPPxy1yxw", plot: "", release: "2026-11-09" },
-    { title: "Episode 5", url: "", plot: "" },
+    { title: "Episode 5", url: "https://youtube.com/shorts/GfihY1PbGyM", plot: "", release: "2026-11-23" },
     { title: "Episode 6", url: "", plot: "" },
     { title: "Episode 7", url: "", plot: "" },
     { title: "Episode 8", url: "", plot: "" },
