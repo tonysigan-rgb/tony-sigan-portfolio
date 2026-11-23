@@ -224,8 +224,9 @@
       </div>
     </div>
 
-    <script src="pluffy-data.js?v=20261123c"></script>
+    <script src="pluffy-data.js?v=20261123d"></script>
     <script>
+    window.PLUFFY.whenReady(function () {
       /* ================================================================
          EDIT YOUR SERIES HERE
          status: "out"  -> label shows `label`, card opens `link`
@@ -252,7 +253,7 @@
 
       // "EP01–03 OUT NOW" label + early-access notice come from the Monday schedule in pluffy-data.js
       const relT = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
-      const ytOk = (e) => /(?:shorts\/|youtu\.be\/|[?&]v=)[\w-]{11}/.test(e.url || "");
+      const ytOk = (e) => e.uploaded || /(?:shorts\/|youtu\.be\/|[?&]v=)[\w-]{11}/.test(e.url || "");
       const eps = window.PLUFFY.episodes;
       const outCount = eps.filter((e) => ytOk(e) && relT(e) <= Date.now()).length;
       const earlyEp = eps.findIndex((e) => ytOk(e) && relT(e) > Date.now());
@@ -331,6 +332,7 @@
       const nav = $("nav");
       const onScroll = () => nav.classList.toggle("solid", scrollY > 40);
       addEventListener("scroll", onScroll, { passive: true }); onScroll();
+        });
     </script>
   </body>
 </html>

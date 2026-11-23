@@ -63,3 +63,54 @@ window.PLUFFY = {
     { title: "Episode 40", url: "", plot: "" },
   ],
 };
+
+/* ================================================================
+   UPLOADED-EPISODE CHECK
+   An episode can only be watched once its video file (ps-epNN.mp4) is in the Cloudflare folder.
+   Until then it shows as SOON on every page and in the apps, even if it has a YouTube link.
+   Pages call PLUFFY.whenReady(fn): it asks Cloudflare which files exist, sets
+   episode.uploaded = true / false, then runs fn. If Cloudflare can't be reached, the
+   episodes keep their YouTube-link behaviour so the site never goes blank.
+   ================================================================ */
+(function () {
+  const P = window.PLUFFY;
+  const base = (P.videoBase || "").replace(/\/?$/, "/");
+  P.fileUrl = (i) => {
+    const e = P.episodes[i] || {};
+    if (e.video === false || !P.videoBase) return "";
+    const name = e.video || (P.videoPattern || "").replace("{nn}", String(i + 1).padStart(2, "0"));
+    return !name ? "" : /^https?:/.test(name) ? name : base + name;
+  };
+  // true / false per episode, or null if the check couldn't run
+  const KEY = "pluffy-uploaded-v1", MAX_AGE = 5 * 60 * 1000;
+  const head = (u) => fetch(u, { method: "HEAD", cache: "no-store", mode: "cors" }).then((r) => r.ok, () => null);
+  async function check() {
+    try { const c = JSON.parse(sessionStorage.getItem(KEY) || "null"); if (c && Date.now() - c.t < MAX_AGE && c.n === P.episodes.length) return c.list; } catch (_) {}
+    const n = P.episodes.length, list = new Array(n).fill(false);
+    let misses = 0;
+    // check in small groups; stop after 3 missing in a row past the last uploaded file
+    for (let i = 0; i < n && misses < 3; i += 3) {
+      const idx = [i, i + 1, i + 2].filter((k) => k < n);
+      const res = await Promise.all(idx.map((k) => (P.fileUrl(k) ? head(P.fileUrl(k)) : false)));
+      if (res.some((r) => r === null)) return null;   // Cloudflare unreachable / blocked
+      res.forEach((ok, j) => { list[idx[j]] = ok; misses = ok ? 0 : misses + 1; });
+    }
+    try { sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), n, list })); } catch (_) {}
+    return list;
+  }
+  let done = null;
+  P.whenReady = (fn) => {
+    if (!done) {
+      const timeout = new Promise((ok) => setTimeout(() => ok(null), 6000));
+      done = Promise.race([check().catch(() => null), timeout]).then((list) => {
+        P.checked = !!list;
+        P.episodes.forEach((e, i) => {
+          e.uploaded = list ? !!list[i] : null;
+          if (list && !list[i]) e.url = "";   // not uploaded -> SOON everywhere
+        });
+        return list;
+      });
+    }
+    done.then(() => fn());
+  };
+})();

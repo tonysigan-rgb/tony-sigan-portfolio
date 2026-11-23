@@ -76,8 +76,9 @@
   <body>
     <div id="app"></div>
 
-    <script src="pluffy-data.js?v=20261123c"></script>
+    <script src="pluffy-data.js?v=20261123d"></script>
     <script>
+    window.PLUFFY.whenReady(function () {
       /* ---------- SERIES (add a new show here) ---------- */
       const SERIES = [
         {
@@ -105,7 +106,8 @@
       const rel = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
       const eps = (window.PLUFFY && window.PLUFFY.episodes) || [];
       const now = Date.now();
-      const status = eps.map((e, i) => ({ n: i + 1, out: !!vid(e.url) && rel(e) <= now, early: !!vid(e.url) && rel(e) > now }));
+      const has = (e) => e.uploaded || !!vid(e.url);   // uploaded to Cloudflare (or YouTube-only if the check could not run)
+      const status = eps.map((e, i) => ({ n: i + 1, out: has(e) && rel(e) <= now, early: has(e) && rel(e) > now }));
       const outCount = status.filter((s) => s.out).length;
       const early = status.find((s) => s.early);
       const label = (s) => (s.teaser ? "UPCOMING" : outCount > 1 ? `EP01–${pad(outCount)} OUT NOW` : "EP01 OUT NOW");
@@ -171,6 +173,7 @@
       }
       addEventListener("hashchange", route);
       route();
+        });
     </script>
   </body>
 </html>

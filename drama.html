@@ -376,8 +376,9 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261123c"></script>
+    <script src="pluffy-data.js?v=20261123d"></script>
     <script>
+    window.PLUFFY.whenReady(function () {
       /* ================================================================
          EDIT YOUR SERIES HERE  (episodes + Monday schedule: see pluffy-data.js)
          - url:   paste the YouTube link (Shorts, youtu.be or watch?v=).
@@ -438,7 +439,7 @@
       };
       EPISODES.forEach((e, i) => {
         const vid = getId(e.url);
-        e.cf = videoUrl(e, i);
+        e.cf = e.uploaded === false ? "" : videoUrl(e, i);   // not in the Cloudflare folder yet -> SOON
         const key = vid || (e.cf ? `cf-ep${String(i + 1).padStart(3, "0")}` : null);
         e.early = !!key && releaseTime(e) > Date.now();   // on YouTube already, unlocks here on Monday
         e.yt = key;
@@ -965,6 +966,7 @@
       const s = document.createElement("script");
       s.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(s);
+        });
     </script>
   </body>
 </html>
