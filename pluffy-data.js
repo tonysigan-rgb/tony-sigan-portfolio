@@ -15,9 +15,9 @@ window.PLUFFY = {
   // Google sign-in for "subscribers watch early". Paste your OAuth Client ID here to switch it on
   // (looks like 1234567890-abc123.apps.googleusercontent.com). Empty = only the Subscribe button shows.
   // Google sign-in: checks the viewer's subscription, subscribes them if needed, then plays.
-  // Cloudflare R2 video storage (bucket "pluffy-minis"). Episode N plays /ps-epNN.mp4 from here when that
+  // Cloudflare R2 video storage (bucket "pluffy-minis", folder "P.S. I Think, I Like You"). Episode N plays /ps-epNN.mp4 from here when that
   // file is in the bucket; if it isn't there yet, the YouTube link plays instead.
-  videoBase: "https://pub-defd093bf93442e4b37f513a47e645b2.r2.dev/",
+  videoBase: "https://pub-defd093bf93442e4b37f513a47e645b2.r2.dev/P.S.%20I%20Think%2C%20I%20Like%20You/",
   videoPattern: "ps-ep{nn}.mp4",
   googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
