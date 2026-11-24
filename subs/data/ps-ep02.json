@@ -1,0 +1,199 @@
+{
+ "episode": 2,
+ "status": "translated",
+ "source": "whisper large-v3 + reviewed by Claude",
+ "cues": [
+  {
+   "s": 11.15,
+   "e": 13.42,
+   "en": "All these years, I thought you didn't like me.",
+   "ms": "Selama ini, aku ingat kau tak suka aku.",
+   "zh": "这么多年，我一直以为你不喜欢我。",
+   "ko": "그동안 난 네가 날 싫어하는 줄 알았어."
+  },
+  {
+   "s": 14.74,
+   "e": 16.05,
+   "en": "Well, you never made it easy.",
+   "ms": "Kau pun tak pernah memudahkannya.",
+   "zh": "你也从来没让这事变得容易啊。",
+   "ko": "글쎄, 너도 쉽게 굴진 않았잖아."
+  },
+  {
+   "s": 16.11,
+   "e": 18.03,
+   "en": "You were always too busy competing with me.",
+   "ms": "Kau selalu sibuk sangat nak bersaing dengan aku.",
+   "zh": "你总是忙着跟我较劲。",
+   "ko": "넌 맨날 나랑 경쟁하느라 바빴고."
+  },
+  {
+   "s": 18.37,
+   "e": 19.44,
+   "en": "What can I say?",
+   "ms": "Nak buat macam mana?",
+   "zh": "我能说什么呢？",
+   "ko": "어쩌겠어?"
+  },
+  {
+   "s": 19.71,
+   "e": 21.38,
+   "en": "I had to get your attention somehow.",
+   "ms": "Aku terpaksa cari cara untuk tarik perhatian kau.",
+   "zh": "我总得想办法引起你的注意吧。",
+   "ko": "어떻게든 네 관심을 끌어야 했으니까."
+  },
+  {
+   "s": 21.67,
+   "e": 23.12,
+   "en": "You were always looking at Owen.",
+   "ms": "Mata kau selalu pada Owen.",
+   "zh": "你的眼里总是只有欧文。",
+   "ko": "넌 항상 오웬만 봤잖아."
+  },
+  {
+   "s": 23.52,
+   "e": 24.51,
+   "en": "Oh, please.",
+   "ms": "Sudahlah.",
+   "zh": "拜托。",
+   "ko": "됐거든."
+  },
+  {
+   "s": 24.6,
+   "e": 27.92,
+   "en": "You just couldn't stand the thought of losing to Owen,\neven when it came to me.",
+   "ms": "Kau cuma tak sanggup kalah dengan Owen,\nwalaupun soal aku.",
+   "zh": "你只是受不了输给欧文，\n哪怕是在我这件事上。",
+   "ko": "넌 그냥 오웬한테 지는 게 싫었던 거야.\n나에 관해서조차도."
+  },
+  {
+   "s": 39.36,
+   "e": 41.49,
+   "en": "Didn't know early attendance came with a kissing bonus?",
+   "ms": "Tak sangka datang awal dapat bonus ciuman?",
+   "zh": "没想到早到还有接吻福利？",
+   "ko": "일찍 오면 키스 보너스도 있는 줄 몰랐네?"
+  },
+  {
+   "s": 42.07,
+   "e": 43.2,
+   "en": "How did you get in?",
+   "ms": "Macam mana kau masuk?",
+   "zh": "你怎么进来的？",
+   "ko": "어떻게 들어왔어?"
+  },
+  {
+   "s": 43.23,
+   "e": 45.7,
+   "en": "Well, my mother-in-law just got back from a business trip.",
+   "ms": "Mak mentua aku baru pulang dari perjalanan kerja.",
+   "zh": "嗯，我丈母娘刚出差回来。",
+   "ko": "장모님이 출장에서 막 돌아오셨거든."
+  },
+  {
+   "s": 45.75,
+   "e": 46.76,
+   "en": "She let me in.",
+   "ms": "Dia yang bagi aku masuk.",
+   "zh": "是她让我进来的。",
+   "ko": "들여보내 주시더라."
+  },
+  {
+   "s": 49.06,
+   "e": 49.96,
+   "en": "Funny.",
+   "ms": "Kelakar.",
+   "zh": "真好笑。",
+   "ko": "웃기네."
+  },
+  {
+   "s": 50.06,
+   "e": 52.89,
+   "en": "You never told Raymond what happened\nwhen we shared a room that night.",
+   "ms": "Kau tak pernah beritahu Raymond apa yang berlaku\nmasa kita berkongsi bilik malam itu.",
+   "zh": "你从来没告诉雷蒙德，\n那晚我们同住一个房间时发生了什么。",
+   "ko": "그날 밤 우리가 같은 방 썼을 때 무슨 일 있었는지\n레이먼드한테 한 번도 말 안 했지?"
+  },
+  {
+   "s": 56.53,
+   "e": 57.5,
+   "en": "Nothing happened.",
+   "ms": "Tak ada apa-apa yang berlaku.",
+   "zh": "什么都没发生。",
+   "ko": "아무 일도 없었어."
+  },
+  {
+   "s": 61.08,
+   "e": 61.98,
+   "en": "Did it?",
+   "ms": "Betul ke?",
+   "zh": "真的吗？",
+   "ko": "정말?"
+  },
+  {
+   "s": 67.42,
+   "e": 69.03,
+   "en": "Not when you're like this.",
+   "ms": "Bukan masa kau macam ni.",
+   "zh": "你这样的时候不行。",
+   "ko": "네가 이러는데 그럴 순 없지."
+  },
+  {
+   "s": 69.1,
+   "e": 70.47,
+   "en": "Then stay.",
+   "ms": "Kalau macam tu, tinggallah.",
+   "zh": "那就留下来。",
+   "ko": "그럼 있어."
+  },
+  {
+   "s": 73.67,
+   "e": 76.0,
+   "en": "I like you, but I don't know how to tell you.",
+   "ms": "Aku suka kau, tapi aku tak tahu macam mana nak beritahu.",
+   "zh": "我喜欢你，但我不知道该怎么告诉你。",
+   "ko": "너 좋아해. 근데 어떻게 말해야 할지 모르겠어."
+  },
+  {
+   "s": 76.62,
+   "e": 77.71,
+   "en": "I can see that.",
+   "ms": "Aku nampak.",
+   "zh": "看得出来。",
+   "ko": "티 나."
+  },
+  {
+   "s": 85.17,
+   "e": 88.32,
+   "en": "I'm just saying, I got to sleep next to him first.",
+   "ms": "Aku cuma cakap, aku yang dapat tidur sebelah dia dulu.",
+   "zh": "我只是说说，我可是先睡在他旁边的。",
+   "ko": "그냥 하는 말인데, 그 옆에서 먼저 잔 건 나야."
+  },
+  {
+   "s": 90.52,
+   "e": 92.51,
+   "en": "You make it sound like you won a billion dollars.",
+   "ms": "Cara kau cakap macam kau menang sebilion dolar.",
+   "zh": "你说得好像中了十亿大奖一样。",
+   "ko": "무슨 10억 달러라도 딴 것처럼 말하네."
+  },
+  {
+   "s": 94.26,
+   "e": 95.16,
+   "en": "Didn't I?",
+   "ms": "Bukan ke?",
+   "zh": "难道不是吗？",
+   "ko": "아니야?"
+  },
+  {
+   "s": 112.57,
+   "e": 113.98,
+   "en": "I received your letter.",
+   "ms": "Aku sudah terima surat kau.",
+   "zh": "我收到你的信了。",
+   "ko": "네 편지 받았어."
+  }
+ ]
+}

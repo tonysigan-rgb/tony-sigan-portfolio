@@ -431,7 +431,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261124b"></script>
+    <script src="pluffy-data.js?v=20261124c"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -942,9 +942,14 @@
       function loadCues() {
         const key = `${current}|${ccLang}`; if (key === cueKey) return; cueKey = key; cues = []; showCue("");
         if (ccLang === "off") return;
-        const url = `subs/ps-ep${pad(current + 1)}.${ccLang}.vtt?v=${window.PLUFFY.subsVersion || 1}`;
-        (ccCache[url] ||= fetch(url).then((r) => (r.ok ? r.text() : "")).then(parseVtt).catch(() => []))
-          .then((c) => { if (cueKey !== key) return; cues = c; if (!c.length && EPISODES[current].id) hint("SUBTITLES COMING SOON FOR THIS EPISODE", 2000); });
+        const get = (lang) => { const url = `subs/ps-ep${pad(current + 1)}.${lang}.vtt?v=${window.PLUFFY.subsVersion || 1}`; return (ccCache[url] ||= fetch(url).then((r) => (r.ok ? r.text() : "")).then(parseVtt).catch(() => [])); };
+        get(ccLang).then((c) => (c.length || ccLang === "en" ? [c, false] : get("en").then((e) => [e, e.length > 0])))
+          .then(([c, fallback]) => {
+            if (cueKey !== key) return; cues = c;
+            if (!EPISODES[current].id) return;
+            if (fallback) hint("TRANSLATION COMING SOON · SHOWING ENGLISH", 2200);
+            else if (!c.length) hint("SUBTITLES COMING SOON FOR THIS EPISODE", 2000);
+          });
       }
       function showCue(t) { if (t === lastCueText) return; lastCueText = t; const el = $("subs"); el.innerHTML = ""; if (t) { const sp = document.createElement("span"); sp.textContent = t; el.appendChild(sp); } }
       (function tick() {

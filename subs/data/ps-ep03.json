@@ -1,0 +1,192 @@
+{
+ "episode": 3,
+ "status": "translated",
+ "source": "whisper large-v3 + reviewed by Claude",
+ "cues": [
+  {
+   "s": 5.4,
+   "e": 7.31,
+   "en": "It's usually just us two.",
+   "ms": "Biasanya kami berdua saja.",
+   "zh": "平时就只有我们俩。",
+   "ko": "보통은 우리 둘뿐이야."
+  },
+  {
+   "s": 7.42,
+   "e": 10.79,
+   "en": "Theo's so boring, always reading at dinner\nand shushing me.",
+   "ms": "Theo membosankan betul, asyik membaca masa makan malam\ndan suruh aku diam.",
+   "zh": "西奥太无聊了，吃晚饭也在看书，\n还老让我小声点。",
+   "ko": "테오는 너무 재미없어. 저녁 먹을 때도 책만 읽고\n나보고 조용히 하래."
+  },
+  {
+   "s": 11.6,
+   "e": 12.5,
+   "en": "Mom.",
+   "ms": "Mak.",
+   "zh": "妈。",
+   "ko": "엄마."
+  },
+  {
+   "s": 12.74,
+   "e": 15.16,
+   "en": "At college, he's always glued to Lizzie.",
+   "ms": "Di kolej, dia asyik melekat dengan Lizzie.",
+   "zh": "在大学里，他总是黏着莉兹。",
+   "ko": "대학에선 맨날 리지한테 붙어 있고."
+  },
+  {
+   "s": 15.2,
+   "e": 16.81,
+   "en": "Doesn't even spare us a glance.",
+   "ms": "Langsung tak pandang kami pun.",
+   "zh": "连看都不看我们一眼。",
+   "ko": "우리한텐 눈길도 안 줘.",
+   "check": "the audio sounds like \"a glass\"; \"a glance\" fits the sentence"
+  },
+  {
+   "s": 21.71,
+   "e": 24.87,
+   "en": "So, which one of you three is going to be my son-in-law?",
+   "ms": "Jadi, siapa antara kamu bertiga yang akan jadi menantu saya?",
+   "zh": "那么，你们三个谁要当我女婿？",
+   "ko": "그래서, 너희 셋 중에 누가 내 사위가 될 거니?"
+  },
+  {
+   "s": 27.86,
+   "e": 28.44,
+   "en": "Me?",
+   "ms": "Saya?",
+   "zh": "我？",
+   "ko": "저요?"
+  },
+  {
+   "s": 28.52,
+   "e": 29.21,
+   "en": "Mom!",
+   "ms": "Mak!",
+   "zh": "妈！",
+   "ko": "엄마!"
+  },
+  {
+   "s": 30.12,
+   "e": 33.67,
+   "en": "Writing letters to all your crushes\nand then handing them over yourself?",
+   "ms": "Tulis surat untuk semua crush kau,\nlepas tu serahkan sendiri?",
+   "zh": "给所有暗恋对象写信，\n还亲手送过去？",
+   "ko": "좋아하는 사람들한테 전부 편지를 쓰고\n그걸 직접 건네줬다고?"
+  },
+  {
+   "s": 34.26,
+   "e": 36.62,
+   "en": "Theo, what the fuck is wrong with you?",
+   "ms": "Theo, apa masalah kau ni sebenarnya?!",
+   "zh": "西奥，你他妈到底怎么回事？",
+   "ko": "테오, 너 대체 뭐가 문제야?!"
+  },
+  {
+   "s": 36.66,
+   "e": 39.04,
+   "en": "You better not fuck up your own life again.",
+   "ms": "Jangan kau rosakkan hidup kau sendiri lagi.",
+   "zh": "你最好别再把自己的人生搞砸了。",
+   "ko": "또 네 인생 망치지 마."
+  },
+  {
+   "s": 39.08,
+   "e": 40.51,
+   "en": "Hard decision, huh?",
+   "ms": "Susah nak buat keputusan, kan?",
+   "zh": "很难抉择吧？",
+   "ko": "결정하기 어렵지?"
+  },
+  {
+   "s": 51.05,
+   "e": 52.5,
+   "en": "Sending it was a mistake.",
+   "ms": "Hantar surat itu satu kesilapan.",
+   "zh": "把信寄出去是个错误。",
+   "ko": "그걸 보낸 건 실수였어."
+  },
+  {
+   "s": 52.79,
+   "e": 56.43,
+   "en": "Those feelings, they're from a long time ago.",
+   "ms": "Perasaan itu... semuanya sudah lama berlalu.",
+   "zh": "那些感情，都是很久以前的事了。",
+   "ko": "그 감정들은 다 오래전 거야."
+  },
+  {
+   "s": 58.28,
+   "e": 59.23,
+   "en": "Come here.",
+   "ms": "Mari sini.",
+   "zh": "过来。",
+   "ko": "이리 와."
+  },
+  {
+   "s": 65.76,
+   "e": 67.34,
+   "en": "Remember when you were a kid?",
+   "ms": "Ingat masa kau kecil dulu?",
+   "zh": "还记得你小时候吗？",
+   "ko": "너 어렸을 때 기억나?"
+  },
+  {
+   "s": 67.38,
+   "e": 69.9,
+   "en": "You could never decide which candy flavor to pick,",
+   "ms": "Kau tak pernah boleh pilih nak gula-gula perisa apa,",
+   "zh": "你总是决定不了要哪种口味的糖果，",
+   "ko": "넌 무슨 맛 사탕을 고를지 늘 못 정했지."
+  },
+  {
+   "s": 69.94,
+   "e": 72.75,
+   "en": "even when you knew all that sugar\nwasn't good for your teeth.",
+   "ms": "walaupun kau tahu gula sebanyak itu\ntak elok untuk gigi.",
+   "zh": "哪怕你知道吃那么多糖\n对牙齿不好。",
+   "ko": "그 많은 설탕이\n이에 안 좋다는 걸 알면서도."
+  },
+  {
+   "s": 73.52,
+   "e": 76.28,
+   "en": "Sometimes you just have to stop overthinking every choice",
+   "ms": "Kadang-kadang kau cuma perlu berhenti terlalu memikirkan setiap pilihan",
+   "zh": "有时候你只需要别再对每个选择想太多，",
+   "ko": "가끔은 모든 선택을 너무 깊이 고민하지 말고"
+  },
+  {
+   "s": 76.3,
+   "e": 77.9,
+   "en": "and let things unfold naturally.",
+   "ms": "dan biarkan semuanya berlaku dengan sendirinya.",
+   "zh": "顺其自然就好。",
+   "ko": "자연스럽게 흘러가게 둬야 해."
+  },
+  {
+   "s": 77.92,
+   "e": 80.77,
+   "en": "You don't have to figure everything out tonight.",
+   "ms": "Kau tak perlu fikirkan semuanya malam ini.",
+   "zh": "你不必今晚就把一切都想清楚。",
+   "ko": "오늘 밤에 다 정리할 필요는 없어."
+  },
+  {
+   "s": 81.81,
+   "e": 84.6,
+   "en": "Sometimes, it's not the choices that imprison us,",
+   "ms": "Kadang-kadang, bukan pilihan yang memenjarakan kita,",
+   "zh": "有时候，困住我们的不是选择本身，",
+   "ko": "때로는 우리를 가두는 건 선택이 아니라,"
+  },
+  {
+   "s": 84.63,
+   "e": 87.36,
+   "en": "but our desire to make the perfect one.",
+   "ms": "tapi keinginan kita untuk membuat pilihan yang sempurna.",
+   "zh": "而是我们想做出完美选择的执念。",
+   "ko": "완벽한 선택을 하고 싶은 욕심이야."
+  }
+ ]
+}

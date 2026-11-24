@@ -1,0 +1,155 @@
+{
+ "episode": 4,
+ "status": "translated",
+ "source": "whisper large-v3 + reviewed by Claude",
+ "cues": [
+  {
+   "s": 0.3,
+   "e": 1.79,
+   "en": "The academic rival kissing?",
+   "ms": "Saingan akademik bercium?",
+   "zh": "学霸死对头在接吻？",
+   "ko": "학업 라이벌이 키스를?"
+  },
+  {
+   "s": 1.84,
+   "e": 4.0,
+   "en": "Wait, what? Enemies to lovers is so real?",
+   "ms": "Eh, apa? Musuh jadi kekasih tu betul-betul wujud?",
+   "zh": "等等，什么？欢喜冤家变情侣居然是真的？",
+   "ko": "잠깐, 뭐? 혐관 로맨스가 진짜 있다고?"
+  },
+  {
+   "s": 4.04,
+   "e": 4.8,
+   "en": "I fanned myself.",
+   "ms": "Aku sampai kipas diri.",
+   "zh": "我都激动得直扇风了。",
+   "ko": "나 부채질까지 했어.",
+   "check": "\"I fanned myself\" (unclear word)"
+  },
+  {
+   "s": 4.84,
+   "e": 6.72,
+   "en": "Ah! I'm screaming! I'm screaming!",
+   "ms": "Ah! Aku menjerit! Aku menjerit!",
+   "zh": "啊！我要尖叫了！我要尖叫了！",
+   "ko": "꺅! 나 소리 질러! 소리 질러!"
+  },
+  {
+   "s": 6.76,
+   "e": 8.49,
+   "en": "I rewatched it six times!",
+   "ms": "Aku sudah tengok semula enam kali!",
+   "zh": "我已经重看了六遍！",
+   "ko": "벌써 여섯 번이나 돌려봤어!"
+  },
+  {
+   "s": 10.02,
+   "e": 12.31,
+   "en": "Did you see Theo kissing Raymond?",
+   "ms": "Kau nampak tak Theo cium Raymond?",
+   "zh": "你看到西奥亲雷蒙德了吗？",
+   "ko": "테오가 레이먼드한테 키스하는 거 봤어?"
+  },
+  {
+   "s": 12.82,
+   "e": 15.61,
+   "en": "And now the track and field king is after him, too?",
+   "ms": "Dan sekarang raja olahraga pun nak memikat dia juga?",
+   "zh": "现在连田径王也在追他？",
+   "ko": "그리고 이제 육상부 킹까지 걔한테 대시한다고?"
+  },
+  {
+   "s": 17.04,
+   "e": 18.9,
+   "en": "You two geniuses...",
+   "ms": "Kamu berdua yang genius ini...",
+   "zh": "你们两个天才……",
+   "ko": "너희 두 천재가..."
+  },
+  {
+   "s": 31.0,
+   "e": 32.63,
+   "en": "...have the whole faculty talking.",
+   "ms": "...jadi buah mulut satu fakulti.",
+   "zh": "……让整个学院都在议论。",
+   "ko": "...학부 전체를 떠들썩하게 만들었네."
+  },
+  {
+   "s": 33.43,
+   "e": 35.0,
+   "en": "Nothing I can do about it.",
+   "ms": "Aku tak boleh buat apa-apa.",
+   "zh": "我也没办法。",
+   "ko": "나도 어쩔 수 없어."
+  },
+  {
+   "s": 35.63,
+   "e": 37.13,
+   "en": "Besides, they're not wrong.",
+   "ms": "Lagipun, mereka tak salah.",
+   "zh": "再说，他们也没说错。",
+   "ko": "게다가 틀린 말도 아니고."
+  },
+  {
+   "s": 49.9,
+   "e": 51.45,
+   "en": "You hit on the Jakarta guy too?",
+   "ms": "Kau goda lelaki Jakarta tu juga?",
+   "zh": "你连那个雅加达男生也撩了？",
+   "ko": "자카르타 남자한테도 작업 걸었어?",
+   "check": "\"Jakarta guy\" (unclear)"
+  },
+  {
+   "s": 51.64,
+   "e": 54.99,
+   "en": "Can I borrow your prints, Gi?",
+   "ms": "Boleh aku pinjam nota cetak kau, Gi?",
+   "zh": "Gi，能借我你的打印资料吗？",
+   "ko": "기, 네 프린트 좀 빌려줄래?",
+   "check": "\"prints\" and the name \"Gi\" (unclear)"
+  },
+  {
+   "s": 55.04,
+   "e": 56.67,
+   "en": "Up to you, Your Highness!",
+   "ms": "Terserah Tuanku!",
+   "zh": "全凭殿下做主！",
+   "ko": "전하 뜻대로 하시옵소서!",
+   "check": "heard as \"Up to Royal Highness!\""
+  },
+  {
+   "s": 57.94,
+   "e": 58.75,
+   "en": "Can we?",
+   "ms": "Boleh?",
+   "zh": "可以吗？",
+   "ko": "그래도 돼?"
+  },
+  {
+   "s": 62.4,
+   "e": 63.89,
+   "en": "I'm sorry about earlier.",
+   "ms": "Maaf pasal tadi.",
+   "zh": "刚才的事，对不起。",
+   "ko": "아까 일은 미안해."
+  },
+  {
+   "s": 64.1,
+   "e": 65.67,
+   "en": "I was just teasing you.",
+   "ms": "Aku cuma bergurau dengan kau.",
+   "zh": "我只是在逗你。",
+   "ko": "그냥 장난친 거야."
+  },
+  {
+   "s": 67.21,
+   "e": 68.11,
+   "en": "It's okay.",
+   "ms": "Tak apa.",
+   "zh": "没事。",
+   "ko": "괜찮아."
+  }
+ ]
+}

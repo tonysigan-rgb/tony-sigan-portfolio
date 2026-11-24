@@ -1,0 +1,95 @@
+{
+ "episode": 1,
+ "status": "translated",
+ "source": "whisper large-v3 + reviewed by Claude",
+ "cues": [
+  {
+   "s": 26.99,
+   "e": 28.12,
+   "en": "I received your letter!",
+   "ms": "Aku sudah terima surat kau!",
+   "zh": "我收到你的信了！",
+   "ko": "네 편지 받았어!"
+  },
+  {
+   "s": 28.31,
+   "e": 29.21,
+   "en": "Number two!",
+   "ms": "Nombor dua!",
+   "zh": "二号！",
+   "ko": "2번!"
+  },
+  {
+   "s": 41.43,
+   "e": 43.89,
+   "en": "I bet everyone has their own love fantasies.",
+   "ms": "Aku pasti setiap orang ada fantasi cinta masing-masing.",
+   "zh": "我敢说每个人都有自己的恋爱幻想。",
+   "ko": "누구나 자기만의 연애 판타지가 있을 거야."
+  },
+  {
+   "s": 43.93,
+   "e": 45.81,
+   "en": "But maybe not one quite like mine.",
+   "ms": "Tapi mungkin tiada yang seperti fantasi aku.",
+   "zh": "但也许没有一个像我这样的。",
+   "ko": "하지만 내 것 같은 판타지는 없을걸."
+  },
+  {
+   "s": 45.85,
+   "e": 48.49,
+   "en": "Not when one of my crushes shows up at my front door.",
+   "ms": "Apatah lagi bila salah seorang crush aku muncul di depan pintu rumah.",
+   "zh": "尤其是我暗恋的人之一出现在我家门口的时候。",
+   "ko": "내가 좋아했던 사람 중 하나가 우리 집 앞에 나타났으니까."
+  },
+  {
+   "s": 48.53,
+   "e": 50.52,
+   "en": "I couldn't remember what happened that night,",
+   "ms": "Aku tak ingat apa yang berlaku malam itu,",
+   "zh": "我不记得那晚发生了什么，",
+   "ko": "그날 밤 무슨 일이 있었는지 기억은 안 나지만,"
+  },
+  {
+   "s": 50.57,
+   "e": 54.14,
+   "en": "but I must have done something to make Raymond smile awkwardly at me.",
+   "ms": "tapi aku mesti ada buat sesuatu sampai Raymond senyum kekok pada aku.",
+   "zh": "但我一定做了什么，才让雷蒙德对我笑得那么尴尬。",
+   "ko": "레이먼드가 날 보고 어색하게 웃는 걸 보면 분명 내가 뭔가 했나 봐."
+  },
+  {
+   "s": 58.47,
+   "e": 59.5,
+   "en": "Theo, what's this?",
+   "ms": "Theo, apa ini?",
+   "zh": "西奥，这是什么？",
+   "ko": "테오, 이게 뭐야?"
+  },
+  {
+   "s": 60.38,
+   "e": 61.91,
+   "en": "Something I should have given you.",
+   "ms": "Sesuatu yang sepatutnya aku beri pada kau.",
+   "zh": "早该给你的东西。",
+   "ko": "진작 너한테 줬어야 했던 거."
+  },
+  {
+   "s": 65.65,
+   "e": 66.58,
+   "en": "Number two.",
+   "ms": "Nombor dua.",
+   "zh": "二号。",
+   "ko": "2번."
+  },
+  {
+   "s": 67.01,
+   "e": 68.48,
+   "en": "Don't fall in love with me, okay?",
+   "ms": "Jangan jatuh cinta dengan aku, okey?",
+   "zh": "别爱上我，好吗？",
+   "ko": "나한테 반하지 마, 알았지?"
+  }
+ ]
+}
