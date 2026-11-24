@@ -26,7 +26,7 @@ def config():
 
 
 def exists(url):
-    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "pluffy-auto-subs"})
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "Mozilla/5.0 (pluffy-auto-subs)"})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             return r.status == 200
@@ -107,10 +107,16 @@ def main():
     for n, url in todo:
         print(f"EP{n:02d}: downloading {url}", flush=True)
         with tempfile.TemporaryDirectory() as tmp:
-            mp4, wav = os.path.join(tmp, "ep.mp4"), os.path.join(tmp, "ep.wav")
-            urllib.request.urlretrieve(url, mp4)
-            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", mp4, "-vn", "-ac", "1", "-ar", "16000", wav], check=True)
-            segs, info = model.transcribe(wav, beam_size=5, vad_filter=True, vad_parameters={"min_silence_duration_ms": 400},
+            mp4 = os.path.join(tmp, "ep.mp4")
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (pluffy-auto-subs)"})
+            with urllib.request.urlopen(req, timeout=300) as r, open(mp4, "wb") as f:
+                while True:
+                    chunk = r.read(1 << 20)
+                    if not chunk:
+                        break
+                    f.write(chunk)
+            # faster-whisper reads the audio straight from the MP4 (no ffmpeg needed)
+            segs, info = model.transcribe(mp4, beam_size=5, vad_filter=True, vad_parameters={"min_silence_duration_ms": 400},
                                           word_timestamps=True, condition_on_previous_text=False, initial_prompt=PROMPT)
             segs = list(segs)
         cues = cues_from(segs)

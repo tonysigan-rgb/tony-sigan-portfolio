@@ -46,7 +46,7 @@ jobs:
               if os.path.exists(f"subs/data/ps-ep{n:02d}.json"):
                   continue
               try:
-                  req = urllib.request.Request(base + pat.replace("{nn}", f"{n:02d}"), method="HEAD", headers={"User-Agent": "pluffy-auto-subs"})
+                  req = urllib.request.Request(base + pat.replace("{nn}", f"{n:02d}"), method="HEAD", headers={"User-Agent": "Mozilla/5.0 (pluffy-auto-subs)"})
                   if urllib.request.urlopen(req, timeout=30).status == 200:
                       new.append(n)
               except Exception:
@@ -54,11 +54,15 @@ jobs:
           print("new episodes:", new)
           open(os.environ["GITHUB_OUTPUT"], "a").write(f"new={'yes' if new else ''}\n")
           EOF
+      - name: Keep the Whisper model between runs
+        if: steps.check.outputs.new == 'yes'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-large-v3
       - name: Install Whisper
         if: steps.check.outputs.new == 'yes'
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          python -m pip install --quiet faster-whisper
+        run: python -m pip install --quiet faster-whisper
       - name: Transcribe new episodes
         if: steps.check.outputs.new == 'yes'
         env:
