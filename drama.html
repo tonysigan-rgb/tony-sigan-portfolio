@@ -431,7 +431,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261124c"></script>
+    <script src="pluffy-data.js?v=20261124d"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -483,7 +483,7 @@
       const $ = (id) => document.getElementById(id);
       const P = $("player");
       const getId = (url) => { const m = (url || "").match(/(?:shorts\/|youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/); return m ? m[1] : null; };
-      const releaseTime = (e) => (e.release ? new Date(e.release + "T00:00:00+08:00").getTime() : 0);
+      const releaseTime = (e) => window.PLUFFY.releaseAt(e);   // 8:00 AM Malaysia time on its Monday
       // video: the episode's file on Cloudflare R2 (pluffy-data.js). When set, it plays from there; YouTube is the backup.
       const VIDEO_BASE = (window.PLUFFY.videoBase || "").replace(/\/?$/, "/");
       // Each episode looks for its file by name (videoPattern, e.g. ps-ep05.mp4) unless it has its own `video`.
@@ -567,7 +567,7 @@
         document.head.appendChild(sc);
       }
 
-      const dayLabel = (e) => new Date(e.release + "T00:00:00+08:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
+      const dayLabel = (e) => new Date(window.PLUFFY.releaseAt(e)).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
       const pad = (n) => String(n).padStart(2, "0");
       const total = EPISODES.length;
       const released = EPISODES.filter((e) => e.id).length;

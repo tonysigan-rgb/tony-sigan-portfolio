@@ -2,10 +2,12 @@
    PLUFFY MINIS — EPISODE SCHEDULE (used by drama.html, pluffyminis.html, videos.html)
 
    url:      the episode's YouTube link. Empty "" = shows as SOON.
-   release:  the Monday it unlocks on this website ("YYYY-MM-DD", unlocks 12:00 AM Malaysia time).
+   release:  the Monday it unlocks on this website ("YYYY-MM-DD", unlocks 8:00 AM Malaysia time).
+             Leave it out after the first dated episode and it is set automatically to the Monday
+             one week after the previous episode (EP06 = 30 Nov 2026, EP07 = 7 Dec, ...).
              Before that date the episode shows as "WATCH EARLY" and sends people to
              subscribe on YouTube, where it is already up.
-             Leave release out (or in the past) = free to watch here.
+             Episodes before the first dated one (EP01–03) are free to watch here.
    plot:     optional one- or two-line summary.
    ================================================================ */
 window.PLUFFY = {
@@ -65,6 +67,24 @@ window.PLUFFY = {
     { title: "Episode 40", url: "", plot: "" },
   ],
 };
+
+/* ================================================================
+   MONDAY RELEASE SCHEDULE — every episode unlocks at 8:00 AM Malaysia time (UTC+8) on its Monday.
+   Undated episodes after a dated one get the Monday one week later, so the weekly schedule keeps
+   going on its own. Until then, YouTube subscribers can watch early.
+   ================================================================ */
+(function () {
+  const P = window.PLUFFY;
+  P.releaseHour = "08:00";
+  let prev = null;
+  P.episodes.forEach((e) => {
+    if (e.release) { prev = e.release; e.releaseAuto = false; return; }
+    if (!prev) return;
+    const d = new Date(prev + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + 7);
+    e.release = prev = d.toISOString().slice(0, 10); e.releaseAuto = true;
+  });
+  P.releaseAt = (e) => (e && e.release ? new Date(`${e.release}T${P.releaseHour}:00+08:00`).getTime() : 0);
+})();
 
 /* ================================================================
    UPLOADED-EPISODE CHECK
