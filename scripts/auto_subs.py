@@ -34,6 +34,20 @@ def exists(url):
         return False
 
 
+def load_audio(path):
+    """MP4 -> 16 kHz mono float32 samples for Whisper (uses PyAV, which faster-whisper installs)."""
+    import av, numpy as np
+    out = []
+    with av.open(path) as box:
+        res = av.audio.resampler.AudioResampler(format="s16", layout="mono", rate=16000)
+        for frame in box.decode(audio=0):
+            for f in res.resample(frame) or []:
+                out.append(f.to_ndarray().reshape(-1))
+        for f in res.resample(None) or []:
+            out.append(f.to_ndarray().reshape(-1))
+    return (np.concatenate(out).astype(np.float32) / 32768.0) if out else np.zeros(0, np.float32)
+
+
 def cues_from(segments):
     """Turn Whisper segments into readable subtitle cues (sentences, <= ~2 short lines, timed to the words)."""
     words = []
@@ -115,8 +129,8 @@ def main():
                     if not chunk:
                         break
                     f.write(chunk)
-            # faster-whisper reads the audio straight from the MP4 (no ffmpeg needed)
-            segs, info = model.transcribe(mp4, beam_size=5, vad_filter=True, vad_parameters={"min_silence_duration_ms": 400},
+            audio = load_audio(mp4)
+            segs, info = model.transcribe(audio, beam_size=5, vad_filter=True, vad_parameters={"min_silence_duration_ms": 400},
                                           word_timestamps=True, condition_on_previous_text=False, initial_prompt=PROMPT)
             segs = list(segs)
         cues = cues_from(segs)
