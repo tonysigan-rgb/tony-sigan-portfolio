@@ -106,6 +106,24 @@
       .rail button:active .ic { transform:scale(.92); }
       .rail .ic svg { width:1.3rem; height:1.3rem; }
       .rail .eps-btn .ic { background:var(--red); }
+      .rail .cc-btn .ic b { font:800 .8rem var(--display, system-ui); letter-spacing:.02em; }
+      .rail .cc-btn[aria-pressed="true"] .ic { background:var(--white); color:#000; }
+      /* Subtitles */
+      .subs { position:absolute; z-index:3; left:50%; bottom:12.5rem; transform:translateX(-50%); width:max-content; max-width:min(84%, 30rem); text-align:center; pointer-events:none; }
+      .subs span { display:inline; padding:.18em .45em; border-radius:.35rem; background:rgba(0,0,0,.62); color:#fff; font:600 1.02rem/1.55 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Noto Sans SC", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; text-shadow:0 1px 2px rgba(0,0,0,.6); -webkit-box-decoration-break:clone; box-decoration-break:clone; white-space:pre-line; }
+      .subs:empty { display:none; }
+      .player.fs .subs { bottom:max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem)); max-width:min(78%, 34rem); }
+      .player.fs .subs span { font-size:1.1rem; }
+      .player.sheet-open .subs, .player.locked .subs { display:none; }
+      @media (min-width:821px) { .subs { bottom:5.5rem; } }
+      .cc-menu { position:absolute; z-index:7; right:4rem; bottom:9rem; min-width:11.5rem; padding:.4rem; border-radius:.9rem; background:rgba(18,19,22,.96); border:1px solid var(--line); box-shadow:0 .6rem 2rem rgba(0,0,0,.5); display:none; }
+      .cc-menu.open { display:block; }
+      .cc-menu p { margin:.35rem .6rem .45rem; font:.58rem var(--mono); color:var(--muted); letter-spacing:.05em; }
+      .cc-menu button { display:flex; width:100%; align-items:center; justify-content:space-between; gap:.8rem; padding:.62rem .7rem; border-radius:.55rem; color:var(--white); font:500 .9rem system-ui, sans-serif; text-align:left; }
+      .cc-menu button:hover { background:rgba(255,255,255,.07); }
+      .cc-menu button.on { background:rgba(193,10,10,.25); }
+      .cc-menu button.on::after { content:"✓"; color:var(--red); font-weight:700; }
+      .player.fs .cc-menu { bottom:max(6rem, calc(env(safe-area-inset-bottom, 0px) + 5rem)); }
       .rail .auto-btn[aria-pressed="true"] .ic { background:rgba(193,10,10,.85); }
 
       .meta { position:absolute; left:0; right:4.2rem; bottom:1.7rem; padding:0 .9rem; color:var(--white); }
@@ -308,6 +326,7 @@
             </div>
 
             <div class="rail">
+              <button class="cc-btn" id="ccBtn" aria-pressed="false" aria-label="Subtitles"><span class="ic"><b>CC</b></span><span id="ccLabel">CC</span></button>
               <button class="eps-btn" id="epsBtn" aria-label="Episode list"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg></span><span id="epsLabel">EPISODES</span></button>
               <button class="auto-btn hide-fs" id="auto" aria-pressed="true" aria-label="Auto-play next episode"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></span><span id="autoLabel">AUTO ON</span></button>
               <button class="hide-fs" id="shareBtn" aria-label="Share episode"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg></span><span>SHARE</span></button>
@@ -333,6 +352,15 @@
           </div>
 
           <div class="swipe-hint" id="swipeHint"></div>
+          <div class="subs" id="subs" aria-live="off"></div>
+          <div class="cc-menu" id="ccMenu" role="menu" aria-label="Subtitles">
+            <p>SUBTITLES</p>
+            <button data-l="off">Off</button>
+            <button data-l="en">English</button>
+            <button data-l="ms">Bahasa Melayu / Indonesia</button>
+            <button data-l="zh">中文（简体）</button>
+            <button data-l="ko">한국어</button>
+          </div>
 
           <div class="sheet-bg" id="sheetBg"></div>
           <div class="sheet" id="sheet" role="dialog" aria-label="Episode list">
@@ -403,7 +431,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261124a"></script>
+    <script src="pluffy-data.js?v=20261124b"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -608,6 +636,7 @@
       const nextAvail = (from, dir) => { for (let i = from + dir; i >= 0 && i < total; i += dir) if (EPISODES[i].id) return i; return -1; };
 
       function render() {
+        if (typeof loadCues === "function") loadCues();
         const ep = EPISODES[current];
         page = Math.floor(current / PER_PAGE);
         buildGrids();
@@ -893,6 +922,49 @@
         if (P.classList.contains("reveal") && playing) P.classList.remove("reveal"); else reveal();
       });
       $("center").onclick = () => { unlockSpare(); P.classList.contains("started") ? togglePlay() : firstPlay(); reveal(); };
+      /* ---------------- subtitles (CC) ----------------
+         Files: subs/ps-epNN.<lang>.vtt  (en, ms, zh, ko). The choice is remembered on this device. */
+      const CC_SHORT = { off: "CC", en: "EN", ms: "BM", zh: "中文", ko: "한국어" };
+      let ccLang = "off"; try { ccLang = localStorage.getItem("pluffy-cc") || "off"; } catch (_) {}
+      const ccCache = {};
+      let cues = [], cueKey = "", lastCueText = null;
+      const vttTime = (t) => { const p = t.trim().split(":").map(parseFloat); return p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1]; };
+      function parseVtt(txt) {
+        const out = [];
+        txt.replace(/\r/g, "").split(/\n\n+/).forEach((block) => {
+          const lines = block.split("\n"); const i = lines.findIndex((l) => l.includes("-->"));
+          if (i < 0) return;
+          const [a, b] = lines[i].split("-->");
+          out.push({ s: vttTime(a), e: vttTime(b.trim().split(/\s+/)[0]), t: lines.slice(i + 1).join("\n").replace(/<[^>]+>/g, "").trim() });
+        });
+        return out;
+      }
+      function loadCues() {
+        const key = `${current}|${ccLang}`; if (key === cueKey) return; cueKey = key; cues = []; showCue("");
+        if (ccLang === "off") return;
+        const url = `subs/ps-ep${pad(current + 1)}.${ccLang}.vtt?v=${window.PLUFFY.subsVersion || 1}`;
+        (ccCache[url] ||= fetch(url).then((r) => (r.ok ? r.text() : "")).then(parseVtt).catch(() => []))
+          .then((c) => { if (cueKey !== key) return; cues = c; if (!c.length && EPISODES[current].id) hint("SUBTITLES COMING SOON FOR THIS EPISODE", 2000); });
+      }
+      function showCue(t) { if (t === lastCueText) return; lastCueText = t; const el = $("subs"); el.innerHTML = ""; if (t) { const sp = document.createElement("span"); sp.textContent = t; el.appendChild(sp); } }
+      (function tick() {
+        if (ccLang !== "off" && cues.length && ready && EPISODES[current].id) {
+          const t = yt.getCurrentTime(); const c = cues.find((x) => t >= x.s && t < x.e);
+          showCue(c ? c.t : "");
+        } else if (lastCueText) showCue("");
+        requestAnimationFrame(tick);
+      })();
+      function setCc(l) {
+        ccLang = l; try { localStorage.setItem("pluffy-cc", l); } catch (_) {}
+        $("ccBtn").setAttribute("aria-pressed", l !== "off"); $("ccLabel").textContent = CC_SHORT[l] || "CC";
+        [...$("ccMenu").querySelectorAll("button")].forEach((b) => b.classList.toggle("on", b.dataset.l === l));
+        loadCues();
+      }
+      $("ccBtn").onclick = (e) => { e.stopPropagation(); $("ccMenu").classList.toggle("open"); reveal(true); };
+      $("ccMenu").addEventListener("click", (e) => { e.stopPropagation(); const b = e.target.closest("button"); if (!b) return; setCc(b.dataset.l); $("ccMenu").classList.remove("open"); scheduleHide(); });
+      document.addEventListener("click", (e) => { if (!e.target.closest("#ccMenu, #ccBtn")) $("ccMenu").classList.remove("open"); });
+      setCc(ccLang);
+
       // Leaving the page or the app pauses the episode
       document.addEventListener("visibilitychange", () => { if (document.hidden && playing) yt.pauseVideo(); });
       /* ---------------- 10-second skip ---------------- */
