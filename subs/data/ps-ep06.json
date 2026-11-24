@@ -1,0 +1,99 @@
+{
+ "episode": 6,
+ "status": "needs-translation",
+ "language": "en",
+ "source": "whisper large-v3 (automatic)",
+ "cues": [
+  {
+   "s": 13.39,
+   "e": 14.58,
+   "en": "Saying yes wasn't hard."
+  },
+  {
+   "s": 14.73,
+   "e": 16.34,
+   "en": "Besides, I owed you a promise."
+  },
+  {
+   "s": 21.54,
+   "e": 22.3,
+   "en": "Go mingle."
+  },
+  {
+   "s": 22.34,
+   "e": 23.51,
+   "en": "I'll grab us some drinks."
+  },
+  {
+   "s": 39.89,
+   "e": 40.81,
+   "en": "He's just your friend.",
+   "check": "unclear word(s): He's"
+  },
+  {
+   "s": 40.85,
+   "e": 41.51,
+   "en": "He is!"
+  },
+  {
+   "s": 41.55,
+   "e": 43.3,
+   "en": "Then why am I always second to him?"
+  },
+  {
+   "s": 45.28,
+   "e": 46.88,
+   "en": "I never meant to hurt you."
+  },
+  {
+   "s": 46.92,
+   "e": 49.17,
+   "en": "Yet you allow him slutting around you."
+  },
+  {
+   "s": 54.05,
+   "e": 56.17,
+   "en": "Yes. I did have feelings for Chris."
+  },
+  {
+   "s": 56.67,
+   "e": 58.9,
+   "en": "But that doesn't give you the right to downgrading someone."
+  },
+  {
+   "s": 59.63,
+   "e": 63.36,
+   "en": "And Chris, if loving me means hurting her, then hear me clearly."
+  },
+  {
+   "s": 63.65,
+   "e": 65.68,
+   "en": "I'm not allowing myself to make enemies of it."
+  },
+  {
+   "s": 77.56,
+   "e": 78.56,
+   "en": "Theo, wait!"
+  },
+  {
+   "s": 79.88,
+   "e": 80.95,
+   "en": "What about you?"
+  },
+  {
+   "s": 82.41,
+   "e": 84.24,
+   "en": "Didn't you hurt someone after kissing them?"
+  },
+  {
+   "s": 85.59,
+   "e": 87.48,
+   "en": "Then hate me all you want, Raymond."
+  },
+  {
+   "s": 89.35,
+   "e": 90.35,
+   "en": "Stop!"
+  }
+ ]
+}

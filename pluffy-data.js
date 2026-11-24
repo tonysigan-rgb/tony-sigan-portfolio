@@ -22,7 +22,7 @@ window.PLUFFY = {
   videoBase: "https://pub-defd093bf93442e4b37f513a47e645b2.r2.dev/P.S.%20I%20Think%2C%20I%20Like%20You/",
   videoPattern: "ps-ep{nn}.mp4",
   // Subtitles live in subs/ (ps-epNN.en|ms|zh|ko.vtt). Change this after editing them so phones fetch the new copy.
-  subsVersion: "20261124a",
+  subsVersion: "202611242338",
   googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
     { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
