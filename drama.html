@@ -57,8 +57,9 @@
       .soon { z-index:3; background-color:#000 !important; }
       .player.locked .center { display:none; }
       /* Series logo watermark (top left of the video) */
-      .watermark { position:absolute; z-index:2; top:4.1rem; left:.9rem; width:5.2rem; height:auto; opacity:.72; pointer-events:none; filter:drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
-      .player.fs .watermark { top:max(1rem, env(safe-area-inset-top)); }
+      /* sits below the phone's notch / Dynamic Island, with a dark shadow so it reads on bright scenes */
+      .watermark { position:absolute; z-index:2; top:max(4.4rem, calc(env(safe-area-inset-top, 0px) + 3.6rem)); left:1rem; width:6.4rem; height:auto; opacity:.95; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.85)) drop-shadow(0 0 6px rgba(0,0,0,.55)); }
+      .player.fs .watermark { top:max(1.4rem, calc(env(safe-area-inset-top, 0px) + 1.6rem)); }
       .player.locked .watermark { display:none; }
       .in-app .top { display:none !important; }
       .in-app .bar .home { display:grid !important; }
