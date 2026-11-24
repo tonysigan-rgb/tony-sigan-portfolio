@@ -46,8 +46,8 @@
       .player #yt, .player iframe { position:absolute; left:0; top:0; width:100%; height:100%; border:0; pointer-events:none; }
       .player.native-tap iframe { pointer-events:auto; }
       /* Cloudflare-hosted episodes play in a normal video element */
-      .player #cfv { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; pointer-events:none; display:none; }
-      .player.cf #cfv { display:block; }
+      .player .cfv { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; pointer-events:none; display:none; }
+      .player.cf .cfv.on { display:block; }
       .player.cf #yt { visibility:hidden; }
 
       .soon { position:absolute; inset:0; z-index:1; display:none; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; text-align:center; padding:2rem; background:radial-gradient(circle at 50% 35%, rgba(193,10,10,.35), #000 70%); }
@@ -117,6 +117,23 @@
       .center { position:absolute; left:50%; top:50%; width:4.4rem; height:4.4rem; margin:-2.2rem 0 0 -2.2rem; display:grid; place-items:center; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); color:var(--white); opacity:0; transform:scale(.85); transition:opacity .2s, transform .2s; pointer-events:none !important; }
       .center svg { width:1.8rem; height:1.8rem; }
       .player.paused .center, .player.flash .center { opacity:1; transform:scale(1); pointer-events:auto !important; }
+      /* −10s / play-pause / +10s: always shown while paused, and for 3 s after a tap while playing */
+      .transport { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:2.2rem; opacity:0; transition:opacity .2s; pointer-events:none; z-index:2; }
+      .transport .center { position:static; margin:0; opacity:1; transform:none; pointer-events:auto !important; }
+      .transport .skip { width:3.2rem; height:3.2rem; display:grid; place-items:center; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); color:var(--white); position:relative; pointer-events:auto !important; }
+      .transport .skip svg { width:1.7rem; height:1.7rem; }
+      .transport .skip b { position:absolute; font:700 .55rem var(--mono); top:52%; left:50%; transform:translate(-50%,-50%); }
+      .transport button:active { transform:scale(.9); }
+      .player.started.paused .transport, .player.reveal .transport, .player.flash .transport, .player:not(.started) .transport { opacity:1; }
+      .player:not(.started) .transport .skip { visibility:hidden; }
+      .player.locked .transport { display:none; }
+      .player.sheet-open .transport { opacity:0 !important; pointer-events:none; }
+      .player:not(.reveal):not(.paused):not(.flash).started .transport, .player:not(.reveal):not(.paused):not(.flash).started .transport * { pointer-events:none !important; }
+      .player.fs .transport { opacity:0; }
+      .player.fs.reveal .transport, .player.fs.paused .transport { opacity:1; }
+      .skip-flash { position:absolute; top:50%; transform:translateY(-50%); z-index:3; padding:.5rem .8rem; border-radius:2rem; background:rgba(0,0,0,.55); color:#fff; font:.7rem var(--mono); opacity:0; transition:opacity .25s; pointer-events:none; }
+      .skip-flash.l { left:12%; } .skip-flash.r { right:12%; }
+      .skip-flash.show { opacity:1; }
 
       .progress { position:absolute; left:0; right:0; bottom:0; height:1.1rem; display:flex; align-items:flex-end; pointer-events:auto; cursor:pointer; }
       .progress span { display:block; width:100%; height:3px; background:rgba(255,255,255,.22); }
@@ -135,8 +152,7 @@
       .player.fs .rail .eps-btn .ic svg { width:1.55rem; height:1.55rem; }
       .player.fs .rail .eps-btn span:last-child { font-size:.62rem; }
       .player.fs .shade.b { height:9rem; }
-      .player.fs.paused .center { opacity:0; }
-      .player.fs.reveal.paused .center, .player.fs.flash .center { opacity:1; }
+      .player.fs.paused .transport .center { opacity:1; }
       .player.immersive { position:fixed; inset:0; z-index:100; width:100vw; height:100vh; height:100dvh; max-height:none; aspect-ratio:auto; margin:0; }
       .swipe-hint { position:absolute; z-index:4; left:50%; top:36%; transform:translate(-50%,-50%); padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,.6); color:#fff; font:.65rem var(--mono); opacity:0; transition:opacity .3s; pointer-events:none; text-align:center; white-space:nowrap; }
       .swipe-hint.show { opacity:1; }
@@ -172,6 +188,8 @@
 
       /* ---------- Desktop controls under player ---------- */
       .controls { display:flex; align-items:center; gap:.5rem; margin-top:.75rem; }
+      .controls .ctrl.tp { flex:0 0 auto; padding:0 .9rem; }
+      .controls .ctrl.tp svg { width:1.1rem; height:1.1rem; }
       .ctrl { flex:1; display:flex; align-items:center; justify-content:center; gap:.4rem; min-height:2.75rem; border:1px solid var(--line); border-radius:.7rem; font:.7rem var(--mono); transition:background .2s,border-color .2s; }
       .ctrl:hover:not(:disabled) { border-color:var(--paper); }
       .ctrl:disabled { opacity:.35; cursor:default; }
@@ -302,7 +320,12 @@
               <button class="chip" id="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg><span id="chipText">ALL EPISODES · 03</span></button>
             </div>
 
-            <button class="center" id="center" aria-label="Play or pause"><svg id="centerIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
+            <div class="transport" id="transport">
+              <button class="skip" id="back10" aria-label="Back 10 seconds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg><b>10</b></button>
+              <button class="center" id="center" aria-label="Play or pause"><svg id="centerIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
+              <button class="skip" id="fwd10" aria-label="Forward 10 seconds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><b>10</b></button>
+            </div>
+            <span class="skip-flash l" id="skipL">« 10s</span><span class="skip-flash r" id="skipR">10s »</span>
 
             <div class="progress" id="progress" aria-label="Seek"><span><i id="bar"></i></span></div>
             <span class="scroll-cue"></span>
@@ -324,6 +347,9 @@
 
         <div class="controls">
           <button class="ctrl" id="prev" aria-label="Previous episode">← PREV</button>
+          <button class="ctrl tp" id="back10d" aria-label="Back 10 seconds">« 10s</button>
+          <button class="ctrl tp" id="playD" aria-label="Play or pause"><svg id="playDIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></button>
+          <button class="ctrl tp" id="fwd10d" aria-label="Forward 10 seconds">10s »</button>
           <button class="ctrl" id="epsDesk">EPISODES</button>
           <button class="ctrl next" id="next" aria-label="Next episode">NEXT →</button>
         </div>
@@ -376,7 +402,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261123d"></script>
+    <script src="pluffy-data.js?v=20261124a"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -624,40 +650,79 @@
       /* One player for both sources: Cloudflare video file (mode "cf") or YouTube (mode "yt").
          The rest of the page talks to `yt` the same way either way. */
       const ST = { UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5 };
-      const CFV = document.createElement("video");
-      CFV.id = "cfv"; CFV.playsInline = true; CFV.setAttribute("playsinline", ""); CFV.setAttribute("webkit-playsinline", ""); CFV.preload = "metadata";
-      CFV.setAttribute("controlslist", "nodownload"); CFV.oncontextmenu = (e) => e.preventDefault();
-      P.insertBefore(CFV, P.firstChild);
+      // Two video elements: one plays, the other quietly loads the next episode so it starts instantly.
+      const VIDS = [0, 1].map(() => {
+        const v = document.createElement("video");
+        v.className = "cfv"; v.playsInline = true; v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", ""); v.preload = "metadata";
+        v.setAttribute("controlslist", "nodownload noplaybackrate noremoteplayback"); v.disablePictureInPicture = true; v.disableRemotePlayback = true;
+        v.oncontextmenu = (e) => e.preventDefault();
+        P.insertBefore(v, P.firstChild);
+        return v;
+      });
+      let CFV = VIDS[0]; CFV.classList.add("on");
+      const spare = () => (CFV === VIDS[0] ? VIDS[1] : VIDS[0]);
+      function setSrc(v, u) { if (v.dataset.src !== u) { v.dataset.src = u; if (u) v.src = u; else { v.removeAttribute("src"); v.load(); } } }
+      // Load the next available episode into the spare player while this one plays
+      let preloadTimer;
+      function preloadNext() {
+        clearTimeout(preloadTimer);
+        preloadTimer = setTimeout(() => {
+          const n = nextAvail(current, 1); const e = n >= 0 && EPISODES[n];
+          if (!e || !e.id || !e.cf) return;
+          const s = spare(); if (s.dataset.src === e.cf) return;
+          s.preload = "auto"; setSrc(s, e.cf); s.load();
+        }, 2500);   // give the current episode a head start
+      }
+      // iPhone only lets a video start by itself if it was started once by a tap: unlock the spare player on the first tap
+      let spareUnlocked = false;
+      function unlockSpare() {
+        if (spareUnlocked) return; spareUnlocked = true;
+        const s = spare(); const n = nextAvail(current, 1); const e = n >= 0 && EPISODES[n];
+        if (e && e.cf) setSrc(s, e.cf);
+        if (!s.dataset.src) { spareUnlocked = false; return; }
+        s.muted = true; const pr = s.play(); if (pr && pr.then) pr.then(() => { s.pause(); s.currentTime = 0; s.muted = CFV.muted; }, () => { s.muted = CFV.muted; });
+      }
       let ytp = null, ytReady = false, mode = "yt";
       const ytCall = (fn, ...a) => { if (ytReady && ytp && ytp[fn]) { try { return ytp[fn](...a); } catch (_) {} } };
       function useMode(m) {
         if (m === mode) return;
         mode = m; P.classList.toggle("cf", m === "cf");
-        if (m === "cf") ytCall("pauseVideo"); else CFV.pause();
+        if (m === "cf") ytCall("pauseVideo"); else VIDS.forEach((v) => v.pause());
       }
       function cfLoad(id, autoStart) {
         const u = cfUrl(id);
-        if (CFV.dataset.src !== u) { CFV.dataset.src = u; CFV.src = u; } else CFV.currentTime = 0;
+        if (CFV.dataset.src === u) { CFV.currentTime = 0; }
+        else if (spare().dataset.src === u && !CFV.webkitDisplayingFullscreen) {
+          // the next episode is already loaded in the spare player: swap to it (no gap)
+          const old = CFV; CFV = spare(); CFV.muted = old.muted;
+          CFV.classList.add("on"); old.classList.remove("on"); old.pause(); old.preload = "auto";
+          if (CFV.currentTime) CFV.currentTime = 0;
+        } else { CFV.preload = "auto"; setSrc(CFV, u); }
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
       // If a Cloudflare file fails to load, fall back to the YouTube upload of that episode
-      CFV.addEventListener("error", () => {
-        if (mode !== "cf" || !CFV.dataset.src) return;
-        const e = EPISODES.find((x) => x.cf === CFV.dataset.src); if (!e) return;
-        const wasPlaying = P.classList.contains("started");
-        e.cf = ""; CFV.removeAttribute("src"); CFV.dataset.src = ""; CFV.load();
-        if (e === EPISODES[current] && e.id) wasPlaying ? yt.loadVideoById(e.id) : yt.cueVideoById(e.id);
+      VIDS.forEach((v) => {
+        v.addEventListener("error", () => {
+          if (!v.dataset.src) return;
+          const e = EPISODES.find((x) => x.cf === v.dataset.src);
+          setSrc(v, "");
+          if (!e) return;
+          e.cf = "";
+          if (v !== CFV || mode !== "cf") return;
+          const wasPlaying = P.classList.contains("started");
+          if (e === EPISODES[current] && e.id) wasPlaying ? yt.loadVideoById(e.id) : yt.cueVideoById(e.id);
+        });
+        v.addEventListener("playing", () => { if (v === CFV && mode === "cf") { onState(ST.PLAYING); preloadNext(); } });
+        v.addEventListener("pause", () => v === CFV && mode === "cf" && !v.ended && onState(ST.PAUSED));
+        v.addEventListener("ended", () => v === CFV && mode === "cf" && onState(ST.ENDED));
       });
-      CFV.addEventListener("playing", () => mode === "cf" && onState(ST.PLAYING));
-      CFV.addEventListener("pause", () => mode === "cf" && !CFV.ended && onState(ST.PAUSED));
-      CFV.addEventListener("ended", () => mode === "cf" && onState(ST.ENDED));
       const ytIdFor = (id) => { const e = EPISODES.find((x) => x.yt === id); return e ? getId(e.url) : id; };
       yt = {
         loadVideoById(id) { if (cfUrl(id)) { useMode("cf"); cfLoad(id, true); } else { useMode("yt"); ytCall("loadVideoById", ytIdFor(id)); } },
         cueVideoById(id) { if (cfUrl(id)) { useMode("cf"); cfLoad(id, false); } else { useMode("yt"); ytCall("cueVideoById", ytIdFor(id)); } },
         playVideo() { if (mode === "cf") CFV.play().catch(() => {}); else ytCall("playVideo"); },
         pauseVideo() { if (mode === "cf") CFV.pause(); else ytCall("pauseVideo"); },
-        stopVideo() { CFV.pause(); ytCall("stopVideo"); },
+        stopVideo() { VIDS.forEach((v) => v.pause()); ytCall("stopVideo"); },
         getCurrentTime() { return mode === "cf" ? CFV.currentTime : ytCall("getCurrentTime") || 0; },
         getDuration() { return mode === "cf" ? (isFinite(CFV.duration) ? CFV.duration : 0) : ytCall("getDuration") || 0; },
         getPlayerState() {
@@ -667,8 +732,8 @@
           return CFV.currentTime > 0 ? ST.PAUSED : ST.CUED;
         },
         seekTo(t) { if (mode === "cf") CFV.currentTime = t; else ytCall("seekTo", t, true); },
-        mute() { CFV.muted = true; ytCall("mute"); },
-        unMute() { CFV.muted = false; ytCall("unMute"); },
+        mute() { VIDS.forEach((v) => (v.muted = true)); ytCall("mute"); },
+        unMute() { VIDS.forEach((v) => (v.muted = false)); ytCall("unMute"); },
       };
       ready = true;
       function onState(data) {
@@ -678,7 +743,7 @@
       }
       function buildPlayer(videoId, start, inline) {
         if (ytp) { try { ytp.destroy(); } catch (_) {} }
-        if (!$("yt")) { const d = document.createElement("div"); d.id = "yt"; P.insertBefore(d, CFV.nextSibling); }
+        if (!$("yt")) { const d = document.createElement("div"); d.id = "yt"; P.insertBefore(d, VIDS[1].nextSibling); }
         ytReady = false;
         ytp = new YT.Player("yt", {
           videoId,
@@ -793,7 +858,7 @@
         if (!ready || !EPISODES[current].id) return;
         yt.getPlayerState() === ST.PLAYING ? yt.pauseVideo() : yt.playVideo();
       }
-      function setCenter() { $("centerIcon").innerHTML = playing ? ICON_PAUSE : ICON_PLAY; }
+      function setCenter() { $("centerIcon").innerHTML = $("playDIcon").innerHTML = playing ? ICON_PAUSE : ICON_PLAY; }
       function flash() { setCenter(); P.classList.add("flash"); clearTimeout(flashTimer); flashTimer = setTimeout(() => P.classList.remove("flash"), 650); }
 
       /* ---------------- tap / reveal / swipe ---------------- */
@@ -823,13 +888,30 @@
         if (swiped) return;
         if (P.classList.contains("sheet-open")) return closeSheet();
         if (mutedStart && ready) { yt.unMute(); mutedStart = false; hint("SOUND ON", 900); return; }
-        if (!P.classList.contains("started")) { firstPlay(); reveal(); return; }
-        if (P.classList.contains("fs")) {
-          // Full screen: clean screen. A touch brings up the episode button + play/pause.
-          if (P.classList.contains("reveal")) P.classList.remove("reveal"); else reveal();
-        } else { togglePlay(); flash(); }
+        if (!P.classList.contains("started")) { unlockSpare(); firstPlay(); reveal(); return; }
+        // A tap shows the controls (−10s, play/pause, +10s); another tap hides them
+        if (P.classList.contains("reveal") && playing) P.classList.remove("reveal"); else reveal();
       });
-      $("center").onclick = () => { P.classList.contains("started") ? togglePlay() : firstPlay(); reveal(); };
+      $("center").onclick = () => { unlockSpare(); P.classList.contains("started") ? togglePlay() : firstPlay(); reveal(); };
+      // Leaving the page or the app pauses the episode
+      document.addEventListener("visibilitychange", () => { if (document.hidden && playing) yt.pauseVideo(); });
+      /* ---------------- 10-second skip ---------------- */
+      let skipTimer;
+      function skip(sec) {
+        if (!ready || !EPISODES[current].id) return;
+        const d = yt.getDuration(), t = yt.getCurrentTime();
+        const to = Math.max(0, Math.min(d ? d - 0.5 : t + sec, t + sec));
+        yt.seekTo(to);
+        const f = $(sec < 0 ? "skipL" : "skipR"); f.classList.add("show");
+        clearTimeout(skipTimer); skipTimer = setTimeout(() => { $("skipL").classList.remove("show"); $("skipR").classList.remove("show"); }, 600);
+        if (d > 0) $("bar").style.width = `${(to / d) * 100}%`;
+        reveal();
+      }
+      $("back10").onclick = $("back10d").onclick = (e) => { e.stopPropagation(); skip(-10); };
+      $("fwd10").onclick = $("fwd10d").onclick = (e) => { e.stopPropagation(); skip(10); };
+      $("playD").onclick = () => { unlockSpare(); P.classList.contains("started") ? togglePlay() : firstPlay(); };
+      // Double-tap the left / right side of the video to skip 10 s (like YouTube)
+      $("tap").addEventListener("dblclick", (e) => { const r = P.getBoundingClientRect(); const x = e.clientX - r.left; if (x < r.width * 0.35) skip(-10); else if (x > r.width * 0.65) skip(10); });
       // Desktop: moving the mouse in full screen also brings the buttons back
       P.addEventListener("mousemove", () => { if (P.classList.contains("fs")) reveal(); });
 
@@ -952,7 +1034,9 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowRight" || e.key === "ArrowDown") go(1);
         if (e.key === "ArrowLeft" || e.key === "ArrowUp") go(-1);
-        if (e.key === " ") { e.preventDefault(); togglePlay(); flash(); }
+        if (e.key === " " || e.key === "k" || e.key === "K") { e.preventDefault(); togglePlay(); flash(); }
+        if (e.key === "j" || e.key === "J") skip(-10);
+        if (e.key === "l" || e.key === "L") skip(10);
         if (e.key === "f" || e.key === "F") $("fsBtn").click();
         if (e.key === "e" || e.key === "E") openSheet();
         if (e.key === "Escape") { if (P.classList.contains("sheet-open")) closeSheet(); else if (immersive) exitFs(); }

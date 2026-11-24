@@ -3,6 +3,7 @@ import { ActivityIndicator, BackHandler, Linking, Pressable, StyleSheet, Text, V
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { WebView } from "react-native-webview";
+import { usePreventScreenCapture } from "expo-screen-capture";
 
 /* The whole interface lives on the website (app.html, drama.html, teaser.html on GitHub Pages).
    Change those files on GitHub and the app shows the new design the next time it opens —
@@ -15,6 +16,8 @@ const OWN = "tonysigan-rgb.github.io";
 const openOutside = (url) => { if (url && /^https?:/.test(url)) Linking.openURL(url).catch(() => {}); };
 
 export default function App() {
+  // Block screen recording and screenshots of the app (Android: the recording shows black; iPhone: the screen is hidden while recording)
+  usePreventScreenCapture();
   const web = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
