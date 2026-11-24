@@ -62,7 +62,7 @@ jobs:
           key: whisper-large-v3
       - name: Install Whisper
         if: steps.check.outputs.new == 'yes'
-        run: python -m pip install --quiet faster-whisper
+        run: python -m pip install --quiet faster-whisper "av<15"
       - name: Transcribe new episodes
         if: steps.check.outputs.new == 'yes'
         env:
