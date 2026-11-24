@@ -830,7 +830,6 @@
         advancedFrom = current;
         const n = nextAvail(current, 1);
         if (autoplay && n >= 0) {
-          hint(`UP NEXT · EP${pad(n + 1)}`, 1500);
           play(n, false);
         } else {
           if (ready) yt.pauseVideo();
