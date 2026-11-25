@@ -31,7 +31,7 @@ window.PLUFFY = {
     { title: "Episode 1", plot: "A drunken mistake involving secret love letters and an unexpected kiss turns Theo's academic rivalry with Raymond into something far more complicated." },
     { title: "Episode 2", plot: "Theo struggles with the consequences of his confession as his longtime crush, Owen, and his academic rival, Raymond, begin competing for his affection." },
     { title: "Episode 3", thumbAt: 28, plot: "As Owen and Raymond grow closer to Theo, their increasingly romantic gestures leave him questioning his true feelings." },
-    { title: "Episode 4", plot: "Kristovian's unexpected affection complicates Theo's already tangled love life, turning a love triangle into a competition between three hearts.", release: "2026-11-09" },
+    { title: "Episode 4", thumbAt: 73, plot: "Kristovian's unexpected affection complicates Theo's already tangled love life, turning a love triangle into a competition between three hearts.", release: "2026-11-09" },
     { title: "Episode 5", thumbAt: 108, plot: "Jealousy and misunderstandings push Raymond away as Theo's growing closeness with Kristovian threatens their fragile relationship.", release: "2026-11-23" },
     { title: "Episode 6", thumbAt: 56, name: "The Wrong Person to Love", plot: "A seemingly innocent house party turns into an emotional confrontation when Raymond forces Theo to face the hearts he has unknowingly hurt." },
     { title: "Episode 7", plot: "" },
