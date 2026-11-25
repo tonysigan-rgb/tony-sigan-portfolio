@@ -1,4 +1,4 @@
-name: Auto subtitles + thumbnails (new episodes on Cloudflare)
+name: Auto subtitles + thumbnails + X-Ray (new episodes on Cloudflare)
 
 # Every hour: if a new ps-epNN.mp4 is in the Cloudflare folder and has no subtitles yet,
 # transcribe it (English, word-timed) and publish subs/ps-epNN.en.vtt.
@@ -6,6 +6,9 @@ name: Auto subtitles + thumbnails (new episodes on Cloudflare)
 on:
   schedule:
     - cron: "41 * * * *"
+  push:
+    branches: [main]
+    paths: ["subs/cast.json"]
   workflow_dispatch:
     inputs:
       remake_thumbnails:
@@ -40,6 +43,15 @@ jobs:
         run: |
           python -m pip install --quiet av pillow numpy opencv-python-headless
           python scripts/auto_thumbs.py
+      - name: Keep the face models between runs
+        if: github.event.inputs.test_episode == ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pluffy-xray
+          key: xray-yunet-sface-v1
+      - name: Actor X-Ray for new episodes (or when subs/cast.json changes)
+        if: github.event.inputs.test_episode == ''
+        run: python scripts/auto_xray.py
       - name: Anything new to transcribe?
         id: check
         env:
@@ -82,12 +94,12 @@ jobs:
       - name: Publish subtitles and thumbnails
         if: github.event.inputs.test_episode == ''
         run: |
-          if [ -z "$(git status --porcelain subs assets/thumbs)" ]; then exit 0; fi
+          if [ -z "$(git status --porcelain subs assets/thumbs assets/cast)" ]; then exit 0; fi
           v=$(date -u +%Y%m%d%H%M)
           sed -i -E "s/subsVersion: \"[^\"]*\"/subsVersion: \"$v\"/" pluffy-data.js
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add subs assets/thumbs pluffy-data.js
-          git commit -m "Auto: subtitles / thumbnails for new episode(s)"
+          git add subs assets/thumbs assets/cast pluffy-data.js
+          git commit -m "Auto: subtitles / thumbnails / X-Ray for new episode(s)"
           git pull --rebase --quiet origin main
           git push
