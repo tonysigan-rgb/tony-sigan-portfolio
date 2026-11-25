@@ -757,7 +757,7 @@
       }
 
       function play(i, user) {
-        current = i; resumeGuard = null; resumeTarget = 0;
+        current = i; resumeGuard = null; resumeTarget = 0; lastPos = { ep: -1, t: 0 };
         const pr = window.PLUFFY.progressOf(i + 1);
         pendingSeek = pr && !pr.done && pr.t > 8 ? pr.t : 0;   // pick up where this viewer stopped
         const ep = EPISODES[i];
@@ -846,11 +846,29 @@
       // from 0:00, so only call it resumed once the video has really played on past that point, and keep
       // watching for a few seconds after that in case it jumps back to the start.
       let resumeGuard = null;   // { v, t, until }
-      function cancelResume() { resumeTarget = 0; pendingSeek = 0; resumeGuard = null; }
+      // Last spot actually watched in this episode. iPhone unloads a paused video when the app/page goes to the
+      // background or the screen locks (common in full screen); playing again then starts from 0:00. If the video
+      // drops back to the start by itself, jump back to this spot.
+      let lastPos = { ep: -1, t: 0 };
+      function cancelResume() { resumeTarget = 0; pendingSeek = 0; resumeGuard = null; lastPos = { ep: -1, t: 0 }; }
+      VIDS.forEach((v) => v.addEventListener("timeupdate", () => {
+        if (v !== CFV || mode !== "cf" || resumeTarget || !EPISODES[current] || !EPISODES[current].id) return;
+        const t = v.currentTime;
+        if (t < 1.5 && lastPos.ep === current && lastPos.t > 8 && !v.ended) {
+          resumeTarget = lastPos.t; resumeFor = v; tryResume(); return;
+        }
+        if (t > 1.5) lastPos = { ep: current, t };
+      }));
+      VIDS.forEach((v) => v.addEventListener("ended", () => { if (v === CFV) lastPos = { ep: -1, t: 0 }; }));
+      // coming back to the page/app: if the video was unloaded meanwhile, put it back where it was
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden || !CFV || lastPos.ep !== current || lastPos.t <= 8) return;
+        if (CFV.currentTime < lastPos.t - 3) { resumeTarget = lastPos.t; resumeFor = CFV; tryResume(); }
+      });
       VIDS.forEach((v) => ["loadedmetadata", "loadeddata", "canplay", "playing", "timeupdate"].forEach((ev) => v.addEventListener(ev, () => {
         if (resumeGuard && resumeGuard.v === v) {
           if (Date.now() > resumeGuard.until || v !== CFV) resumeGuard = null;
-          else if (!v.paused && v.currentTime < resumeGuard.t - 3) { try { v.currentTime = resumeGuard.t; } catch (_) {} }
+          else if (!v.paused && v.currentTime < resumeGuard.t - 3) { const to = Math.max(resumeGuard.t, lastPos.ep === current ? lastPos.t : 0); try { v.currentTime = to; } catch (_) {} }
         }
         if (v !== resumeFor || !resumeTarget) return;
         if (v.currentTime >= resumeTarget - 1.5) {
