@@ -10,7 +10,7 @@
  *    in the X-Admin-Key header (the player's admin mode does this; see drama.html ?admin=1)
  *
  * Routes:  GET  /comments?ep=5          list (newest first)
- *          POST /comments               {ep, name, text, me}
+ *          POST /comments               {ep, name, text, me, parent?}   parent = id of the comment being replied to
  *          POST /comments/:id/like      {me}   (toggle)
  *          POST /comments/:id/report    {me}
  *          POST /comments/:id/delete    {me}   own comment, or X-Admin-Key for any
@@ -33,7 +33,10 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS votes (me TEXT NOT NULL, id INTEGER NOT NULL, kind TEXT NOT NULL, PRIMARY KEY (me, id, kind))`,
 ];
 let ready = null;
-const setup = (db) => (ready ||= db.batch(SCHEMA.map((s) => db.prepare(s))).catch((e) => { ready = null; throw e; }));
+// replies: comments.parent = id of the top-level comment (0 = a comment, not a reply). Added after launch, so add the column if missing.
+const setup = (db) => (ready ||= db.batch(SCHEMA.map((s) => db.prepare(s)))
+  .then(() => db.prepare(`ALTER TABLE comments ADD COLUMN parent INTEGER NOT NULL DEFAULT 0`).run().catch(() => {}))
+  .catch((e) => { ready = null; throw e; }));
 
 async function sha(s) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
@@ -71,9 +74,9 @@ export default {
       const mine = url.searchParams.get("me") || "";
       const mineH = mine.length >= 16 ? await sha("me:" + mine) : "";
       const { results } = await env.DB.prepare(
-        `SELECT c.id, c.name, c.text, c.ts, c.likes, c.owner = ?2 AS mine,
+        `SELECT c.id, c.parent, c.name, c.text, c.ts, c.likes, c.owner = ?2 AS mine,
                 EXISTS(SELECT 1 FROM votes v WHERE v.id = c.id AND v.me = ?2 AND v.kind = 'like') AS liked
-         FROM comments c WHERE c.ep = ?1 AND c.hidden = 0 ORDER BY c.ts DESC LIMIT 300`).bind(ep, mineH || "-").all();
+         FROM comments c WHERE c.ep = ?1 AND c.hidden = 0 ORDER BY c.ts DESC LIMIT 500`).bind(ep, mineH || "-").all();
       const total = await env.DB.prepare(`SELECT COUNT(*) AS n FROM comments WHERE ep = ? AND hidden = 0`).bind(ep).first("n");
       return json({ ep, total, comments: results.map((r) => ({ ...r, mine: !!r.mine, liked: !!r.liked })) });
     }
@@ -98,8 +101,14 @@ export default {
       if (burst >= 8) return json({ error: "Lots of comments from your network right now - try again in a minute." }, 429);
       const dup = await env.DB.prepare(`SELECT 1 FROM comments WHERE owner = ? AND text = ? AND ts > ?`).bind(meH, text, now - 3600).first();
       if (dup) return json({ error: "You already posted that." }, 409);
-      const r = await env.DB.prepare(`INSERT INTO comments (ep, name, text, ts, owner, iph) VALUES (?, ?, ?, ?, ?, ?) RETURNING id`).bind(ep, name, text, now, meH, iph).first();
-      return json({ ok: true, comment: { id: r.id, name, text, ts: now, likes: 0, mine: true, liked: false } }, 201);
+      let parent = parseInt(body.parent, 10) || 0;
+      if (parent) {   // a reply to a reply joins the same thread (one level of replies)
+        const p = await env.DB.prepare(`SELECT id, parent, ep, hidden FROM comments WHERE id = ?`).bind(parent).first();
+        if (!p || p.ep !== ep || p.hidden) return json({ error: "That comment is gone." }, 404);
+        parent = p.parent || p.id;
+      }
+      const r = await env.DB.prepare(`INSERT INTO comments (ep, name, text, ts, owner, iph, parent) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id`).bind(ep, name, text, now, meH, iph, parent).first();
+      return json({ ok: true, comment: { id: r.id, parent, name, text, ts: now, likes: 0, mine: true, liked: false } }, 201);
     }
 
     const id = parseInt(parts[1], 10), action = parts[2];
@@ -108,7 +117,10 @@ export default {
       if (!c) return json({ error: "That comment is gone." }, 404);
       if (action === "delete") {
         if (!admin && (!meH || meH !== c.owner)) return json({ error: "You can only delete your own comments." }, 403);
-        await env.DB.batch([env.DB.prepare(`DELETE FROM comments WHERE id = ?`).bind(id), env.DB.prepare(`DELETE FROM votes WHERE id = ?`).bind(id)]);
+        await env.DB.batch([   // deleting a comment also removes its replies
+          env.DB.prepare(`DELETE FROM votes WHERE id = ? OR id IN (SELECT id FROM comments WHERE parent = ?)`).bind(id, id),
+          env.DB.prepare(`DELETE FROM comments WHERE id = ? OR parent = ?`).bind(id, id),
+        ]);
         return json({ ok: true });
       }
       if (!meH) return json({ error: "Please reload the page and try again." }, 400);
