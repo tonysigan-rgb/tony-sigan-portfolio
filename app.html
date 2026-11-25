@@ -64,6 +64,20 @@
       .ep.locked { color:rgba(255,255,255,.28); pointer-events:none; }
       .ep small { position:absolute; bottom:.18rem; font:.36rem var(--mono); letter-spacing:.05em; color:rgba(255,255,255,.3); }
       .ep.is-early small { color:var(--red); }
+      /* thumbnails + watched bar */
+      .ep { overflow:hidden; }
+      .ep img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 28%; opacity:.62; }
+      .ep b { position:relative; z-index:1; font-weight:600; text-shadow:0 1px 3px rgba(0,0,0,.85); }
+      .ep small { z-index:1; }
+      .ep .w { position:absolute; left:0; bottom:0; height:3px; background:var(--red); z-index:2; }
+      /* Continue watching */
+      .cont { display:flex; gap:.8rem; align-items:center; margin:1.1rem 0 0; padding:.6rem; border-radius:.9rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); color:#fff; text-decoration:none; }
+      .cont img { width:3.6rem; height:3.6rem; border-radius:.55rem; object-fit:cover; object-position:50% 28%; background:#000; flex:0 0 auto; }
+      .cont .k { display:block; font:.56rem var(--mono); letter-spacing:.08em; color:var(--red); }
+      .cont b { display:block; font-size:.95rem; margin:.15rem 0 .1rem; }
+      .cont .bar { display:block; height:3px; border-radius:2px; background:rgba(255,255,255,.15); overflow:hidden; }
+      .cont .bar i { display:block; height:100%; background:var(--red); }
+      .cont .go { margin-left:auto; width:2.3rem; height:2.3rem; border-radius:50%; display:grid; place-items:center; background:var(--red); flex:0 0 auto; }
       .soon { margin-top:1.7rem; }
       .soon h3 { margin:0 0 .4rem; font-size:1.35rem; letter-spacing:-.04em; }
       .soon p { color:rgba(255,255,255,.8); margin:0; }
@@ -72,7 +86,7 @@
   <body>
     <div id="app"></div>
 
-    <script src="pluffy-data.js?v=20261125d"></script>
+    <script src="pluffy-data.js?v=20261125e"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ---------- SERIES (add a new show here) ---------- */
@@ -107,6 +121,24 @@
       const early = status.find((s) => s.early);
       const label = (s) => (s.teaser ? "UPCOMING" : outCount > 1 ? `EP01–${pad(outCount)} OUT NOW` : "EP01 OUT NOW");
 
+      // Continue watching (saved on this device)
+      const rp = window.PLUFFY.resumePoint();
+      const contCard = (s) => {
+        if (!rp || !s.player) return "";
+        const pr = window.PLUFFY.progressOf(rp.ep), pct = pr && pr.dur && !rp.next ? Math.min(100, (rp.t / pr.dur) * 100) : 0;
+        return `<a class="cont" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&app=1">
+          <img src="${window.PLUFFY.thumbUrl(rp.ep)}" alt="" onerror="this.style.visibility='hidden'" />
+          <span style="flex:1;min-width:0"><span class="k">${rp.next ? "UP NEXT" : "CONTINUE WATCHING"}</span><b>${esc(s.title)} · EP${pad(rp.ep)}</b>
+          <span class="small">${rp.t ? `Resume at ${window.PLUFFY.clock(rp.t)}` : "Start from the beginning"}</span>${pct ? `<span class="bar"><i style="width:${pct}%"></i></span>` : ""}</span>
+          <span class="go">▶</span></a>`;
+      };
+      const tile = (e) => {
+        const pr = window.PLUFFY.progressOf(e.n);
+        const img = e.out || e.early ? `<img src="${window.PLUFFY.thumbUrl(e.n)}" alt="" loading="lazy" onerror="this.remove()" />` : "";
+        const w = pr && pr.dur && (e.out || e.early) ? `<span class="w" style="width:${pr.done ? 100 : Math.min(100, (pr.t / pr.dur) * 100)}%"></span>` : "";
+        return `${img}<b>${e.n}</b>${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}${w}`;
+      };
+
       const FOOTER = `<p class="footer">© 2026 PLUFFY MINIS · TONY SIGAN ANAK LAPOK</p>`;
 
       function library() {
@@ -114,7 +146,8 @@
           <div class="topbar"><div class="header"><span class="dot"></span><span class="logo">pluffy<span>minis</span></span></div></div>
           <p class="kicker">PLUFFY MINIS ORIGINALS</p>
           <h1>All Series</h1>
-          <div class="grid2">
+          ${contCard(SERIES.find((x) => x.player) || {})}
+          <div class="grid2" style="margin-top:1.1rem">
             ${SERIES.map((s) => `
               <a class="card" href="#/series/${s.key}">
                 <img src="${s.poster}" alt="${esc(s.title)} poster" />
@@ -138,15 +171,17 @@
             <h2>${esc(s.title)}</h2>
             <div class="tags">${esc(s.tags.join(" · "))}${s.player ? ` · ${total} EPISODES` : ""}</div>
             <p class="blurb">${esc(s.blurb)}</p>
-            <a class="btn" href="${s.teaser ? s.teaser + "?app=1" : s.player + "?ep=1&app=1"}">▶ ${s.teaser ? "Watch teaser" : "Start watching · EP01"}</a>
+            ${s.teaser ? `<a class="btn" href="${s.teaser}?app=1">▶ Watch teaser</a>`
+              : rp ? `<a class="btn" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&app=1">▶ ${rp.next ? "Up next" : "Continue"} · EP${pad(rp.ep)}${rp.t ? ` · ${window.PLUFFY.clock(rp.t)}` : ""}</a>`
+              : `<a class="btn" href="${s.player}?ep=1&app=1">▶ Start watching · EP01</a>`}
             ${s.trailer ? `<a class="btn ghost" href="${s.trailer}&app=1">Watch teaser</a>` : ""}
           </div>`;
         if (!s.player) return top + `<div class="soon"><h3>Episodes</h3><p>Episodes are coming soon. Watch the teaser while you wait.</p></div>${FOOTER}</div>`;
         return top + `
-          ${early ? `<a class="early" href="${s.player}?ep=${early.n}&app=1">EP${pad(early.n)} IS FREE HERE ON MONDAY · SUBSCRIBERS WATCH IT NOW →</a>` : ""}
+          ${early ? `<a class="early" href="${s.player}?ep=${early.n}&app=1">EP${pad(early.n)} UNLOCKS IN <span class="cd" data-at="${rel(eps[early.n - 1])}">${window.PLUFFY.countdown(rel(eps[early.n - 1]))}</span> · SUBSCRIBERS WATCH IT NOW →</a>` : ""}
           <div class="eps-head"><h3>Episodes</h3><span class="small">${pad(outCount)} / ${pad(total)} RELEASED</span></div>
           <div class="eps">
-            ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "is-early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${e.n}${e.out ? "" : `<small>${e.early ? "EARLY" : "SOON"}</small>`}</a>`).join("")}
+            ${status.map((e) => `<a class="ep ${e.out ? "out" : e.early ? "is-early" : "locked"}" href="${s.player}?ep=${e.n}&app=1">${tile(e)}</a>`).join("")}
           </div>
           ${FOOTER}
         </div>`;
@@ -166,6 +201,8 @@
         window.scrollTo(0, 0);
       }
       addEventListener("hashchange", route);
+      // countdown to the next Monday unlock ticks over every 30 s
+      setInterval(() => document.querySelectorAll(".cd[data-at]").forEach((el) => (el.textContent = window.PLUFFY.countdown(+el.dataset.at))), 30000);
       route();
         });
     </script>

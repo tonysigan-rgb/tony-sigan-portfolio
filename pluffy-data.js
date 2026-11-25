@@ -9,7 +9,8 @@
              Before that date the episode shows as "WATCH EARLY": people who subscribe to the
              YouTube channel can watch it here straight away.
              Episodes before the first dated one (EP01–03) are free to watch here.
-   plot:     optional one- or two-line summary.
+   plot:     optional one- or two-line summary (logline).
+   name:     optional episode title, e.g. "The Wrong Person to Love" (keep title: "Episode N" as it is).
    ================================================================ */
 window.PLUFFY = {
   channel: "https://www.youtube.com/@itsmetslFilms",
@@ -26,12 +27,12 @@ window.PLUFFY = {
   subsVersion: "202611250042",
   googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
-    { title: "Episode 1", plot: "" },
-    { title: "Episode 2", plot: "" },
-    { title: "Episode 3", plot: "" },
-    { title: "Episode 4", plot: "", release: "2026-11-09" },
-    { title: "Episode 5", plot: "", release: "2026-11-23" },
-    { title: "Episode 6", plot: "" },
+    { title: "Episode 1", plot: "A drunken mistake involving secret love letters and an unexpected kiss turns Theo's academic rivalry with Raymond into something far more complicated." },
+    { title: "Episode 2", plot: "Theo struggles with the consequences of his confession as his longtime crush, Owen, and his academic rival, Raymond, begin competing for his affection." },
+    { title: "Episode 3", plot: "As Owen and Raymond grow closer to Theo, their increasingly romantic gestures leave him questioning his true feelings." },
+    { title: "Episode 4", plot: "Kristovian's unexpected affection complicates Theo's already tangled love life, turning a love triangle into a competition between three hearts.", release: "2026-11-09" },
+    { title: "Episode 5", plot: "Jealousy and misunderstandings push Raymond away as Theo's growing closeness with Kristovian threatens their fragile relationship.", release: "2026-11-23" },
+    { title: "Episode 6", name: "The Wrong Person to Love", plot: "A seemingly innocent house party turns into an emotional confrontation when Raymond forces Theo to face the hearts he has unknowingly hurt." },
     { title: "Episode 7", plot: "" },
     { title: "Episode 8", plot: "" },
     { title: "Episode 9", plot: "" },
@@ -120,6 +121,45 @@ window.PLUFFY.soundtrack = {
     e.release = prev = d.toISOString().slice(0, 10); e.releaseAuto = true;
   });
   P.releaseAt = (e) => (e && e.release ? new Date(`${e.release}T${P.releaseHour}:00+08:00`).getTime() : 0);
+})();
+
+/* ================================================================
+   CONTINUE WATCHING + THUMBNAILS + COUNTDOWN (shared by every page and the apps)
+   - Progress is saved on this device only (no account): last episode, position, finished episodes.
+   - Thumbnails: assets/thumbs/ps-epNN.jpg, made automatically from each uploaded episode.
+   ================================================================ */
+(function () {
+  const P = window.PLUFFY;
+  const KEY = "pluffy-progress-v1";
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null") || { eps: {} }; } catch (_) { return { eps: {} }; } };
+  const save = (p) => { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (_) {} };
+  P.thumbUrl = (n) => `assets/thumbs/ps-ep${String(n).padStart(2, "0")}.jpg`;
+  // remember where the viewer is in episode n (seconds t of dur)
+  P.saveProgress = (n, t, dur) => {
+    if (!(n > 0) || !(dur > 0)) return;
+    const p = load();
+    const done = t >= dur - 12;
+    p.eps[n] = { t: Math.round(t), dur: Math.round(dur), done: done || (p.eps[n] && p.eps[n].done) || false };
+    p.last = { ep: n, t: done ? 0 : Math.round(t), done, at: Date.now() };
+    save(p);
+  };
+  P.progressOf = (n) => load().eps[n] || null;
+  // where to pick up: the unfinished episode, or the next one after a finished episode
+  P.resumePoint = () => {
+    const p = load();
+    if (!p.last) return null;
+    const avail = (i) => P.episodes[i - 1] && P.episodes[i - 1].uploaded && P.releaseAt(P.episodes[i - 1]) <= Date.now();
+    if (!p.last.done && p.last.t > 8 && avail(p.last.ep)) return { ep: p.last.ep, t: p.last.t, next: false };
+    for (let i = p.last.ep + 1; i <= P.episodes.length; i++) if (avail(i)) { const e = p.eps[i]; return { ep: i, t: e && !e.done ? e.t : 0, next: true }; }
+    return null;
+  };
+  P.clock = (s) => { s = Math.max(0, Math.floor(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+  // "2d 14h" / "5h 12m" / "12m"
+  P.countdown = (ts) => {
+    let s = Math.max(0, Math.floor((ts - Date.now()) / 1000));
+    const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.max(1, Math.ceil(s / 60));
+    return d ? `${d}d ${h}h` : h ? `${h}h ${String(m === 60 ? 59 : m).padStart(2, "0")}m` : `${m}m`;
+  };
 })();
 
 /* ================================================================

@@ -222,6 +222,17 @@
       .ep.locked { color:rgba(241,239,240,.3); cursor:not-allowed; }
       .ep.active.locked { color:var(--white); cursor:default; }
       .ep.locked::after { content:"SOON"; position:absolute; bottom:.2rem; font-size:.42rem; letter-spacing:.05em; }
+      /* episode thumbnails + how much of it this viewer has watched */
+      .ep { overflow:hidden; }
+      .ep img.th { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 28%; opacity:.62; transition:opacity .2s; }
+      .ep:hover img.th { opacity:.85; }
+      .ep.has-thumb { color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.85); background:#000; }
+      .ep .n { position:relative; z-index:1; }
+      .ep.active.has-thumb { background:#000; border:2px solid var(--red); }
+      .ep.active.has-thumb img.th { opacity:.9; }
+      .ep .w { position:absolute; left:0; bottom:0; height:3px; background:var(--red); z-index:2; }
+      .ep.early::after, .ep.locked::after { z-index:1; }
+      .ep.active::before { z-index:2; }
       .ep.active::before { content:""; position:absolute; top:.3rem; right:.3rem; width:.35rem; height:.35rem; border-radius:50%; background:var(--white); animation:blink 1.2s infinite; }
       @keyframes blink { 50% { opacity:.2; } }
 
@@ -456,7 +467,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261125d"></script>
+    <script src="pluffy-data.js?v=20261125e"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -648,7 +659,14 @@
           const b = document.createElement("button");
           b.className = "ep" + (ep.early ? " early" : ep.id ? "" : " locked") + (i === current ? " active" : "");
           if (ep.early) b.dataset.day = dayLabel(ep).split(" ").slice(1).join(" ");
-          b.textContent = i + 1;
+          b.innerHTML = `<span class="n">${i + 1}</span>`;
+          if (ep.id || ep.early) {
+            const im = new Image(); im.className = "th"; im.alt = ""; im.loading = "lazy"; im.src = window.PLUFFY.thumbUrl(i + 1);
+            im.onerror = () => { im.remove(); b.classList.remove("has-thumb"); };
+            b.prepend(im); b.classList.add("has-thumb");
+            const pr = window.PLUFFY.progressOf(i + 1);
+            if (pr && pr.dur) { const w = document.createElement("span"); w.className = "w"; w.style.width = `${pr.done ? 100 : Math.min(100, (pr.t / pr.dur) * 100)}%`; b.appendChild(w); }
+          }
           b.setAttribute("aria-label", ep.id ? `Play episode ${i + 1}` : `Episode ${i + 1}, coming soon`);
           b.onclick = () => { if (!ep.id && !ep.early) return; closeSheet(); play(i, true); };
           gridEl.appendChild(b);
@@ -667,17 +685,17 @@
         buildGrids();
         const plot = ep.plot || SYNOPSIS;
         $("badge").textContent = `EP${pad(current + 1)}`;
-        $("metaLine").textContent = `EPISODE ${pad(current + 1)} / ${pad(total)}${ep.title && ep.title !== `Episode ${current + 1}` ? " · " + ep.title.toUpperCase() : ""}`;
+        $("metaLine").textContent = `EPISODE ${pad(current + 1)} / ${pad(total)}${ep.name ? " · " + ep.name.toUpperCase() : ""}`;
         $("metaPlot").textContent = plot;
         $("nowLabel").textContent = `PLOT OF EPISODE ${pad(current + 1)}`;
-        $("nowTitle").textContent = ep.title;
+        $("nowTitle").textContent = ep.name ? `${ep.title} — ${ep.name}` : ep.title;
         $("nowPlot").textContent = plot;
         $("prev").disabled = nextAvail(current, -1) < 0;
         $("next").disabled = $("nextRail").disabled = nextAvail(current, 1) < 0;
         $("nextRail").style.opacity = $("next").disabled ? .4 : 1;
         $("soon").classList.toggle("show", !ep.id);
         $("earlyCtas").hidden = !ep.early;
-        $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
+        $("soonTop").textContent = ep.early ? `FREE HERE IN ${window.PLUFFY.countdown(releaseTime(ep))} · ${dayLabel(ep)}` : "COMING SOON";
         $("soonSub").textContent = ep.early ? "SUBSCRIBERS WATCH IT NOW" : "NEW EPISODE EVERY MONDAY";
         if (ep.early) { $("earlySub").href = SUBSCRIBE; $("earlyCheck").hidden = true; $("earlyPriv").hidden = false; }
         $("soonEp").textContent = `EP${pad(current + 1)}`;
@@ -688,6 +706,8 @@
 
       function play(i, user) {
         current = i;
+        const pr = window.PLUFFY.progressOf(i + 1);
+        pendingSeek = pr && !pr.done && pr.t > 8 ? pr.t : 0;   // pick up where this viewer stopped
         const ep = EPISODES[i];
         const u = new URL(location.href); u.searchParams.set("ep", i + 1); history.replaceState(null, "", u);
         render();
@@ -742,6 +762,14 @@
         mode = m; P.classList.toggle("cf", m === "cf");
         if (m === "cf") ytCall("pauseVideo"); else VIDS.forEach((v) => v.pause());
       }
+      // Resume position for the episode being loaded (Continue watching)
+      let pendingSeek = 0;
+      function applySeek() {
+        if (!pendingSeek) return;
+        const t = pendingSeek, v = CFV; pendingSeek = 0;
+        const go = () => { try { v.currentTime = t; } catch (_) {} hint(`RESUMED AT ${window.PLUFFY.clock(t)}`, 1800); };
+        if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
+      }
       function cfLoad(id, autoStart) {
         const u = cfUrl(id);
         CFV.dataset.retry = "";
@@ -752,6 +780,7 @@
           CFV.classList.add("on"); old.classList.remove("on"); old.pause(); old.preload = "auto";
           if (CFV.currentTime) CFV.currentTime = 0;
         } else { CFV.preload = "auto"; setSrc(CFV, u); }
+        applySeek();
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
       // If an episode can't load (bad connection), say so; the next tap on play tries again
@@ -1016,6 +1045,14 @@
       document.addEventListener("click", (e) => { if (!e.target.closest("#ccMenu, #ccBtn")) $("ccMenu").classList.remove("open"); });
       setCc(ccLang);
 
+      /* Continue watching: save this viewer's position every few seconds, on pause and at the end */
+      const saveNow = () => { if (EPISODES[current] && EPISODES[current].id && yt.getDuration() > 0) window.PLUFFY.saveProgress(current + 1, yt.getCurrentTime(), yt.getDuration()); };
+      setInterval(() => { if (playing) saveNow(); }, 4000);
+      VIDS.forEach((v) => { v.addEventListener("pause", () => { if (v === CFV) { saveNow(); buildGrids(); } }); v.addEventListener("ended", () => { if (v === CFV) { saveNow(); buildGrids(); } }); });
+      window.addEventListener("pagehide", saveNow);
+      // Countdown on a locked episode ticks over every 30 s
+      setInterval(() => { const ep = EPISODES[current]; if (ep && ep.early) $("soonTop").textContent = `FREE HERE IN ${window.PLUFFY.countdown(releaseTime(ep))} · ${dayLabel(ep)}`; }, 30000);
+
       // Leaving the page or the app pauses the episode
       document.addEventListener("visibilitychange", () => { if (document.hidden && playing) yt.pauseVideo(); });
       /* ---------------- 10-second skip ---------------- */
@@ -1168,8 +1205,12 @@
       });
 
       /* ---------------- start ---------------- */
-      const q = parseInt(new URLSearchParams(location.search).get("ep"), 10);
-      current = q >= 1 && q <= total ? q - 1 : Math.max(0, EPISODES.findIndex((e) => e.id));
+      const qs = new URLSearchParams(location.search);
+      const q = parseInt(qs.get("ep"), 10);
+      const rp = window.PLUFFY.resumePoint();
+      current = q >= 1 && q <= total ? q - 1 : rp && EPISODES[rp.ep - 1].id ? rp.ep - 1 : Math.max(0, EPISODES.findIndex((e) => e.id));
+      { const at = parseFloat(qs.get("at")); const pr = window.PLUFFY.progressOf(current + 1);
+        pendingSeek = at > 0 ? at : pr && !pr.done && pr.t > 8 ? pr.t : 0; }
       render();
       if (EPISODES[current].id && cfUrl(EPISODES[current].id)) yt.cueVideoById(EPISODES[current].id);
       if (TRACKS.some((t) => getId(t.url))) {

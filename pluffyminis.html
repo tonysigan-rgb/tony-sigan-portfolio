@@ -224,7 +224,7 @@
       </div>
     </div>
 
-    <script src="pluffy-data.js?v=20261125d"></script>
+    <script src="pluffy-data.js?v=20261125e"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -262,6 +262,7 @@
       const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>';
       const attrs = (s) => s.status === "soon" ? `href="https://youtube.com/shorts/${s.teaser}" data-teaser="${s.teaser}" data-title="${esc(s.title)}" target="_blank" rel="noreferrer"` : `href="${s.link}"`;
 
+      const RP = window.PLUFFY.resumePoint();   // Continue watching (saved on this device)
       /* Hero */
       $("hero").innerHTML = SERIES.map((s, i) => `
         <div class="slide${i === 0 ? " on" : ""}">
@@ -273,7 +274,9 @@
               <div class="s-tags">${s.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
               <p>${esc(s.blurb)}</p>
               <div class="ctas">
-                <a class="btn primary" ${attrs(s)}>${PLAY}${s.status === "soon" ? "Watch Teaser" : "Watch Now"}</a>
+                ${s.status !== "soon" && RP
+                  ? `<a class="btn primary" href="${s.link}?ep=${RP.ep}${RP.t ? `&at=${RP.t}` : ""}">${PLAY}${RP.next ? "Up next" : "Continue"} · EP${p2(RP.ep)}${RP.t ? ` · ${window.PLUFFY.clock(RP.t)}` : ""}</a>`
+                  : `<a class="btn primary" ${attrs(s)}>${PLAY}${s.status === "soon" ? "Watch Teaser" : "Watch Now"}</a>`}
                 <a class="btn ghost" href="#gallery">All Series</a>
               </div>
             </div>
@@ -322,7 +325,9 @@
 
       if (earlyEp >= 0) {
         const d = new Date(window.PLUFFY.releaseAt(eps[earlyEp])).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short", timeZone: "Asia/Kuching" }).toUpperCase();
-        $("earlyStrip").outerHTML = `<div class="early-strip" style="margin-top:4.2rem">EP${p2(earlyEp + 1)} IS FREE HERE ON ${d} · SUBSCRIBERS WATCH IT NOW <a href="drama.html?ep=${earlyEp + 1}">SUBSCRIBE &amp; WATCH NOW →</a></div>`;
+        const at = window.PLUFFY.releaseAt(eps[earlyEp]);
+        $("earlyStrip").outerHTML = `<div class="early-strip" style="margin-top:4.2rem">EP${p2(earlyEp + 1)} UNLOCKS IN <span class="cd" data-at="${at}">${window.PLUFFY.countdown(at)}</span> · ${d} · SUBSCRIBERS WATCH IT NOW <a href="drama.html?ep=${earlyEp + 1}">SUBSCRIBE &amp; WATCH NOW →</a></div>`;
+        setInterval(() => document.querySelectorAll(".cd[data-at]").forEach((el) => (el.textContent = window.PLUFFY.countdown(+el.dataset.at))), 30000);
         document.querySelector(".hero").style.marginTop = "0";
       }
 
