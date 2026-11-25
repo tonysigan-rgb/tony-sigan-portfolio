@@ -747,7 +747,7 @@
       }
 
       function play(i, user) {
-        current = i;
+        current = i; resumeGuard = null; resumeTarget = 0;
         const pr = window.PLUFFY.progressOf(i + 1);
         pendingSeek = pr && !pr.done && pr.t > 8 ? pr.t : 0;   // pick up where this viewer stopped
         const ep = EPISODES[i];
@@ -832,10 +832,22 @@
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
       // If an episode can't load (bad connection), say so; the next tap on play tries again
+      // iPhone (and its home-screen app) can report the new position at the start and then quietly play
+      // from 0:00, so only call it resumed once the video has really played on past that point, and keep
+      // watching for a few seconds after that in case it jumps back to the start.
+      let resumeGuard = null;   // { v, t, until }
+      function cancelResume() { resumeTarget = 0; pendingSeek = 0; resumeGuard = null; }
       VIDS.forEach((v) => ["loadedmetadata", "loadeddata", "canplay", "playing", "timeupdate"].forEach((ev) => v.addEventListener(ev, () => {
+        if (resumeGuard && resumeGuard.v === v) {
+          if (Date.now() > resumeGuard.until || v !== CFV) resumeGuard = null;
+          else if (!v.paused && v.currentTime < resumeGuard.t - 3) { try { v.currentTime = resumeGuard.t; } catch (_) {} }
+        }
         if (v !== resumeFor || !resumeTarget) return;
         if (v.currentTime >= resumeTarget - 1.5) {
-          if (!v.paused && v.readyState >= 3) { hint(`RESUMED AT ${window.PLUFFY.clock(resumeTarget)}`, 1800); resumeTarget = 0; }
+          if (!v.paused && v.readyState >= 3 && v.currentTime >= resumeTarget + 1) {
+            hint(`RESUMED AT ${window.PLUFFY.clock(resumeTarget)}`, 1800);
+            resumeGuard = { v, t: resumeTarget, until: Date.now() + 8000 }; resumeTarget = 0;
+          }
           return;
         }
         tryResume();
@@ -1187,6 +1199,7 @@
       setInterval(() => { if (playing) saveNow(); }, 4000);
       VIDS.forEach((v) => { v.addEventListener("pause", () => { if (v === CFV) { saveNow(); buildGrids(); } }); v.addEventListener("ended", () => { if (v === CFV) { saveNow(); buildGrids(); } }); });
       window.addEventListener("pagehide", saveNow);
+      document.addEventListener("visibilitychange", () => { if (document.hidden) saveNow(); });
       // Countdown on a locked episode ticks over every 30 s
       setInterval(() => { const ep = EPISODES[current]; if (ep && ep.early) $("soonTop").textContent = `FREE HERE IN ${window.PLUFFY.countdown(releaseTime(ep))} · ${dayLabel(ep)}`; }, 30000);
 
@@ -1196,7 +1209,7 @@
       let skipTimer;
       function skip(sec) {
         if (!ready || !EPISODES[current].id) return;
-        resumeTarget = 0;
+        cancelResume();
         const d = yt.getDuration(), t = yt.getCurrentTime();
         const to = Math.max(0, Math.min(d ? d - 0.5 : t + sec, t + sec));
         yt.seekTo(to);
@@ -1327,6 +1340,7 @@
       $("progress").addEventListener("click", (e) => {
         if (!ready) return;
         const r = $("progress").getBoundingClientRect();
+        cancelResume();
         yt.seekTo(((e.clientX - r.left) / r.width) * yt.getDuration(), true);
         reveal();
       });
