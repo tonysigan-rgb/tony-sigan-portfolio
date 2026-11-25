@@ -1,14 +1,19 @@
 """Episode thumbnails (runs in GitHub Actions with the auto-subtitles job).
 
 For every ps-epNN.mp4 in the Cloudflare folder without assets/thumbs/ps-epNN.jpg, pick a striking frame
-(sharp, well lit, colourful; from 10%-70% of the episode, skipping dark/blank frames) and save a
-360x640 JPEG. Run with FORCE=1 to remake all of them.
+and save a 360x640 JPEG: from the middle of the episode (after the opening titles and name captions),
+preferring frames with clear faces, then sharp, well lit and colourful. Run with FORCE=1 to remake all.
 """
 import io, os, re, sys, tempfile, urllib.request
 
 import av
 import numpy as np
 from PIL import Image
+try:
+    import cv2
+    FACES = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+except Exception:          # face detection is a bonus; without OpenCV the picker still works
+    cv2 = FACES = None
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets", "thumbs")
@@ -40,7 +45,14 @@ def score(img):
     rg, yb = a[..., 0] - a[..., 1], 0.5 * (a[..., 0] + a[..., 1]) - a[..., 2]
     colour = np.sqrt(rg.std() ** 2 + yb.std() ** 2) + 0.3 * np.sqrt(rg.mean() ** 2 + yb.mean() ** 2)
     centre = gray[60:220, 30:150].std()             # something happening in the middle (faces, action)
-    return sharp * (1 + colour / 60) * (0.6 + centre / 80)
+    base = sharp * (1 + colour / 60) * (0.6 + centre / 80)
+    if FACES is not None:
+        g = cv2.cvtColor(np.asarray(img.convert("RGB").resize((360, 640))), cv2.COLOR_RGB2GRAY)
+        faces = FACES.detectMultiScale(g, scaleFactor=1.1, minNeighbors=6, minSize=(40, 40))
+        if len(faces):
+            big = max(w * h for (x, y, w, h) in faces) / (360 * 640)
+            base *= 2.5 + min(big, 0.12) * 25 + 0.4 * min(len(faces), 3)   # clear faces win, two-shots a bit more
+    return base
 
 
 def best_frame(path):
@@ -48,8 +60,8 @@ def best_frame(path):
         st = box.streams.video[0]
         dur = float(box.duration / av.time_base) if box.duration else float(st.duration * st.time_base)
         best, best_s = None, -1
-        t = dur * 0.10
-        while t < dur * 0.70:
+        t = dur * 0.30
+        while t < dur * 0.78:
             box.seek(int(t / st.time_base), stream=st, any_frame=False, backward=True)
             for frame in box.decode(st):
                 if frame.time is not None and frame.time >= t - 0.05:

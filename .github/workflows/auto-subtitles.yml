@@ -38,7 +38,7 @@ jobs:
         env:
           FORCE: ${{ github.event.inputs.remake_thumbnails }}
         run: |
-          python -m pip install --quiet av pillow numpy
+          python -m pip install --quiet av pillow numpy opencv-python-headless
           python scripts/auto_thumbs.py
       - name: Anything new to transcribe?
         id: check
