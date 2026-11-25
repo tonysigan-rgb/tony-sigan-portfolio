@@ -134,13 +134,15 @@
       .cm-head b { font:800 .86rem var(--display, system-ui); letter-spacing:.03em; }
       .cm-head b small { font:.6rem var(--mono); color:rgba(255,255,255,.6); margin-left:.35rem; letter-spacing:.05em; }
       .cm-head button { width:1.7rem; height:1.7rem; border-radius:50%; display:grid; place-items:center; color:#fff; background:rgba(255,255,255,.1); font-size:.9rem; line-height:1; }
-      .cm-form { display:grid; grid-template-columns:5.2rem 1fr auto; gap:.4rem; padding:0 .85rem .55rem; }
+      .cm-form { display:grid; grid-template-columns:1fr auto; gap:.4rem; padding:0 .85rem .55rem; }
       .cm-form input, .cm-form textarea { min-width:0; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:#fff; border-radius:.6rem; padding:.5rem .55rem; font:16px/1.25 system-ui, -apple-system, "Segoe UI", sans-serif; outline:none; }
       .cm-form input { font-size:16px; }
       .cm-form textarea { resize:none; height:2.35rem; max-height:6rem; }
       .cm-form input:focus, .cm-form textarea:focus { border-color:rgba(255,255,255,.5); }
       .cm-form button { padding:0 .8rem; border-radius:.6rem; background:var(--red); color:#fff; font:700 .72rem var(--mono); letter-spacing:.04em; }
       .cm-form button:disabled { opacity:.5; }
+      .cm-as { margin:-.15rem .85rem .5rem; font:.58rem var(--mono); color:rgba(255,255,255,.55); letter-spacing:.03em; }
+      .cm-as b { color:#fff; font-weight:600; }
       .cm-note { margin:0 .85rem .45rem; font:.68rem/1.35 system-ui, sans-serif; color:#ffb4b4; min-height:0; }
       .cm-note:empty { display:none; }
       .cm-list { overflow:auto; padding:0 .85rem .6rem; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
@@ -423,10 +425,10 @@
           <div class="cm-panel" id="cmPanel" role="dialog" aria-label="Comments">
             <div class="cm-head"><b id="cmTitle">COMMENTS</b><button id="cmClose" aria-label="Close">✕</button></div>
             <form class="cm-form" id="cmForm" autocomplete="off">
-              <input id="cmName" maxlength="24" placeholder="Guest" aria-label="Your name (optional)" />
               <textarea id="cmText" maxlength="300" rows="1" placeholder="Add a comment…" aria-label="Comment"></textarea>
               <button id="cmSend" type="submit">POST</button>
             </form>
+            <p class="cm-as" id="cmAs"></p>
             <p class="cm-note" id="cmNote"></p>
             <div class="cm-list" id="cmList"></div>
           </div>
@@ -1119,13 +1121,25 @@
         if (open) { setSoundtrack(false); $("ccMenu").classList.remove("open"); $("cmNote").textContent = ""; cmLoad(); reveal(true); }
         else if (was) { document.activeElement && document.activeElement.blur && document.activeElement.blur(); scheduleHide(); }
       }
-      $("cmName").value = cmStore("pluffy-name") || "";
+      // Guests get a random cute name, kept on this device so their comments always show the same name
+      const cmName = (() => {
+        let n = cmStore("pluffy-guest-name");
+        if (!n) {
+          const A = ["Fluffy", "Sleepy", "Sunny", "Tiny", "Cozy", "Sparkly", "Dreamy", "Bubbly", "Shy", "Sweet", "Lucky", "Moonlit", "Peachy", "Snowy", "Breezy", "Minty", "Velvet", "Starry", "Cloudy", "Honey"];
+          const B = ["Panda", "Bunny", "Otter", "Kitten", "Puppy", "Koala", "Penguin", "Fox", "Duckling", "Hamster", "Seal", "Lamb", "Owl", "Bear", "Dolphin", "Squirrel", "Hedgehog", "Deer", "Mochi", "Dumpling"];
+          const r = (a) => a[crypto.getRandomValues(new Uint32Array(1))[0] % a.length];
+          n = `${r(A)} ${r(B)} ${100 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900)}`;
+          cmStore("pluffy-guest-name", n);
+        }
+        return n;
+      })();
+      $("cmAs").innerHTML = `Commenting as <b>${esc(cmName)}</b>`;
       $("cmText").addEventListener("input", (e) => { const t = e.target; t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 96) + "px"; });
       $("cmText").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("cmForm").requestSubmit(); } });
       $("cmForm").addEventListener("submit", (e) => {
         e.preventDefault(); if (CM.busy) return;
-        const text = $("cmText").value.trim(), name = $("cmName").value.trim(); if (!text) return;
-        cmStore("pluffy-name", name); CM.busy = true; $("cmSend").disabled = true; $("cmNote").textContent = "";
+        const text = $("cmText").value.trim(), name = cmName; if (!text) return;
+        CM.busy = true; $("cmSend").disabled = true; $("cmNote").textContent = "";
         const ep = current;
         cmCall("/comments", { ep: ep + 1, name, text }).then((d) => {
           $("cmText").value = ""; $("cmText").style.height = "";
