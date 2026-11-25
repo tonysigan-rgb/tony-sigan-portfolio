@@ -27,7 +27,7 @@ window.PLUFFY = {
   // Subtitles live in subs/ (ps-epNN.en|ms|zh|ko.vtt). Change this after editing them so phones fetch the new copy.
   subsVersion: "202611250427",
   // Episode comments server (Cloudflare Worker, code in cloudflare/comments-worker.js). Empty = "coming soon".
-  commentsApi: "",
+  commentsApi: "https://pluffy-comments.tonysigan.workers.dev",
   googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
     { title: "Episode 1", plot: "A drunken mistake involving secret love letters and an unexpected kiss turns Theo's academic rivalry with Raymond into something far more complicated." },
