@@ -785,7 +785,14 @@
       });
       let CFV = VIDS[0]; CFV.classList.add("on");
       const spare = () => (CFV === VIDS[0] ? VIDS[1] : VIDS[0]);
-      function setSrc(v, u) { if (v.dataset.src !== u) { v.dataset.src = u; if (u) v.src = u; else { v.removeAttribute("src"); v.load(); } } }
+      // start (seconds) is added as "#t=" so iPhone starts the file right there, instead of at 0:00 and jumping later
+      function setSrc(v, u, start) {
+        const full = u && start > 0 ? `${u}#t=${start.toFixed(1)}` : u;
+        if (v.dataset.src !== u || (start > 0 && v.dataset.full !== full)) {
+          v.dataset.src = u; v.dataset.full = full || "";
+          if (u) v.src = full; else { v.removeAttribute("src"); v.load(); }
+        }
+      }
       // Load the next available episode into the spare player while this one plays
       let preloadTimer;
       function preloadNext() {
@@ -831,13 +838,16 @@
       function cfLoad(id, autoStart) {
         const u = cfUrl(id);
         CFV.dataset.retry = "";
-        if (CFV.dataset.src === u) { CFV.currentTime = 0; }
+        if (CFV.dataset.src === u) {
+          if (pendingSeek && CFV.readyState < 1) setSrc(CFV, u, pendingSeek);   // not loaded yet: restart it at the saved spot
+          else CFV.currentTime = 0;
+        }
         else if (spare().dataset.src === u && !CFV.webkitDisplayingFullscreen) {
           // the next episode is already loaded in the spare player: swap to it (no gap)
           const old = CFV; CFV = spare(); CFV.muted = old.muted;
           CFV.classList.add("on"); old.classList.remove("on"); old.pause(); old.preload = "auto";
           if (CFV.currentTime) CFV.currentTime = 0;
-        } else { CFV.preload = "auto"; setSrc(CFV, u); }
+        } else { CFV.preload = "auto"; setSrc(CFV, u, pendingSeek); }
         applySeek();
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
@@ -854,10 +864,10 @@
       VIDS.forEach((v) => v.addEventListener("timeupdate", () => {
         if (v !== CFV || mode !== "cf" || resumeTarget || !EPISODES[current] || !EPISODES[current].id) return;
         const t = v.currentTime;
-        if (t < 1.5 && lastPos.ep === current && lastPos.t > 8 && !v.ended) {
+        if (lastPos.ep === current && lastPos.t > 8 && t < lastPos.t - 5 && !v.ended && !v.seeking) {
           resumeTarget = lastPos.t; resumeFor = v; tryResume(); return;
         }
-        if (t > 1.5) lastPos = { ep: current, t };
+        if (t > 1.5 && !v.seeking) lastPos = { ep: current, t };
       }));
       VIDS.forEach((v) => v.addEventListener("ended", () => { if (v === CFV) lastPos = { ep: -1, t: 0 }; }));
       // coming back to the page/app: if the video was unloaded meanwhile, put it back where it was
@@ -873,7 +883,7 @@
         if (v !== resumeFor || !resumeTarget) return;
         if (v.currentTime >= resumeTarget - 1.5) {
           if (!v.paused && v.readyState >= 3 && v.currentTime >= resumeTarget + 1) {
-            hint(`RESUMED AT ${window.PLUFFY.clock(resumeTarget)}`, 1800);
+            hint(`RESUMED AT ${window.PLUFFY.clock(resumeTarget)}${mutedStart ? " · TAP FOR SOUND" : ""}`, mutedStart ? 3000 : 1800);
             resumeGuard = { v, t: resumeTarget, until: Date.now() + 8000 }; resumeTarget = 0;
           }
           return;
@@ -1419,8 +1429,24 @@
       current = q >= 1 && q <= total ? q - 1 : rp && EPISODES[rp.ep - 1].id ? rp.ep - 1 : Math.max(0, EPISODES.findIndex((e) => e.id));
       { const at = parseFloat(qs.get("at")); const pr = window.PLUFFY.progressOf(current + 1);
         pendingSeek = at > 0 ? at : pr && !pr.done && pr.t > 8 ? pr.t : 0; }
+      const startSeek = pendingSeek;
       render();
       if (EPISODES[current].id && cfUrl(EPISODES[current].id)) yt.cueVideoById(EPISODES[current].id);
+      // Came from "Continue" (or a play link): start right away. Phones only allow sound after a tap on this
+      // page, so if sound is blocked start muted and the first tap turns the sound on.
+      // (also when the Home Screen app opens straight into an unfinished episode)
+      const continuing = qs.get("play") === "1" || parseFloat(qs.get("at")) > 0 || (!qs.get("ep") && startSeek > 0);
+      if (continuing && EPISODES[current].id && cfUrl(EPISODES[current].id)) {
+        const go = () => {
+          if (!ready) return setTimeout(go, 150);
+          CFV.muted = false;
+          CFV.play().catch(() => {
+            yt.mute(); mutedStart = true;
+            CFV.play().then(() => hint("TAP FOR SOUND", 2600)).catch(() => {});
+          });
+        };
+        go();
+      }
       if (TRACKS.some((t) => getId(t.url))) {
         const s = document.createElement("script");
         s.src = "https://www.youtube.com/iframe_api";

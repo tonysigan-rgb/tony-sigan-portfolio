@@ -275,7 +275,7 @@
               <p>${esc(s.blurb)}</p>
               <div class="ctas">
                 ${s.status !== "soon" && RP
-                  ? `<a class="btn primary" href="${s.link}?ep=${RP.ep}${RP.t ? `&at=${RP.t}` : ""}">${PLAY}${RP.next ? "Up next" : "Continue"} · EP${p2(RP.ep)}${RP.t ? ` · ${window.PLUFFY.clock(RP.t)}` : ""}</a>`
+                  ? `<a class="btn primary" href="${s.link}?ep=${RP.ep}${RP.t ? `&at=${RP.t}` : ""}&play=1">${PLAY}${RP.next ? "Up next" : "Continue"} · EP${p2(RP.ep)}${RP.t ? ` · ${window.PLUFFY.clock(RP.t)}` : ""}</a>`
                   : `<a class="btn primary" ${attrs(s)}>${PLAY}${s.status === "soon" ? "Watch Teaser" : "Watch Now"}</a>`}
                 <a class="btn ghost" href="#gallery">All Series</a>
               </div>

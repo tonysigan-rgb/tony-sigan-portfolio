@@ -126,7 +126,7 @@
       const contCard = (s) => {
         if (!rp || !s.player) return "";
         const pr = window.PLUFFY.progressOf(rp.ep), pct = pr && pr.dur && !rp.next ? Math.min(100, (rp.t / pr.dur) * 100) : 0;
-        return `<a class="cont" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&app=1">
+        return `<a class="cont" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&play=1&app=1">
           <img src="${window.PLUFFY.thumbUrl(rp.ep)}" alt="" onerror="this.style.visibility='hidden'" />
           <span style="flex:1;min-width:0"><span class="k">${rp.next ? "UP NEXT" : "CONTINUE WATCHING"}</span><b>${esc(s.title)} · EP${pad(rp.ep)}</b>
           <span class="small">${rp.t ? `Resume at ${window.PLUFFY.clock(rp.t)}` : "Start from the beginning"}</span>${pct ? `<span class="bar"><i style="width:${pct}%"></i></span>` : ""}</span>
@@ -172,7 +172,7 @@
             <div class="tags">${esc(s.tags.join(" · "))}${s.player ? ` · ${total} EPISODES` : ""}</div>
             <p class="blurb">${esc(s.blurb)}</p>
             ${s.teaser ? `<a class="btn" href="${s.teaser}?app=1">▶ Watch teaser</a>`
-              : rp ? `<a class="btn" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&app=1">▶ ${rp.next ? "Up next" : "Continue"} · EP${pad(rp.ep)}${rp.t ? ` · ${window.PLUFFY.clock(rp.t)}` : ""}</a>`
+              : rp ? `<a class="btn" href="${s.player}?ep=${rp.ep}${rp.t ? `&at=${rp.t}` : ""}&play=1&app=1">▶ ${rp.next ? "Up next" : "Continue"} · EP${pad(rp.ep)}${rp.t ? ` · ${window.PLUFFY.clock(rp.t)}` : ""}</a>`
               : `<a class="btn" href="${s.player}?ep=1&app=1">▶ Start watching · EP01</a>`}
             ${s.trailer ? `<a class="btn ghost" href="${s.trailer}&app=1">Watch teaser</a>` : ""}
           </div>`;
