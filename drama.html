@@ -1080,7 +1080,8 @@
       //  - in the browser -> hand the video to the iPhone's own full-screen player (no bars, like a normal phone video)
       function iphoneFs() {
         if (isStandalone()) { immersive = true; P.classList.add("immersive"); setFs(true); return; }
-        if (mode === "cf") { if (CFV.webkitEnterFullscreen) { try { CFV.webkitEnterFullscreen(); } catch (_) {} } return; }
+        // Our own full-screen view (not Safari's video player) so the X-Ray song card and subtitles stay on screen
+        if (mode === "cf") { immersive = true; P.classList.add("immersive"); setFs(true); return; }
         nativeMode = true;
         P.classList.add("native-tap", "native");
         $("fsIcon").innerHTML = ICON_FS_OUT;
