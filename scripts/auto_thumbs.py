@@ -35,6 +35,17 @@ def exists(url):
         return False
 
 
+def caption_amount(a):
+    """How much of the frame is gold/yellow name-caption text (thin bright strokes, not lamp glow)."""
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    m = (r > 170) & (g > 120) & (b < 120) & (r - b > 80)
+    if m.mean() < 0.0008:
+        return 0.0
+    inner = m[1:-1, 1:-1] & m[:-2, 1:-1] & m[2:, 1:-1] & m[1:-1, :-2] & m[1:-1, 2:]
+    edge_ratio = 1 - inner.sum() / max(1, m[1:-1, 1:-1].sum())      # text = mostly edges; glow = solid blobs
+    return float(m.mean()) if edge_ratio > 0.55 else 0.0
+
+
 def score(img):
     a = np.asarray(img.convert("RGB").resize((180, 320)), dtype=np.float32)
     gray = a.mean(axis=2)
@@ -46,6 +57,9 @@ def score(img):
     colour = np.sqrt(rg.std() ** 2 + yb.std() ** 2) + 0.3 * np.sqrt(rg.mean() ** 2 + yb.mean() ** 2)
     centre = gray[60:220, 30:150].std()             # something happening in the middle (faces, action)
     base = sharp * (1 + colour / 60) * (0.6 + centre / 80)
+    big = np.asarray(img.convert("RGB").resize((360, 640)), dtype=np.int16)
+    if caption_amount(big) > 0.0015:
+        base *= 0.15                                # on-screen name captions / titles: avoid
     if FACES is not None:
         g = cv2.cvtColor(np.asarray(img.convert("RGB").resize((360, 640))), cv2.COLOR_RGB2GRAY)
         faces = FACES.detectMultiScale(g, scaleFactor=1.1, minNeighbors=6, minSize=(40, 40))
@@ -60,8 +74,8 @@ def best_frame(path):
         st = box.streams.video[0]
         dur = float(box.duration / av.time_base) if box.duration else float(st.duration * st.time_base)
         best, best_s = None, -1
-        t = dur * 0.30
-        while t < dur * 0.78:
+        t = dur * 0.15
+        while t < dur * 0.80:
             box.seek(int(t / st.time_base), stream=st, any_frame=False, backward=True)
             for frame in box.decode(st):
                 if frame.time is not None and frame.time >= t - 0.05:
@@ -70,7 +84,7 @@ def best_frame(path):
                     if s > best_s:
                         best, best_s = img, s
                     break
-            t += 1.5
+            t += 1.0
     return best
 
 
