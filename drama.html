@@ -244,7 +244,7 @@
       .ranges .teaser-pill { flex:0 0 auto; padding:.4rem .75rem; border-radius:2rem; background:var(--red); border:1px solid var(--red); color:#fff; font:.62rem var(--mono); letter-spacing:.04em; }
       .ranges button { flex:0 0 auto; padding:.4rem .75rem; border-radius:2rem; border:1px solid var(--line); font:.62rem var(--mono); color:var(--muted); }
       .ranges button.on { border-color:var(--paper); color:var(--paper); }
-      .eps { display:grid; grid-template-columns:repeat(auto-fill,minmax(3.4rem,1fr)); gap:.5rem; }
+      .eps { display:grid; grid-template-columns:repeat(auto-fill,minmax(3.4rem,1fr)); grid-auto-rows:max-content; align-content:start; gap:.5rem; }
       .ep { position:relative; aspect-ratio:1; display:grid; place-items:center; border:1px solid var(--line); border-radius:.6rem; font:500 .95rem var(--mono); background:rgba(255,255,255,.03); transition:background .2s,border-color .2s,color .2s; }
       .ep:hover:not(.locked) { border-color:var(--paper); }
       .ep.active { background:var(--red); border-color:var(--red); color:var(--white); }
