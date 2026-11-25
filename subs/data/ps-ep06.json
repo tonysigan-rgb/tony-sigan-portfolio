@@ -1,99 +1,156 @@
 {
  "episode": 6,
- "status": "needs-translation",
+ "status": "translated",
  "language": "en",
  "source": "whisper large-v3 (automatic)",
  "cues": [
   {
    "s": 13.39,
    "e": 14.58,
-   "en": "Saying yes wasn't hard."
+   "en": "Saying yes wasn't hard.",
+   "ms": "Bukan susah pun nak cakap ya.",
+   "zh": "答应你并不难。",
+   "ko": "좋다고 하는 건 어렵지 않았어."
   },
   {
    "s": 14.73,
    "e": 16.34,
-   "en": "Besides, I owed you a promise."
+   "en": "Besides, I owed you a promise.",
+   "ms": "Lagipun, aku ada berhutang janji dengan kau.",
+   "zh": "再说，我还欠你一个承诺。",
+   "ko": "게다가 너한테 한 약속도 있고."
   },
   {
    "s": 21.54,
    "e": 22.3,
-   "en": "Go mingle."
+   "en": "Go mingle.",
+   "ms": "Pergilah bergaul dengan orang.",
+   "zh": "去跟大家玩吧。",
+   "ko": "가서 사람들이랑 어울려."
   },
   {
    "s": 22.34,
    "e": 23.51,
-   "en": "I'll grab us some drinks."
+   "en": "I'll grab us some drinks.",
+   "ms": "Aku pergi ambil minuman untuk kita.",
+   "zh": "我去拿点喝的。",
+   "ko": "난 마실 것 좀 가져올게."
   },
   {
    "s": 39.89,
    "e": 40.81,
    "en": "He's just your friend.",
-   "check": "unclear word(s): He's"
+   "check": "unclear word \"He's\"; taken as her sarcastic \"He's just your friend?\"",
+   "ms": "Dia cuma kawan kau, kan?",
+   "zh": "他只是你的朋友而已？",
+   "ko": "걔가 그냥 친구라고?"
   },
   {
    "s": 40.85,
    "e": 41.51,
-   "en": "He is!"
+   "en": "He is!",
+   "ms": "Memang pun!",
+   "zh": "本来就是！",
+   "ko": "진짜 친구야!"
   },
   {
    "s": 41.55,
    "e": 43.3,
-   "en": "Then why am I always second to him?"
+   "en": "Then why am I always second to him?",
+   "ms": "Habis tu kenapa dia selalu didahulukan, bukan aku?",
+   "zh": "那为什么我永远排在他后面？",
+   "ko": "그럼 왜 난 항상 걔 다음이야?"
   },
   {
    "s": 45.28,
    "e": 46.88,
-   "en": "I never meant to hurt you."
+   "en": "I never meant to hurt you.",
+   "ms": "Aku tak pernah berniat nak sakitkan hati kau.",
+   "zh": "我从来没想过要伤害你。",
+   "ko": "너한테 상처 줄 생각은 없었어."
   },
   {
    "s": 46.92,
    "e": 49.17,
-   "en": "Yet you allow him slutting around you."
+   "en": "Yet you allow him slutting around you.",
+   "ms": "Tapi kau biarkan saja dia menggatal keliling kau.",
+   "zh": "可你却任由他在你身边发骚。",
+   "ko": "근데 넌 걔가 네 옆에서\n꼬리 치게 내버려 두잖아."
   },
   {
    "s": 54.05,
    "e": 56.17,
-   "en": "Yes. I did have feelings for Chris."
+   "en": "Yes. I did have feelings for Chris.",
+   "ms": "Ya. Aku memang pernah ada perasaan pada Chris.",
+   "zh": "没错，我是喜欢过克里斯。",
+   "ko": "그래. 나 크리스 좋아했던 거 맞아.",
+   "check": "name \"Chris\" is new (not in EP01-05); kept as heard: 克里斯 / 크리스. Please confirm name/spelling"
   },
   {
    "s": 56.67,
    "e": 58.9,
-   "en": "But that doesn't give you the right to downgrading someone."
+   "en": "But that doesn't give you the right to downgrading someone.",
+   "ms": "Tapi itu tak bagi kau hak untuk merendah-rendahkan orang.",
+   "zh": "但这不代表你有权\n贬低别人。",
+   "ko": "그렇다고 네가 남을\n깎아내릴 권리는 없어.",
+   "check": "\"downgrading someone\" taken as \"put someone down / degrade someone\""
   },
   {
    "s": 59.63,
    "e": 63.36,
-   "en": "And Chris, if loving me means hurting her, then hear me clearly."
+   "en": "And Chris, if loving me means hurting her, then hear me clearly.",
+   "ms": "Dan Chris, kalau sayang aku bermakna menyakiti dia,\ndengar sini baik-baik.",
+   "zh": "还有克里斯，如果爱我意味着伤害她，\n那你给我听清楚。",
+   "ko": "그리고 크리스, 날 좋아하는 게\n얘한테 상처가 된다면, 똑똑히 들어."
   },
   {
    "s": 63.65,
    "e": 65.68,
-   "en": "I'm not allowing myself to make enemies of it."
+   "en": "I'm not allowing myself to make enemies of it.",
+   "ms": "Aku takkan biarkan diri aku jadi punca kamu bermusuh.",
+   "zh": "我不会让自己成为\n你们反目的原因。",
+   "ko": "나 때문에 너희가 원수 되는 꼴은\n안 볼 거야.",
+   "check": "unclear: \"make enemies of it\"; assumed \"I won't let myself be the reason you two become enemies\""
   },
   {
    "s": 77.56,
    "e": 78.56,
-   "en": "Theo, wait!"
+   "en": "Theo, wait!",
+   "ms": "Theo, tunggu!",
+   "zh": "西奥，等等！",
+   "ko": "테오, 잠깐만!"
   },
   {
    "s": 79.88,
    "e": 80.95,
-   "en": "What about you?"
+   "en": "What about you?",
+   "ms": "Kau pula macam mana?",
+   "zh": "那你呢？",
+   "ko": "그럼 너는?"
   },
   {
    "s": 82.41,
    "e": 84.24,
-   "en": "Didn't you hurt someone after kissing them?"
+   "en": "Didn't you hurt someone after kissing them?",
+   "ms": "Bukan ke kau pun sakitkan hati orang lepas cium dia?",
+   "zh": "你不也是亲完别人\n就伤了人家的心吗？",
+   "ko": "너도 키스해 놓고\n상처 준 사람 있잖아?"
   },
   {
    "s": 85.59,
    "e": 87.48,
-   "en": "Then hate me all you want, Raymond."
+   "en": "Then hate me all you want, Raymond.",
+   "ms": "Kalau macam tu, bencilah aku sepuas hati kau, Raymond.",
+   "zh": "那你就尽管恨我吧，雷蒙德。",
+   "ko": "그럼 실컷 미워해, 레이먼드."
   },
   {
    "s": 89.35,
    "e": 90.35,
-   "en": "Stop!"
+   "en": "Stop!",
+   "ms": "Berhenti!",
+   "zh": "够了！",
+   "ko": "그만해!"
   }
  ]
 }
