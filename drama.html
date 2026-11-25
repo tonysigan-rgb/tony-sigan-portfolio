@@ -763,12 +763,18 @@
         if (m === "cf") ytCall("pauseVideo"); else VIDS.forEach((v) => v.pause());
       }
       // Resume position for the episode being loaded (Continue watching)
-      let pendingSeek = 0;
+      let pendingSeek = 0, resumeTarget = 0, resumeFor = null;
+      // iPhone (Safari and the app) ignores a jump made before playback really starts, so keep
+      // re-applying the saved position until the episode is actually playing there.
       function applySeek() {
         if (!pendingSeek) return;
-        const t = pendingSeek, v = CFV; pendingSeek = 0;
-        const go = () => { try { v.currentTime = t; } catch (_) {} hint(`RESUMED AT ${window.PLUFFY.clock(t)}`, 1800); };
-        if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
+        resumeTarget = pendingSeek; resumeFor = CFV; pendingSeek = 0;
+        tryResume();
+      }
+      function tryResume() {
+        const v = resumeFor;
+        if (!resumeTarget || !v || v !== CFV || v.readyState < 1) return;
+        if (v.currentTime < resumeTarget - 1.5) { try { v.currentTime = resumeTarget; } catch (_) {} }
       }
       function cfLoad(id, autoStart) {
         const u = cfUrl(id);
@@ -784,6 +790,14 @@
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
       // If an episode can't load (bad connection), say so; the next tap on play tries again
+      VIDS.forEach((v) => ["loadedmetadata", "loadeddata", "canplay", "playing", "timeupdate"].forEach((ev) => v.addEventListener(ev, () => {
+        if (v !== resumeFor || !resumeTarget) return;
+        if (v.currentTime >= resumeTarget - 1.5) {
+          if (!v.paused && v.readyState >= 3) { hint(`RESUMED AT ${window.PLUFFY.clock(resumeTarget)}`, 1800); resumeTarget = 0; }
+          return;
+        }
+        tryResume();
+      })));
       VIDS.forEach((v) => {
         v.addEventListener("error", () => {
           if (!v.dataset.src) return;
@@ -1046,7 +1060,7 @@
       setCc(ccLang);
 
       /* Continue watching: save this viewer's position every few seconds, on pause and at the end */
-      const saveNow = () => { if (EPISODES[current] && EPISODES[current].id && yt.getDuration() > 0) window.PLUFFY.saveProgress(current + 1, yt.getCurrentTime(), yt.getDuration()); };
+      const saveNow = () => { if (!resumeTarget && EPISODES[current] && EPISODES[current].id && yt.getDuration() > 0) window.PLUFFY.saveProgress(current + 1, yt.getCurrentTime(), yt.getDuration()); };
       setInterval(() => { if (playing) saveNow(); }, 4000);
       VIDS.forEach((v) => { v.addEventListener("pause", () => { if (v === CFV) { saveNow(); buildGrids(); } }); v.addEventListener("ended", () => { if (v === CFV) { saveNow(); buildGrids(); } }); });
       window.addEventListener("pagehide", saveNow);
@@ -1059,6 +1073,7 @@
       let skipTimer;
       function skip(sec) {
         if (!ready || !EPISODES[current].id) return;
+        resumeTarget = 0;
         const d = yt.getDuration(), t = yt.getCurrentTime();
         const to = Math.max(0, Math.min(d ? d - 0.5 : t + sec, t + sec));
         yt.seekTo(to);
