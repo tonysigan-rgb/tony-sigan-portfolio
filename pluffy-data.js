@@ -10,6 +10,7 @@
              YouTube channel can watch it here straight away.
              Episodes before the first dated one (EP01–03) are free to watch here.
    plot:     optional one- or two-line summary (logline).
+   thumbAt:  optional — the second of the episode to use as its thumbnail (otherwise picked automatically).
    name:     optional episode title, e.g. "The Wrong Person to Love" (keep title: "Episode N" as it is).
    ================================================================ */
 window.PLUFFY = {
@@ -29,10 +30,10 @@ window.PLUFFY = {
   episodes: [
     { title: "Episode 1", plot: "A drunken mistake involving secret love letters and an unexpected kiss turns Theo's academic rivalry with Raymond into something far more complicated." },
     { title: "Episode 2", plot: "Theo struggles with the consequences of his confession as his longtime crush, Owen, and his academic rival, Raymond, begin competing for his affection." },
-    { title: "Episode 3", plot: "As Owen and Raymond grow closer to Theo, their increasingly romantic gestures leave him questioning his true feelings." },
+    { title: "Episode 3", thumbAt: 28, plot: "As Owen and Raymond grow closer to Theo, their increasingly romantic gestures leave him questioning his true feelings." },
     { title: "Episode 4", plot: "Kristovian's unexpected affection complicates Theo's already tangled love life, turning a love triangle into a competition between three hearts.", release: "2026-11-09" },
-    { title: "Episode 5", plot: "Jealousy and misunderstandings push Raymond away as Theo's growing closeness with Kristovian threatens their fragile relationship.", release: "2026-11-23" },
-    { title: "Episode 6", name: "The Wrong Person to Love", plot: "A seemingly innocent house party turns into an emotional confrontation when Raymond forces Theo to face the hearts he has unknowingly hurt." },
+    { title: "Episode 5", thumbAt: 108, plot: "Jealousy and misunderstandings push Raymond away as Theo's growing closeness with Kristovian threatens their fragile relationship.", release: "2026-11-23" },
+    { title: "Episode 6", thumbAt: 56, name: "The Wrong Person to Love", plot: "A seemingly innocent house party turns into an emotional confrontation when Raymond forces Theo to face the hearts he has unknowingly hurt." },
     { title: "Episode 7", plot: "" },
     { title: "Episode 8", plot: "" },
     { title: "Episode 9", plot: "" },

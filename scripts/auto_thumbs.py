@@ -2,7 +2,9 @@
 
 For every ps-epNN.mp4 in the Cloudflare folder without assets/thumbs/ps-epNN.jpg, pick a striking frame
 and save a 360x640 JPEG: from the middle of the episode (after the opening titles and name captions),
-preferring frames with clear faces, then sharp, well lit and colourful. Run with FORCE=1 to remake all.
+preferring frames with clear faces, then sharp, well lit and colourful, and never the same shot as another
+episode's thumbnail (scenes replayed in later episodes). An episode can name its exact frame with
+thumbAt: seconds in pluffy-data.js. Run with FORCE=1 to remake all.
 """
 import io, os, re, sys, tempfile, urllib.request
 
@@ -24,8 +26,12 @@ def config():
     js = open(os.path.join(ROOT, "pluffy-data.js"), encoding="utf-8").read()
     base = re.search(r'videoBase:\s*"([^"]+)"', js).group(1).rstrip("/") + "/"
     pattern = re.search(r'videoPattern:\s*"([^"]+)"', js).group(1)
-    total = len(re.findall(r'\{\s*title:\s*"Episode \d+"', js))
-    return base, pattern, total
+    eps = re.findall(r'\{\s*title:\s*"Episode (\d+)"[^}]*\}', js)
+    total = len(eps)
+    at = {}
+    for m in re.finditer(r'\{\s*title:\s*"Episode (\d+)"[^}]*?thumbAt:\s*([\d.]+)', js):
+        at[int(m.group(1))] = float(m.group(2))
+    return base, pattern, total, at
 
 
 def exists(url):
@@ -35,15 +41,13 @@ def exists(url):
         return False
 
 
-def caption_amount(a):
-    """How much of the frame is gold/yellow name-caption text (thin bright strokes, not lamp glow)."""
-    r, g, b = a[..., 0], a[..., 1], a[..., 2]
-    m = (r > 170) & (g > 120) & (b < 120) & (r - b > 80)
-    if m.mean() < 0.0008:
-        return 0.0
-    inner = m[1:-1, 1:-1] & m[:-2, 1:-1] & m[2:, 1:-1] & m[1:-1, :-2] & m[1:-1, 2:]
-    edge_ratio = 1 - inner.sum() / max(1, m[1:-1, 1:-1].sum())      # text = mostly edges; glow = solid blobs
-    return float(m.mean()) if edge_ratio > 0.55 else 0.0
+def fingerprint(img):
+    g = np.asarray(img.convert("L").resize((9, 16)), dtype=np.int16)
+    return (g[:, 1:] > g[:, :-1]).flatten()             # 128-bit difference hash
+
+
+def similar(fp, others):
+    return any((fp != o).sum() < 22 for o in others)
 
 
 def score(img):
@@ -57,9 +61,6 @@ def score(img):
     colour = np.sqrt(rg.std() ** 2 + yb.std() ** 2) + 0.3 * np.sqrt(rg.mean() ** 2 + yb.mean() ** 2)
     centre = gray[60:220, 30:150].std()             # something happening in the middle (faces, action)
     base = sharp * (1 + colour / 60) * (0.6 + centre / 80)
-    big = np.asarray(img.convert("RGB").resize((360, 640)), dtype=np.int16)
-    if caption_amount(big) > 0.0015:
-        base *= 0.15                                # on-screen name captions / titles: avoid
     if FACES is not None:
         g = cv2.cvtColor(np.asarray(img.convert("RGB").resize((360, 640))), cv2.COLOR_RGB2GRAY)
         faces = FACES.detectMultiScale(g, scaleFactor=1.1, minNeighbors=6, minSize=(40, 40))
@@ -69,7 +70,17 @@ def score(img):
     return base
 
 
-def best_frame(path):
+def frame_at(path, sec):
+    with av.open(path) as box:
+        st = box.streams.video[0]
+        box.seek(int(sec / st.time_base), stream=st, any_frame=False, backward=True)
+        for frame in box.decode(st):
+            if frame.time is not None and frame.time >= sec - 0.05:
+                return frame.to_image()
+    return None
+
+
+def best_frame(path, avoid=()):
     with av.open(path) as box:
         st = box.streams.video[0]
         dur = float(box.duration / av.time_base) if box.duration else float(st.duration * st.time_base)
@@ -81,6 +92,8 @@ def best_frame(path):
                 if frame.time is not None and frame.time >= t - 0.05:
                     img = frame.to_image()
                     s = score(img)
+                    if s > 0 and similar(fingerprint(img), avoid):
+                        s *= 0.05                       # same shot as another episode's thumbnail
                     if s > best_s:
                         best, best_s = img, s
                     break
@@ -89,10 +102,16 @@ def best_frame(path):
 
 
 def main():
-    base, pattern, total = config()
+    base, pattern, total, thumb_at = config()
     os.makedirs(OUT, exist_ok=True)
     force = os.environ.get("FORCE") == "1"
     made = 0
+    # fingerprints of the thumbnails we keep, so a new one never repeats another episode's shot
+    kept = {}
+    for n in range(1, total + 1):
+        f = os.path.join(OUT, f"ps-ep{n:02d}.jpg")
+        if os.path.exists(f) and not force:
+            kept[n] = fingerprint(Image.open(f))
     for n in range(1, total + 1):
         dst = os.path.join(OUT, f"ps-ep{n:02d}.jpg")
         if os.path.exists(dst) and not force:
@@ -108,7 +127,7 @@ def main():
                     if not chunk:
                         break
                     f.write(chunk)
-            img = best_frame(mp4)
+            img = frame_at(mp4, thumb_at[n]) if n in thumb_at else best_frame(mp4, [v for k, v in kept.items() if k != n])
         if img is None:
             print(f"EP{n:02d}: no usable frame")
             continue
@@ -116,6 +135,7 @@ def main():
         tw = min(w, int(h * 9 / 16))                # crop to 9:16 if needed
         img = img.crop(((w - tw) // 2, 0, (w - tw) // 2 + tw, h)).resize((360, 640), Image.LANCZOS)
         img.save(dst, "JPEG", quality=82, optimize=True, progressive=True)
+        kept[n] = fingerprint(img)
         print(f"EP{n:02d}: thumbnail saved ({os.path.getsize(dst) // 1024} KB)")
         made += 1
     print(f"{made} thumbnail(s) made")
