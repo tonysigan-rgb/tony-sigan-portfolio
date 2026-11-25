@@ -154,6 +154,15 @@
       .cm-item .acts { display:flex; gap:.9rem; font:.6rem var(--mono); color:rgba(255,255,255,.6); }
       .cm-item .acts button { color:inherit; font:inherit; display:flex; align-items:center; gap:.25rem; }
       .cm-item .acts button.on { color:#ff5a6a; }
+      .cm-replies { margin:-.2rem 0 .1rem 1.1rem; padding-left:.65rem; border-left:2px solid rgba(255,255,255,.14); }
+      .cm-item.reply { border-top:0; padding:.4rem 0; }
+      .cm-item.reply .who { font-size:.7rem; }
+      .cm-item.reply p { font-size:.8rem; }
+      .cm-more { display:block; margin:.2rem 0 .1rem; font:.58rem var(--mono); color:rgba(255,255,255,.7); letter-spacing:.04em; }
+      .cm-replying { margin:0 .85rem .4rem; font:.62rem var(--mono); color:rgba(255,255,255,.7); display:flex; align-items:center; gap:.5rem; }
+      .cm-replying:empty { display:none; }
+      .cm-replying b { color:#fff; font-weight:600; }
+      .cm-replying button { width:1.25rem; height:1.25rem; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; font-size:.65rem; line-height:1; }
       .cm-empty { padding:1rem 0 .6rem; text-align:center; font:.74rem system-ui, sans-serif; color:rgba(255,255,255,.7); }
       .player.fs .cm-panel { bottom:max(2.2rem, env(safe-area-inset-bottom)); max-height:72%; }
       .player.locked .cm-panel { display:none; }
@@ -424,6 +433,7 @@
           </div>
           <div class="cm-panel" id="cmPanel" role="dialog" aria-label="Comments">
             <div class="cm-head"><b id="cmTitle">COMMENTS</b><button id="cmClose" aria-label="Close">✕</button></div>
+            <p class="cm-replying" id="cmReplying"></p>
             <form class="cm-form" id="cmForm" autocomplete="off">
               <textarea id="cmText" maxlength="300" rows="1" placeholder="Add a comment…" aria-label="Comment"></textarea>
               <button id="cmSend" type="submit">POST</button>
@@ -1097,7 +1107,7 @@
       document.addEventListener("click", (e) => { if (!e.target.closest("#stPanel, #stBtn")) setSoundtrack(false); });
       /* Comments: one thread per episode on the pluffy comments server (window.PLUFFY.commentsApi, a Cloudflare Worker).
          No sign-in: a random device key (kept in this browser) lets a viewer like, report and delete their own comments. */
-      const CM = { api: (window.PLUFFY.commentsApi || "").replace(/\/+$/, ""), ep: -1, list: [], total: null, open: false, busy: false };
+      const CM = { api: (window.PLUFFY.commentsApi || "").replace(/\/+$/, ""), ep: -1, list: [], total: null, open: false, busy: false, replyTo: null, expanded: new Set() };
       const cmStore = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (_) {} return null; };
       const cmMe = (() => { let m = cmStore("pluffy-me"); if (!m || m.length < 16) { m = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join(""); cmStore("pluffy-me", m); } return m; })();
       if (/[?&]admin=1/.test(location.search)) { const k = window.prompt("pluffy comments admin key (leave empty to turn admin off)"); cmStore("pluffy-admin", k || ""); }
@@ -1114,14 +1124,27 @@
         if (!CM.api) { $("cmList").innerHTML = `<p class="cm-empty">Comments are coming soon.</p>`; return; }
         if (!ok) { $("cmList").innerHTML = `<p class="cm-empty">Comments open when this episode is out.</p>`; return; }
         if (CM.total === null) { $("cmList").innerHTML = `<p class="cm-empty">Loading comments…</p>`; return; }
-        $("cmList").innerHTML = CM.list.length ? CM.list.map((c) => `<div class="cm-item" data-id="${c.id}">
+        const item = (c, reply) => `<div class="cm-item${reply ? " reply" : ""}" data-id="${c.id}">
             <div class="who">${esc(c.name)}${c.mine ? '<span class="you">YOU</span>' : ""}<small>${cmAgo(c.ts)}</small></div>
             <p>${esc(c.text)}</p>
-            <div class="acts"><button data-a="like" class="${c.liked ? "on" : ""}" aria-label="Like">♥ ${c.likes || ""}</button>${c.mine || cmAdmin() ? '<button data-a="delete">DELETE</button>' : '<button data-a="report">REPORT</button>'}</div></div>`).join("")
+            <div class="acts"><button data-a="like" class="${c.liked ? "on" : ""}" aria-label="Like">♥ ${c.likes || ""}</button><button data-a="reply">REPLY</button>${c.mine || cmAdmin() ? '<button data-a="delete">DELETE</button>' : '<button data-a="report">REPORT</button>'}</div></div>`;
+        const tops = CM.list.filter((c) => !c.parent);   // newest first
+        const kids = {}; CM.list.filter((c) => c.parent).forEach((c) => (kids[c.parent] ||= []).unshift(c));   // replies oldest first
+        $("cmList").innerHTML = tops.length ? tops.map((c) => {
+            const r = kids[c.id] || [], open = CM.expanded.has(c.id) || r.length <= 2, shown = open ? r : r.slice(-1);
+            return item(c) + (r.length ? `<div class="cm-replies">${!open ? `<button class="cm-more" data-more="${c.id}">VIEW ${r.length - 1} MORE ${r.length - 1 === 1 ? "REPLY" : "REPLIES"}</button>` : ""}${shown.map((x) => item(x, true)).join("")}</div>` : "");
+          }).join("")
           : `<p class="cm-empty">No comments yet — be the first!</p>`;
+        cmReplyBar();
+      }
+      function cmReplyBar() {
+        const r = CM.replyTo && CM.list.find((c) => c.id === CM.replyTo.id);
+        if (CM.replyTo && !r) CM.replyTo = null;
+        $("cmReplying").innerHTML = CM.replyTo ? `Replying to <b>${esc(CM.replyTo.name)}</b><button id="cmNoReply" type="button" aria-label="Cancel reply">✕</button>` : "";
+        $("cmText").placeholder = CM.replyTo ? `Reply to ${CM.replyTo.name}…` : "Add a comment…";
       }
       function cmLoad(quiet) {
-        const ep = current; if (CM.ep !== ep) { CM.ep = ep; CM.list = []; CM.total = null; }
+        const ep = current; if (CM.ep !== ep) { CM.ep = ep; CM.list = []; CM.total = null; CM.replyTo = null; CM.expanded.clear(); }
         if (!CM.api || !EPISODES[ep] || !EPISODES[ep].id) { CM.total = null; return cmRender(); }
         if (!quiet) cmRender();
         cmCall(`/comments?ep=${ep + 1}&me=${cmMe}`).then((d) => { if (CM.ep !== ep) return; CM.list = d.comments || []; CM.total = d.total || 0; cmRender(); })
@@ -1153,20 +1176,34 @@
         const text = $("cmText").value.trim(), name = cmName; if (!text) return;
         CM.busy = true; $("cmSend").disabled = true; $("cmNote").textContent = "";
         const ep = current;
-        cmCall("/comments", { ep: ep + 1, name, text }).then((d) => {
-          $("cmText").value = ""; $("cmText").style.height = "";
-          if (CM.ep === ep) { CM.list.unshift(d.comment); CM.total = (CM.total || 0) + 1; cmRender(); $("cmList").scrollTop = 0; }
+        const parent = CM.replyTo ? CM.replyTo.id : 0;
+        cmCall("/comments", { ep: ep + 1, name, text, parent }).then((d) => {
+          $("cmText").value = ""; $("cmText").style.height = ""; CM.replyTo = null;
+          if (CM.ep === ep) {
+            CM.list.unshift(d.comment); CM.total = (CM.total || 0) + 1;
+            if (d.comment.parent) CM.expanded.add(d.comment.parent);
+            cmRender();
+            const el = $("cmList").querySelector(`[data-id="${d.comment.id}"]`);
+            if (d.comment.parent && el) el.scrollIntoView({ block: "nearest" }); else $("cmList").scrollTop = 0;
+          }
         }).catch((err) => { $("cmNote").textContent = err.message; }).finally(() => { CM.busy = false; $("cmSend").disabled = false; });
       });
+      $("cmPanel").addEventListener("click", (e) => { if (e.target.closest("#cmNoReply")) { CM.replyTo = null; cmReplyBar(); } });
       $("cmList").addEventListener("click", (e) => {
+        const more = e.target.closest("button[data-more]"); if (more) { CM.expanded.add(+more.dataset.more); cmRender(); return; }
         const b = e.target.closest("button[data-a]"); if (!b) return; const item = b.closest(".cm-item"); const id = +item.dataset.id; const c = CM.list.find((x) => x.id === id); if (!c) return;
         const a = b.dataset.a;
-        if (a === "delete" && !window.confirm("Delete this comment?")) return;
+        if (a === "reply") {   // a reply to a reply goes in the same thread, tagged with who it answers
+          CM.replyTo = { id: c.parent || c.id, name: c.name };
+          if (c.parent && !$("cmText").value.startsWith("@")) $("cmText").value = `@${c.name} ` + $("cmText").value;
+          cmReplyBar(); $("cmText").focus(); return;
+        }
+        if (a === "delete" && !window.confirm(c.parent ? "Delete this reply?" : "Delete this comment and its replies?")) return;
         if (a === "report" && !window.confirm("Report this comment as rude or spam?")) return;
         cmCall(`/comments/${id}/${a}`, {}).then((d) => {
           if (a === "like") { c.liked = d.liked; c.likes = d.likes; }
-          if (a === "delete") { CM.list = CM.list.filter((x) => x.id !== id); CM.total = Math.max(0, (CM.total || 1) - 1); }
-          if (a === "report") { CM.list = CM.list.filter((x) => x.id !== id); $("cmNote").textContent = "Thanks — reported."; }
+          if (a === "delete") { const gone = CM.list.filter((x) => x.id === id || x.parent === id).length; CM.list = CM.list.filter((x) => x.id !== id && x.parent !== id); CM.total = Math.max(0, (CM.total || gone) - gone); }
+          if (a === "report") { CM.list = CM.list.filter((x) => x.id !== id && x.parent !== id); $("cmNote").textContent = "Thanks — reported."; }
           cmRender();
         }).catch((err) => { $("cmNote").textContent = err.message; });
       });
