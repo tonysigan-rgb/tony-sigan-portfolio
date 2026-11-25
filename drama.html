@@ -399,7 +399,6 @@
         <div class="share">
           <button id="copy">COPY EPISODE LINK</button>
           <a id="subInfo" href="#" target="_blank" rel="noreferrer" style="background:var(--red);border-color:var(--red);color:#fff">SUBSCRIBE FOR FREE · WATCH EARLY ↗</a>
-          <a id="ytLink" href="#" target="_blank" rel="noreferrer">WATCH ON YOUTUBE ↗</a>
           <a href="https://www.tiktok.com/@tinuttee" target="_blank" rel="noreferrer">TIKTOK ↗</a>
           <a href="#soundtrack">SOUNDTRACK ♪</a>
         </div>
@@ -431,13 +430,13 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261124d"></script>
+    <script src="pluffy-data.js?v=20261125a"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
          EDIT YOUR SERIES HERE  (episodes + Monday schedule: see pluffy-data.js)
-         - url:   paste the YouTube link (Shorts, youtu.be or watch?v=).
-                  Leave it "" and the episode shows as "SOON".
+         - an episode plays once its video (ps-epNN.mp4) is in the Cloudflare folder;
+           until then it shows as "SOON".
          - plot:  optional one- or two-line summary for that episode.
          Add more lines for more episodes. Over 30 episodes, the list
          splits into 1–30, 31–60 ... tabs automatically.
@@ -484,7 +483,7 @@
       const P = $("player");
       const getId = (url) => { const m = (url || "").match(/(?:shorts\/|youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/); return m ? m[1] : null; };
       const releaseTime = (e) => window.PLUFFY.releaseAt(e);   // 8:00 AM Malaysia time on its Monday
-      // video: the episode's file on Cloudflare R2 (pluffy-data.js). When set, it plays from there; YouTube is the backup.
+      // video: the episode's file on Cloudflare R2 (pluffy-data.js). Episodes play only from there.
       const VIDEO_BASE = (window.PLUFFY.videoBase || "").replace(/\/?$/, "/");
       // Each episode looks for its file by name (videoPattern, e.g. ps-ep05.mp4) unless it has its own `video`.
       const videoUrl = (e, i) => {
@@ -493,10 +492,9 @@
         return !name ? "" : /^https?:/.test(name) ? name : VIDEO_BASE + name;
       };
       EPISODES.forEach((e, i) => {
-        const vid = getId(e.url);
-        e.cf = e.uploaded === false ? "" : videoUrl(e, i);   // not in the Cloudflare folder yet -> SOON
-        const key = vid || (e.cf ? `cf-ep${String(i + 1).padStart(3, "0")}` : null);
-        e.early = !!key && releaseTime(e) > Date.now();   // on YouTube already, unlocks here on Monday
+        e.cf = e.uploaded ? videoUrl(e, i) : "";   // not in the Cloudflare folder yet -> SOON
+        const key = e.cf ? `ep${String(i + 1).padStart(3, "0")}` : null;
+        e.early = !!key && releaseTime(e) > Date.now();   // uploaded, but its Monday hasn't come: subscribers watch early
         e.yt = key;
         e.id = e.early ? null : key;
       });
@@ -650,9 +648,6 @@
         $("prev").disabled = nextAvail(current, -1) < 0;
         $("next").disabled = $("nextRail").disabled = nextAvail(current, 1) < 0;
         $("nextRail").style.opacity = $("next").disabled ? .4 : 1;
-        const ytId = getId(ep.url);
-        $("ytLink").href = ep.id && ytId ? `https://youtube.com/shorts/${ytId}` : "#";
-        $("ytLink").style.display = ep.id && ytId ? "" : "none";
         $("soon").classList.toggle("show", !ep.id);
         $("earlyCtas").hidden = !ep.early;
         $("soonTop").textContent = ep.early ? `FREE HERE ON ${dayLabel(ep)}` : "COMING SOON";
@@ -712,7 +707,8 @@
         if (!s.dataset.src) { spareUnlocked = false; return; }
         s.muted = true; const pr = s.play(); if (pr && pr.then) pr.then(() => { s.pause(); s.currentTime = 0; s.muted = CFV.muted; }, () => { s.muted = CFV.muted; });
       }
-      let ytp = null, ytReady = false, mode = "yt";
+      let ytp = null, ytReady = false, mode = "cf";   // episodes play only from Cloudflare
+      P.classList.add("cf");
       const ytCall = (fn, ...a) => { if (ytReady && ytp && ytp[fn]) { try { return ytp[fn](...a); } catch (_) {} } };
       function useMode(m) {
         if (m === mode) return;
@@ -721,6 +717,7 @@
       }
       function cfLoad(id, autoStart) {
         const u = cfUrl(id);
+        CFV.dataset.retry = "";
         if (CFV.dataset.src === u) { CFV.currentTime = 0; }
         else if (spare().dataset.src === u && !CFV.webkitDisplayingFullscreen) {
           // the next episode is already loaded in the spare player: swap to it (no gap)
@@ -730,27 +727,28 @@
         } else { CFV.preload = "auto"; setSrc(CFV, u); }
         if (autoStart) CFV.play().catch(() => {}); else onState(ST.CUED);
       }
-      // If a Cloudflare file fails to load, fall back to the YouTube upload of that episode
+      // If an episode can't load (bad connection), say so; the next tap on play tries again
       VIDS.forEach((v) => {
         v.addEventListener("error", () => {
           if (!v.dataset.src) return;
-          const e = EPISODES.find((x) => x.cf === v.dataset.src);
-          setSrc(v, "");
-          if (!e) return;
-          e.cf = "";
-          if (v !== CFV || mode !== "cf") return;
-          const wasPlaying = P.classList.contains("started");
-          if (e === EPISODES[current] && e.id) wasPlaying ? yt.loadVideoById(e.id) : yt.cueVideoById(e.id);
+          const u = v.dataset.src; setSrc(v, "");
+          if (v !== CFV) return;
+          CFV.dataset.retry = u;
+          playing = false; P.classList.add("paused"); setCenter(); reveal(true);
+          hint("CAN'T LOAD THIS EPISODE RIGHT NOW · TAP PLAY TO TRY AGAIN", 2600);
         });
         v.addEventListener("playing", () => { if (v === CFV && mode === "cf") { onState(ST.PLAYING); preloadNext(); } });
         v.addEventListener("pause", () => v === CFV && mode === "cf" && !v.ended && onState(ST.PAUSED));
         v.addEventListener("ended", () => v === CFV && mode === "cf" && onState(ST.ENDED));
       });
-      const ytIdFor = (id) => { const e = EPISODES.find((x) => x.yt === id); return e ? getId(e.url) : id; };
+      const ytIdFor = (id) => id;
       yt = {
         loadVideoById(id) { if (cfUrl(id)) { useMode("cf"); cfLoad(id, true); } else { useMode("yt"); ytCall("loadVideoById", ytIdFor(id)); } },
         cueVideoById(id) { if (cfUrl(id)) { useMode("cf"); cfLoad(id, false); } else { useMode("yt"); ytCall("cueVideoById", ytIdFor(id)); } },
-        playVideo() { if (mode === "cf") CFV.play().catch(() => {}); else ytCall("playVideo"); },
+        playVideo() {
+          if (CFV.dataset.retry && !CFV.dataset.src) { setSrc(CFV, CFV.dataset.retry); CFV.dataset.retry = ""; CFV.load(); }
+          CFV.play().catch(() => {});
+        },
         pauseVideo() { if (mode === "cf") CFV.pause(); else ytCall("pauseVideo"); },
         stopVideo() { VIDS.forEach((v) => v.pause()); ytCall("stopVideo"); },
         getCurrentTime() { return mode === "cf" ? CFV.currentTime : ytCall("getCurrentTime") || 0; },
@@ -789,11 +787,8 @@
           },
         });
       }
-      window.onYouTubeIframeAPIReady = () => {
-        const cur = EPISODES[current];
-        const first = (cur.id && getId(cur.url)) || getId((EPISODES.find((e) => e.id && getId(e.url)) || {}).url);
-        buildPlayer(first, 0, true); buildMusic();
-      };
+      // YouTube's player is only loaded for the soundtrack songs (when TRACKS has any); episodes never use it
+      window.onYouTubeIframeAPIReady = () => { buildMusic(); };
 
       /* ---------------- soundtrack player (YouTube audio, video hidden) ---------------- */
       TRACKS.forEach((t) => (t.id = getId(t.url)));
@@ -1054,7 +1049,7 @@
       //  - in the browser -> hand the video to the iPhone's own full-screen player (no bars, like a normal phone video)
       function iphoneFs() {
         if (isStandalone()) { immersive = true; P.classList.add("immersive"); setFs(true); return; }
-        if (mode === "cf" && CFV.webkitEnterFullscreen) { try { CFV.webkitEnterFullscreen(); } catch (_) {} return; }
+        if (mode === "cf") { if (CFV.webkitEnterFullscreen) { try { CFV.webkitEnterFullscreen(); } catch (_) {} } return; }
         nativeMode = true;
         P.classList.add("native-tap", "native");
         $("fsIcon").innerHTML = ICON_FS_OUT;
@@ -1124,9 +1119,11 @@
       current = q >= 1 && q <= total ? q - 1 : Math.max(0, EPISODES.findIndex((e) => e.id));
       render();
       if (EPISODES[current].id && cfUrl(EPISODES[current].id)) yt.cueVideoById(EPISODES[current].id);
-      const s = document.createElement("script");
-      s.src = "https://www.youtube.com/iframe_api";
-      document.head.appendChild(s);
+      if (TRACKS.some((t) => getId(t.url))) {
+        const s = document.createElement("script");
+        s.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(s);
+      }
         });
     </script>
   </body>

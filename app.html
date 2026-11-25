@@ -72,7 +72,7 @@
   <body>
     <div id="app"></div>
 
-    <script src="pluffy-data.js?v=20261124d"></script>
+    <script src="pluffy-data.js?v=20261125a"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ---------- SERIES (add a new show here) ---------- */
@@ -98,11 +98,10 @@
 
       const pad = (n) => String(n).padStart(2, "0");
       const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-      const vid = (u) => ((u || "").match(/(?:shorts\/|youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/) || [])[1];
       const rel = (e) => window.PLUFFY.releaseAt(e);
       const eps = (window.PLUFFY && window.PLUFFY.episodes) || [];
       const now = Date.now();
-      const has = (e) => e.uploaded || !!vid(e.url);   // uploaded to Cloudflare (or YouTube-only if the check could not run)
+      const has = (e) => !!e.uploaded;   // its video is in the Cloudflare folder
       const status = eps.map((e, i) => ({ n: i + 1, out: has(e) && rel(e) <= now, early: has(e) && rel(e) > now }));
       const outCount = status.filter((s) => s.out).length;
       const early = status.find((s) => s.early);

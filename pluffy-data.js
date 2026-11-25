@@ -1,12 +1,13 @@
 /* ================================================================
    PLUFFY MINIS — EPISODE SCHEDULE (used by drama.html, pluffyminis.html, videos.html)
 
-   url:      the episode's YouTube link. Empty "" = shows as SOON.
+   Episodes play only from Cloudflare R2 (videoBase below). An episode is watchable once its file
+   (ps-epNN.mp4) is in the Cloudflare folder; until then it shows as SOON. No YouTube links needed.
    release:  the Monday it unlocks on this website ("YYYY-MM-DD", unlocks 8:00 AM Malaysia time).
              Leave it out after the first dated episode and it is set automatically to the Monday
              one week after the previous episode (EP06 = 30 Nov 2026, EP07 = 7 Dec, ...).
-             Before that date the episode shows as "WATCH EARLY" and sends people to
-             subscribe on YouTube, where it is already up.
+             Before that date the episode shows as "WATCH EARLY": people who subscribe to the
+             YouTube channel can watch it here straight away.
              Episodes before the first dated one (EP01–03) are free to watch here.
    plot:     optional one- or two-line summary.
    ================================================================ */
@@ -18,53 +19,53 @@ window.PLUFFY = {
   // (looks like 1234567890-abc123.apps.googleusercontent.com). Empty = only the Subscribe button shows.
   // Google sign-in: checks the viewer's subscription, subscribes them if needed, then plays.
   // Cloudflare R2 video storage (bucket "pluffy-minis", folder "P.S. I Think, I Like You"). Episode N plays /ps-epNN.mp4 from here when that
-  // file is in the bucket; if it isn't there yet, the YouTube link plays instead.
+  // file is in the bucket; if it isn't there yet, the episode shows as SOON.
   videoBase: "https://pub-defd093bf93442e4b37f513a47e645b2.r2.dev/P.S.%20I%20Think%2C%20I%20Like%20You/",
   videoPattern: "ps-ep{nn}.mp4",
   // Subtitles live in subs/ (ps-epNN.en|ms|zh|ko.vtt). Change this after editing them so phones fetch the new copy.
   subsVersion: "202611242338",
   googleClientId: "537130988058-m8nk7l7ed010ioh3lbj83vr1vc40hti1.apps.googleusercontent.com",
   episodes: [
-    { title: "Episode 1", url: "https://youtube.com/shorts/nPlVttY9neU", plot: "" },
-    { title: "Episode 2", url: "https://youtube.com/shorts/exbzsaH_mzE", plot: "" },
-    { title: "Episode 3", url: "https://youtube.com/shorts/K53sfH6Mbok", plot: "" },
-    { title: "Episode 4", url: "https://youtube.com/shorts/VnYPPxy1yxw", plot: "", release: "2026-11-09" },
-    { title: "Episode 5", url: "https://youtube.com/shorts/GfihY1PbGyM", plot: "", release: "2026-11-23" },
-    { title: "Episode 6", url: "", plot: "" },
-    { title: "Episode 7", url: "", plot: "" },
-    { title: "Episode 8", url: "", plot: "" },
-    { title: "Episode 9", url: "", plot: "" },
-    { title: "Episode 10", url: "", plot: "" },
-    { title: "Episode 11", url: "", plot: "" },
-    { title: "Episode 12", url: "", plot: "" },
-    { title: "Episode 13", url: "", plot: "" },
-    { title: "Episode 14", url: "", plot: "" },
-    { title: "Episode 15", url: "", plot: "" },
-    { title: "Episode 16", url: "", plot: "" },
-    { title: "Episode 17", url: "", plot: "" },
-    { title: "Episode 18", url: "", plot: "" },
-    { title: "Episode 19", url: "", plot: "" },
-    { title: "Episode 20", url: "", plot: "" },
-    { title: "Episode 21", url: "", plot: "" },
-    { title: "Episode 22", url: "", plot: "" },
-    { title: "Episode 23", url: "", plot: "" },
-    { title: "Episode 24", url: "", plot: "" },
-    { title: "Episode 25", url: "", plot: "" },
-    { title: "Episode 26", url: "", plot: "" },
-    { title: "Episode 27", url: "", plot: "" },
-    { title: "Episode 28", url: "", plot: "" },
-    { title: "Episode 29", url: "", plot: "" },
-    { title: "Episode 30", url: "", plot: "" },
-    { title: "Episode 31", url: "", plot: "" },
-    { title: "Episode 32", url: "", plot: "" },
-    { title: "Episode 33", url: "", plot: "" },
-    { title: "Episode 34", url: "", plot: "" },
-    { title: "Episode 35", url: "", plot: "" },
-    { title: "Episode 36", url: "", plot: "" },
-    { title: "Episode 37", url: "", plot: "" },
-    { title: "Episode 38", url: "", plot: "" },
-    { title: "Episode 39", url: "", plot: "" },
-    { title: "Episode 40", url: "", plot: "" },
+    { title: "Episode 1", plot: "" },
+    { title: "Episode 2", plot: "" },
+    { title: "Episode 3", plot: "" },
+    { title: "Episode 4", plot: "", release: "2026-11-09" },
+    { title: "Episode 5", plot: "", release: "2026-11-23" },
+    { title: "Episode 6", plot: "" },
+    { title: "Episode 7", plot: "" },
+    { title: "Episode 8", plot: "" },
+    { title: "Episode 9", plot: "" },
+    { title: "Episode 10", plot: "" },
+    { title: "Episode 11", plot: "" },
+    { title: "Episode 12", plot: "" },
+    { title: "Episode 13", plot: "" },
+    { title: "Episode 14", plot: "" },
+    { title: "Episode 15", plot: "" },
+    { title: "Episode 16", plot: "" },
+    { title: "Episode 17", plot: "" },
+    { title: "Episode 18", plot: "" },
+    { title: "Episode 19", plot: "" },
+    { title: "Episode 20", plot: "" },
+    { title: "Episode 21", plot: "" },
+    { title: "Episode 22", plot: "" },
+    { title: "Episode 23", plot: "" },
+    { title: "Episode 24", plot: "" },
+    { title: "Episode 25", plot: "" },
+    { title: "Episode 26", plot: "" },
+    { title: "Episode 27", plot: "" },
+    { title: "Episode 28", plot: "" },
+    { title: "Episode 29", plot: "" },
+    { title: "Episode 30", plot: "" },
+    { title: "Episode 31", plot: "" },
+    { title: "Episode 32", plot: "" },
+    { title: "Episode 33", plot: "" },
+    { title: "Episode 34", plot: "" },
+    { title: "Episode 35", plot: "" },
+    { title: "Episode 36", plot: "" },
+    { title: "Episode 37", plot: "" },
+    { title: "Episode 38", plot: "" },
+    { title: "Episode 39", plot: "" },
+    { title: "Episode 40", plot: "" },
   ],
 };
 
@@ -89,10 +90,10 @@ window.PLUFFY = {
 /* ================================================================
    UPLOADED-EPISODE CHECK
    An episode can only be watched once its video file (ps-epNN.mp4) is in the Cloudflare folder.
-   Until then it shows as SOON on every page and in the apps, even if it has a YouTube link.
+   Until then it shows as SOON on every page and in the apps.
    Pages call PLUFFY.whenReady(fn): it asks Cloudflare which files exist, sets
-   episode.uploaded = true / false, then runs fn. If Cloudflare can't be reached, the
-   episodes keep their YouTube-link behaviour so the site never goes blank.
+   episode.uploaded = true / false, then runs fn. If Cloudflare can't be reached right now, the
+   last result this device saw is used, so the episode list doesn't go blank.
    ================================================================ */
 (function () {
   const P = window.PLUFFY;
@@ -104,7 +105,8 @@ window.PLUFFY = {
     return !name ? "" : /^https?:/.test(name) ? name : base + name;
   };
   // true / false per episode, or null if the check couldn't run
-  const KEY = "pluffy-uploaded-v1", MAX_AGE = 5 * 60 * 1000;
+  const KEY = "pluffy-uploaded-v1", LAST = "pluffy-uploaded-last", MAX_AGE = 5 * 60 * 1000;
+  const lastKnown = () => { try { const l = JSON.parse(localStorage.getItem(LAST) || "null"); return Array.isArray(l) ? l : null; } catch (_) { return null; } };
   const head = (u) => fetch(u, { method: "HEAD", cache: "no-store", mode: "cors" }).then((r) => r.ok, () => null);
   async function check() {
     try { const c = JSON.parse(sessionStorage.getItem(KEY) || "null"); if (c && Date.now() - c.t < MAX_AGE && c.n === P.episodes.length) return c.list; } catch (_) {}
@@ -117,19 +119,17 @@ window.PLUFFY = {
       if (res.some((r) => r === null)) return null;   // Cloudflare unreachable / blocked
       res.forEach((ok, j) => { list[idx[j]] = ok; misses = ok ? 0 : misses + 1; });
     }
-    try { sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), n, list })); } catch (_) {}
+    try { sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), n, list })); localStorage.setItem(LAST, JSON.stringify(list)); } catch (_) {}
     return list;
   }
   let done = null;
   P.whenReady = (fn) => {
     if (!done) {
       const timeout = new Promise((ok) => setTimeout(() => ok(null), 6000));
-      done = Promise.race([check().catch(() => null), timeout]).then((list) => {
-        P.checked = !!list;
-        P.episodes.forEach((e, i) => {
-          e.uploaded = list ? !!list[i] : null;
-          if (list && !list[i]) e.url = "";   // not uploaded -> SOON everywhere
-        });
+      done = Promise.race([check().catch(() => null), timeout]).then((fresh) => {
+        P.checked = !!fresh;
+        const list = fresh || lastKnown() || [];
+        P.episodes.forEach((e, i) => { e.uploaded = !!list[i]; });
         return list;
       });
     }

@@ -224,7 +224,7 @@
       </div>
     </div>
 
-    <script src="pluffy-data.js?v=20261124d"></script>
+    <script src="pluffy-data.js?v=20261125a"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -248,12 +248,10 @@
           blurb: "One office. One night. One deadline neither of them can afford to miss.",
         },
       ];
-      // Released episodes shown in "New Episodes" (YouTube Shorts IDs, newest last)
-      const EPISODES = ["nPlVttY9neU", "exbzsaH_mzE", "K53sfH6Mbok", "VnYPPxy1yxw"];
 
       // "EP01–03 OUT NOW" label + early-access notice come from the Monday schedule in pluffy-data.js
       const relT = (e) => window.PLUFFY.releaseAt(e);
-      const ytOk = (e) => e.uploaded || /(?:shorts\/|youtu\.be\/|[?&]v=)[\w-]{11}/.test(e.url || "");
+      const ytOk = (e) => !!e.uploaded;   // its video is in the Cloudflare folder
       const eps = window.PLUFFY.episodes;
       const outCount = eps.filter((e) => ytOk(e) && relT(e) <= Date.now()).length;
       const earlyEp = eps.findIndex((e) => ytOk(e) && relT(e) > Date.now());
