@@ -1,8 +1,8 @@
 /*
- * pluffy minis — episode comments (Cloudflare Worker + D1 database bound as DB)
+ * pluffy minis - episode comments (Cloudflare Worker + D1 database bound as DB)
  *
  * Anyone can comment, guests included. Comments show instantly, with these guards:
- *  - 1–300 characters, name up to 24 (default "Guest"); links and a list of bad words are refused
+ *  - 1-300 characters, name up to 24 (default "Guest"); links and a list of bad words are refused
  *  - one comment per 30 seconds per device, at most 8 a minute per network (IP stored only as a salted hash)
  *  - viewers can report; a comment reported by 3 different viewers is hidden automatically
  *  - a viewer can delete their own comment (device key kept in their browser)
@@ -21,7 +21,7 @@ const BAD = [
   "fuck", "fck", "fuk", "shit", "bitch", "cunt", "dick", "pussy", "asshole", "bastard", "slut", "whore", "nigger", "nigga",
   "faggot", "fag", "retard", "porn", "xxx", "sex video", "onlyfans",
   "babi", "bodoh", "sial", "pukimak", "puki", "kimak", "lancau", "pantat", "sundal", "jalang", "anjing", "bangsat", "kontol", "memek", "ngentot", "goblok",
-  "操你", "傻逼", "妈的", "씨발", "병신", "개새끼",
+  "\u64cd\u4f60", "\u50bb\u903c", "\u5988\u7684", "\uc528\ubc1c", "\ubcd1\uc2e0", "\uac1c\uc0c8\ub07c",
 ];
 const LINK = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(com|net|org|io|me|ly|gg|xyz|link|site|co|my|id|tk|ru|cn)\b|t\.me\/|wa\.me\/|bit\.ly)/i;
 
@@ -39,8 +39,8 @@ async function sha(s) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("").slice(0, 32);
 }
-const clean = (s, max) => String(s || "").replace(/[\u0000-\u0008\u000b-\u001f\u007f​-‏‪-‮]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, max);
-const squash = (s) => s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[@4]/g, "a").replace(/[3]/g, "e").replace(/[1!|]/g, "i").replace(/[0]/g, "o").replace(/[$5]/g, "s").replace(/[^a-z\u0080-￿ ]/g, "");
+const clean = (s, max) => String(s || "").replace(/[\u0000-\u0008\u000b-\u001f\u007f\u200b-\u200f\u202a-\u202e]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, max);
+const squash = (s) => s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[@4]/g, "a").replace(/[3]/g, "e").replace(/[1!|]/g, "i").replace(/[0]/g, "o").replace(/[$5]/g, "s").replace(/[^a-z\u0080-\uffff ]/g, "");
 const rude = (s) => { const t = squash(s), w = ` ${t} `; return BAD.some((b) => (/^[a-z ]+$/.test(b) ? w.includes(` ${b} `) || (b.length >= 5 && t.replace(/ /g, "").includes(b.replace(/ /g, ""))) : t.includes(b))); };
 
 export default {
@@ -87,15 +87,15 @@ export default {
       if (!text) return json({ error: "Write something first." }, 400);
       if (text.length > MAX_TEXT) return json({ error: `Keep it under ${MAX_TEXT} characters.` }, 400);
       if (LINK.test(text) || LINK.test(name)) return json({ error: "Links aren't allowed in comments." }, 400);
-      if (rude(text) || rude(name)) return json({ error: "Please keep it friendly — that wording isn't allowed." }, 400);
+      if (rude(text) || rude(name)) return json({ error: "Please keep it friendly - that wording isn't allowed." }, 400);
       const ip = req.headers.get("CF-Connecting-IP") || "0";
       const iph = await sha("ip:" + ip + ":" + (env.SALT || "pluffy"));
       const now = Math.floor(Date.now() / 1000);
       const last = await env.DB.prepare(`SELECT MAX(ts) AS t FROM comments WHERE owner = ? AND ts > ?`).bind(meH, now - WAIT).first("t");
-      if (last) return json({ error: `Slow down a little — you can comment again in ${WAIT - (now - last)}s.` }, 429);
+      if (last) return json({ error: `Slow down a little - you can comment again in ${WAIT - (now - last)}s.` }, 429);
       // people on the same Wi-Fi or mobile network share an IP, so the IP limit is looser: 8 a minute
       const burst = await env.DB.prepare(`SELECT COUNT(*) AS n FROM comments WHERE iph = ? AND ts > ?`).bind(iph, now - 60).first("n");
-      if (burst >= 8) return json({ error: "Lots of comments from your network right now — try again in a minute." }, 429);
+      if (burst >= 8) return json({ error: "Lots of comments from your network right now - try again in a minute." }, 429);
       const dup = await env.DB.prepare(`SELECT 1 FROM comments WHERE owner = ? AND text = ? AND ts > ?`).bind(meH, text, now - 3600).first();
       if (dup) return json({ error: "You already posted that." }, 409);
       const r = await env.DB.prepare(`INSERT INTO comments (ep, name, text, ts, owner, iph) VALUES (?, ?, ?, ?, ?, ?) RETURNING id`).bind(ep, name, text, now, meH, iph).first();
