@@ -106,7 +106,7 @@
       .rail button:active .ic { transform:scale(.92); }
       .rail .ic svg { width:1.3rem; height:1.3rem; }
       .rail .eps-btn .ic { background:var(--red); }
-      /* Soundtrack (music) button: always on screen, above CC */
+      /* Soundtrack (music) button, above CC */
       .rail .st-btn .ic { background:rgba(0,0,0,.42); }
       .rail .st-btn[aria-expanded="true"] .ic { background:var(--white); color:#000; }
       .st-panel { position:absolute; z-index:7; right:4.2rem; bottom:12rem; width:min(17.5rem, calc(100% - 5.6rem)); max-height:60%; overflow:auto; padding:.8rem .85rem .7rem; border-radius:1rem; background:rgba(10,10,12,.5); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.14); color:#fff; display:none; }
@@ -179,10 +179,10 @@
 
       /* ---------- Fullscreen: clean screen, tap to reveal ---------- */
       .player.fs { border-radius:0; border:0; }
-      .player.fs .ui > *:not(.rail), .player.fs .rail > *:not(.st-btn) { opacity:0; transition:opacity .25s ease; }
+      .player.fs .ui { opacity:0; }
       .player.fs .ui * { pointer-events:none !important; }
-      .player.fs.reveal .ui > *:not(.rail), .player.fs.reveal .rail > * { opacity:1; }
-      .player.fs.reveal .ui button, .player.fs.reveal .ui .progress, .player.fs .rail .st-btn { pointer-events:auto !important; }
+      .player.fs.reveal .ui { opacity:1; }
+      .player.fs.reveal .ui button, .player.fs.reveal .ui .progress { pointer-events:auto !important; }
       .player.fs .meta, .player.fs .bar .home, .player.fs .rail .hide-fs, .player.fs .bar .ep-badge, .player.fs .bar .series { display:none; }
       .player.fs .rail { bottom:max(2.2rem, env(safe-area-inset-bottom)); }
       .player.fs .rail .eps-btn .ic { width:3.4rem; height:3.4rem; box-shadow:0 0 0 .35rem rgba(193,10,10,.3); }
@@ -921,7 +921,7 @@
         hideTimer = setTimeout(() => { if (playing && !P.classList.contains("sheet-open")) P.classList.remove("reveal"); }, 3000);
       }
 
-      let ty = 0, tx = 0, swiped = false;
+      let ty = 0, tx = 0, swiped = false, lastTapToggle = 0;
       $("tap").addEventListener("touchstart", (e) => { ty = e.touches[0].clientY; tx = e.touches[0].clientX; swiped = false; }, { passive: true });
       $("tap").addEventListener("touchend", (e) => {
         if (!P.classList.contains("fs")) return;
@@ -939,6 +939,8 @@
         if (mutedStart && ready) { yt.unMute(); mutedStart = false; hint("SOUND ON", 900); return; }
         if (!P.classList.contains("started")) { unlockSpare(); firstPlay(); reveal(); return; }
         // A tap shows the controls (−10s, play/pause, +10s); another tap hides them
+        // (ignore a second click within 0.35 s: some phones send two for one tap)
+        const now = Date.now(); if (now - lastTapToggle < 350) return; lastTapToggle = now;
         if (P.classList.contains("reveal") && playing) P.classList.remove("reveal"); else reveal();
       });
       $("center").onclick = () => { unlockSpare(); P.classList.contains("started") ? togglePlay() : firstPlay(); reveal(); };
@@ -982,7 +984,12 @@
           ? `<ol>${list.map((sg) => `<li><b>${esc(sg.title)}</b><span>${(sg.by || []).map(link).join(", ")}${sg.feat && sg.feat.length ? ` feat. ${sg.feat.map(link).join(", ")}` : ""}</span></li>`).join("")}</ol>`
           : `<p class="none">Songs for this episode coming soon.</p>`;
       }
-      function setSoundtrack(open) { $("stPanel").classList.toggle("open", open); $("stBtn").setAttribute("aria-expanded", open); if (open) { renderSoundtrack(); $("ccMenu").classList.remove("open"); } }
+      function setSoundtrack(open) {
+        const was = $("stPanel").classList.contains("open");
+        $("stPanel").classList.toggle("open", open); $("stBtn").setAttribute("aria-expanded", open);
+        if (open) { renderSoundtrack(); $("ccMenu").classList.remove("open"); reveal(true); }   // buttons stay while the list is open
+        else if (was) scheduleHide();                                                          // then hide with the others
+      }
       $("stBtn").onclick = (e) => { e.stopPropagation(); setSoundtrack(!$("stPanel").classList.contains("open")); };
       $("stClose").onclick = (e) => { e.stopPropagation(); setSoundtrack(false); };
       $("stPanel").addEventListener("click", (e) => e.stopPropagation());
@@ -1025,7 +1032,8 @@
       // Double-tap the left / right side of the video to skip 10 s (like YouTube)
       $("tap").addEventListener("dblclick", (e) => { const r = P.getBoundingClientRect(); const x = e.clientX - r.left; if (x < r.width * 0.35) skip(-10); else if (x > r.width * 0.65) skip(10); });
       // Desktop: moving the mouse in full screen also brings the buttons back
-      P.addEventListener("mousemove", () => { if (P.classList.contains("fs")) reveal(); });
+      // (only a real mouse: phones send a fake mouse move with every tap, which would cancel the tap)
+      P.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse" && P.classList.contains("fs")) reveal(); });
 
       // Some phones (mostly iPhone) block starting a video from outside the YouTube frame.
       // If our tap doesn't start it, let the next tap go straight to YouTube's player.
