@@ -121,6 +121,8 @@
       .st-panel li b { font:700 .86rem/1.25 system-ui, -apple-system, "Segoe UI", sans-serif; }
       .st-panel li span { font:500 .7rem/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; color:rgba(255,255,255,.72); }
       .st-panel li a { color:#fff; text-decoration:underline; text-decoration-color:rgba(255,255,255,.35); text-underline-offset:2px; }
+      .st-panel li b a { text-decoration:none; }
+      .st-panel li b a::after { content:" ↗"; font-size:.7em; color:rgba(255,255,255,.55); }
       .st-panel p.none { margin:.3rem 0; font:.72rem system-ui, sans-serif; color:rgba(255,255,255,.7); }
       .player.fs .st-panel { bottom:max(9rem, calc(env(safe-area-inset-bottom, 0px) + 8rem)); }
       .player.locked .st-panel { display:none; }
@@ -454,7 +456,7 @@
     <div class="toast" id="toast">LINK COPIED</div>
 
     <script>if (/[?&]app=1/.test(location.search)) { document.documentElement.classList.add("in-app"); addEventListener("DOMContentLoaded", () => { const h = document.querySelector(".bar .home"); if (h) { h.href = "app.html#/series/ps"; h.setAttribute("aria-label", "Back to series"); } }); }</script>
-    <script src="pluffy-data.js?v=20261125c"></script>
+    <script src="pluffy-data.js?v=20261125d"></script>
     <script>
     window.PLUFFY.whenReady(function () {
       /* ================================================================
@@ -976,12 +978,14 @@
       function showCue(t) { if (t === lastCueText) return; lastCueText = t; const el = $("subs"); el.innerHTML = ""; if (t) { const sp = document.createElement("span"); sp.textContent = t; el.appendChild(sp); } }
       /* Soundtrack list (songs per episode: window.PLUFFY.soundtrack). Opening it never pauses the episode. */
       const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      // Song title -> its Epidemic Sound page (song.link), or Epidemic Sound's search for that exact song + artist
+      const songUrl = (sg) => sg.link || `https://www.epidemicsound.com/music/search/?term=${encodeURIComponent(`${sg.title} ${((sg.by || [])[0] || [""])[0]}`)}`;
       function renderSoundtrack() {
         const list = (window.PLUFFY.soundtrack || {})[current + 1] || [];
         $("stKicker").textContent = `SOUNDTRACK · EP${pad(current + 1)}`;
         const link = (a) => `<a href="${esc(a[1] || "https://www.epidemicsound.com/")}" target="_blank" rel="noreferrer">${esc(a[0])}</a>`;
         $("stList").innerHTML = list.length
-          ? `<ol>${list.map((sg) => `<li><b>${esc(sg.title)}</b><span>${(sg.by || []).map(link).join(", ")}${sg.feat && sg.feat.length ? ` feat. ${sg.feat.map(link).join(", ")}` : ""}</span></li>`).join("")}</ol>`
+          ? `<ol>${list.map((sg) => `<li><b><a href="${esc(songUrl(sg))}" target="_blank" rel="noreferrer">${esc(sg.title)}</a></b><span>${(sg.by || []).map(link).join(", ")}${sg.feat && sg.feat.length ? ` feat. ${sg.feat.map(link).join(", ")}` : ""}</span></li>`).join("")}</ol>`
           : `<p class="none">Songs for this episode coming soon.</p>`;
       }
       function setSoundtrack(open) {

@@ -72,33 +72,35 @@ window.PLUFFY = {
 /* ================================================================
    SOUNDTRACK — songs per episode (all from Epidemic Sound), in the order you list them.
    Shown when viewers tap the music button above CC.  by / feat: [name, artist page]
+   link: the song's own Epidemic Sound page (the title opens it). Without a link, the title opens
+   Epidemic Sound's search for that song + artist.
    ================================================================ */
 window.PLUFFY.soundtrack = {
   1: [
-    { title: "Shut Your Mouth (and Kiss Me)", by: [["Loving Caliber", "https://www.epidemicsound.com/artists/loving-caliber/"]] },
-    { title: "Like It Like That", by: [["Mindme", "https://www.epidemicsound.com/artists/mindme/"]], feat: [["Le June", "https://www.epidemicsound.com/artists/le-june/"]] },
+    { title: "Shut Your Mouth (and Kiss Me)", link: "https://www.epidemicsound.com/music/tracks/648d695c-02ac-4e99-b59b-52c7a2bc8efb/", by: [["Loving Caliber", "https://www.epidemicsound.com/artists/loving-caliber/"]] },
+    { title: "Like It Like That", link: "https://www.epidemicsound.com/music/tracks/f942b50a-f928-46e7-afb3-78fe41186b85/", by: [["Mindme", "https://www.epidemicsound.com/artists/mindme/"]], feat: [["Le June", "https://www.epidemicsound.com/artists/le-june/"]] },
   ],
   2: [
-    { title: "A Letter to Buddy", by: [["Holy See", "https://www.epidemicsound.com/artists/holy-see/"]] },
-    { title: "In Love", by: [["Gamma Skies", "https://www.epidemicsound.com/artists/gamma-skies/"]] },
+    { title: "A Letter to Buddy", link: "https://www.epidemicsound.com/music/tracks/c00df26c-a8eb-437a-917f-a3a575d00a47/", by: [["Holy See", "https://www.epidemicsound.com/artists/holy-see/"]] },
+    { title: "In Love", link: "https://www.epidemicsound.com/music/tracks/6fa0f12c-9285-3148-80c3-e3c629b16ac3/", by: [["Gamma Skies", "https://www.epidemicsound.com/artists/gamma-skies/"]] },
   ],
   3: [
-    { title: "Why I Try", by: [["Loving Caliber", "https://www.epidemicsound.com/artists/loving-caliber/"]] },
-    { title: "Skip the Small Talk", by: [["Gamma Skies", "https://www.epidemicsound.com/artists/gamma-skies/"]] },
+    { title: "Why I Try", link: "https://www.epidemicsound.com/music/tracks/42c886c7-0545-3c98-9e83-9785dd6c8f15/", by: [["Loving Caliber", "https://www.epidemicsound.com/artists/loving-caliber/"]] },
+    { title: "Skip the Small Talk", link: "https://www.epidemicsound.com/music/tracks/87fe8bef-def0-457b-9907-788016c7f86d/", by: [["Gamma Skies", "https://www.epidemicsound.com/artists/gamma-skies/"]] },
   ],
   4: [
-    { title: "Fire", by: [["Tilden Parc", "https://www.epidemicsound.com/artists/tilden-parc/"]] },
-    { title: "Life of the Party", by: [["Maybe", "https://www.epidemicsound.com/artists/maybe-2/"]] },
-    { title: "Number One", by: [["Romaro", "https://www.epidemicsound.com/artists/romaro/"]], feat: [["Elena Persson", "https://www.epidemicsound.com/artists/elena-persson/"]] },
+    { title: "Fire", link: "https://www.epidemicsound.com/music/tracks/ca5077b3-661b-46ab-b0f2-bd7cb12a9b24/", by: [["Tilden Parc", "https://www.epidemicsound.com/artists/tilden-parc/"]] },
+    { title: "Life of the Party", link: "https://www.epidemicsound.com/music/tracks/ad98eae7-2705-4190-bdff-b2fe50b455c8/", by: [["Maybe", "https://www.epidemicsound.com/artists/maybe-2/"]] },
+    { title: "Number One", link: "https://www.epidemicsound.com/music/tracks/5b7d1e23-e612-37f5-92c4-bf8f923fbc14/", by: [["Romaro", "https://www.epidemicsound.com/artists/romaro/"]], feat: [["Elena Persson", "https://www.epidemicsound.com/artists/elena-persson/"]] },
   ],
   5: [
-    { title: "I Do Believe", by: [["Craig Reever", "https://www.epidemicsound.com/artists/craig-reever/"]], feat: [["Mia Niles", "https://www.epidemicsound.com/artists/mia-niles/"]] },
-    { title: "Stay With Me", by: [["IFCHAN", "https://www.epidemicsound.com/artists/ifchan/"], ["SCENE", "https://www.epidemicsound.com/artists/scene/"]] },
+    { title: "I Do Believe", link: "https://www.epidemicsound.com/music/tracks/6e34314d-2bbf-3115-8d35-31f5ac1c6db6/", by: [["Craig Reever", "https://www.epidemicsound.com/artists/craig-reever/"]], feat: [["Mia Niles", "https://www.epidemicsound.com/artists/mia-niles/"]] },
+    { title: "Stay with Me", link: "https://www.epidemicsound.com/music/tracks/34ed1964-6c8c-4bb6-9633-d405f2b55e09/", by: [["IFCHAN", "https://www.epidemicsound.com/artists/ifchan/"], ["SCENE", "https://www.epidemicsound.com/artists/scene/"]] },
   ],
   6: [
-    { title: "Bad For You", by: [["Vicki Vox", "https://www.epidemicsound.com/artists/vicki-vox/"]] },
-    { title: "Not Gonna Wake Up", by: [["Mindme", "https://www.epidemicsound.com/artists/mindme/"]], feat: [["Mia Pfirrman", "https://www.epidemicsound.com/artists/mia-pfirrman/"]] },
-    { title: "Safe and Sound", by: [["CLNGR", "https://www.epidemicsound.com/artists/clngr/"]] },
+    { title: "Bad for You", link: "https://www.epidemicsound.com/music/tracks/73f51609-8331-4e98-a43f-e2ed49241b89/", by: [["Vicki Vox", "https://www.epidemicsound.com/artists/vicki-vox/"]] },
+    { title: "Not Gonna Wake Up", link: "https://www.epidemicsound.com/music/tracks/1b4dcdcb-62e9-4d59-9103-f762b718fce6/", by: [["Mindme", "https://www.epidemicsound.com/artists/mindme/"]], feat: [["Mia Pfirrman", "https://www.epidemicsound.com/artists/mia-pfirrman/"]] },
+    { title: "Safe and Sound", link: "https://www.epidemicsound.com/music/tracks/ec0a9f93-8587-3314-98fe-f9b9844f323d/", by: [["CLNGR", "https://www.epidemicsound.com/artists/clngr/"]] },
   ],
 };
 
