@@ -109,7 +109,7 @@ def scan(path, faces):
         if not ok:
             break
         for cx, cy, h, s, e, _ in faces.detect(fr):
-            rows.append([round(t, 1), round(cx, 3), round(cy, 3), round(h, 3), round(s, 3), pack(e)])
+            rows.append([round(t, 1), round(float(cx), 3), round(float(cy), 3), round(float(h), 3), round(float(s), 3), pack(e)])
         t += 1.0
     cap.release()
     return {"v": 1, "dur": round(dur, 2), "faces": rows}
